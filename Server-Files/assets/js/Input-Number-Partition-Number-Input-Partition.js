@@ -12,6 +12,9 @@ window.addEventListener('load', function () {
 
             // Do whatever with pasteddata
 
+            function saoTodosNumeros(texto) {
+                return /^\d+$/.test(texto);
+            }
 
             if (saoTodosNumeros(pastedData)) {
                 let identifier = event.target.dataset.number_partition_identifier;
@@ -26,7 +29,6 @@ window.addEventListener('load', function () {
                             getElementsGroup()[groupIdentifier][indexArray].focus();
                             indexArray++;
                         });
-                        console.log(arrayNumbers);
                     }
                 }
             }
@@ -35,32 +37,9 @@ window.addEventListener('load', function () {
 
 
         });
-
-        elementsPartitionInput[i].addEventListener('keydown', function (event) {
-
-            if (!isNumberByEvent(event) && !isTabClickByEvent(event) && !isPasteClickByEvent(event)) {
-                event.preventDefault();
-                if (event.key == 'Backspace') {
-                    console.log('Apagando');
-
-                    let identifier = event.target.dataset.number_partition_identifier;
-                    let groupIdentifier = event.target.dataset.number_partition_group_identifier;
-                    getElementsGroup()[groupIdentifier][identifier].value = "";
-                    if (identifier > 0) {
-                        identifier--;
-                    }
-                    getElementsGroup()[groupIdentifier][identifier].focus();
-                }
-            }
-        });
-
-
 
         elementsPartitionInput[i].addEventListener('keyup', function (event) {
-            if (!isNumberByEvent(event) && isBackspaceClickByEvent(event) || (isTabClickByEvent(event) && !isShiftClickByEvent(event)) || isShiftClickByEvent(event)) {
-                event.preventDefault();
-            } else {
-
+            if (isNumberByEvent(event)) {
                 let identifier = event.target.dataset.number_partition_identifier;
                 let groupIdentifier = event.target.dataset.number_partition_group_identifier;
 
@@ -69,6 +48,23 @@ window.addEventListener('load', function () {
                 }
 
                 getElementsGroup()[groupIdentifier][identifier].focus();
+
+            } else if (event.key == "F5") {
+                window.location.reload();
+            } else if (event.key == 'Backspace') {
+
+
+                let identifier = event.target.dataset.number_partition_identifier;
+                let groupIdentifier = event.target.dataset.number_partition_group_identifier;
+                getElementsGroup()[groupIdentifier][identifier].value = "";
+                if (identifier > 0) {
+                    identifier--;
+                }
+                getElementsGroup()[groupIdentifier][identifier].focus();
+            }
+            else {
+
+                event.preventDefault();
             }
         });
 
@@ -103,44 +99,5 @@ window.addEventListener('load', function () {
             }
         }
         return response;
-    }
-
-    function isTabClickByEvent(event) {
-        let response = false;
-
-        if (event.key == 'Tab') {
-            response = true;
-        }
-        return response;
-    }
-
-    function isShiftClickByEvent(event) {
-        let response = false;
-
-        if (event.key == 'Shift') {
-            response = true;
-        }
-        return response;
-    }
-
-    function isBackspaceClickByEvent(event) {
-        let response = false;
-
-        if (event.key == 'Backspace') {
-            response = true;
-        }
-        return response;
-    }
-
-    function isPasteClickByEvent(event) {
-        let response = false;
-        if (event.key == 'Control' || event.key == "v") {
-            response = true;
-        }
-        return response;
-    }
-
-    function saoTodosNumeros(texto) {
-        return /^\d+$/.test(texto);
     }
 });
