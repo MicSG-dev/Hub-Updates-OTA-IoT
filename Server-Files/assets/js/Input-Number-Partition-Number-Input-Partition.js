@@ -2,16 +2,64 @@ window.addEventListener('load', function () {
     let elementsPartitionInput = document.getElementsByClassName('partition_input');
     for (let i = 0; i < elementsPartitionInput.length; i++) {
 
+        elementsPartitionInput[i].addEventListener('paste', function (event) {
+            event.stopPropagation();
+            event.preventDefault();
+            var clipboardData, pastedData;
+            // Get pasted data via clipboard API
+            clipboardData = event.clipboardData || window.clipboardData;
+            pastedData = clipboardData.getData('Text');
+
+            // Do whatever with pasteddata
+
+
+            if (saoTodosNumeros(pastedData)) {
+                let identifier = event.target.dataset.number_partition_identifier;
+                let groupIdentifier = event.target.dataset.number_partition_group_identifier;
+
+                if (identifier == 5 - pastedData.length) {
+                    if (pastedData.length <= 5 && pastedData.length > 0) {
+                        let arrayNumbers = pastedData.split('');
+                        let indexArray = identifier;
+                        arrayNumbers.forEach(number => {
+                            getElementsGroup()[groupIdentifier][indexArray].value = number;
+                            getElementsGroup()[groupIdentifier][indexArray].focus();
+                            indexArray++;
+                        });
+                        console.log(arrayNumbers);
+                    }
+                }
+            }
+
+
+
+
+        });
+
         elementsPartitionInput[i].addEventListener('keydown', function (event) {
-            if (!isNumberByEvent(event) && !isTabClickByEvent(event) && !isBackspaceClickByEvent(event)) {
+
+            if (!isNumberByEvent(event) && !isTabClickByEvent(event) && !isPasteClickByEvent(event)) {
                 event.preventDefault();
+                if (event.key == 'Backspace') {
+                    console.log('Apagando');
+
+                    let identifier = event.target.dataset.number_partition_identifier;
+                    let groupIdentifier = event.target.dataset.number_partition_group_identifier;
+                    getElementsGroup()[groupIdentifier][identifier].value = "";
+                    if (identifier > 0) {
+                        identifier--;
+                    }
+                    getElementsGroup()[groupIdentifier][identifier].focus();
+                }
             }
         });
 
+
+
         elementsPartitionInput[i].addEventListener('keyup', function (event) {
-            if (!isNumberByEvent(event) || isBackspaceClickByEvent(event)) {
+            if (!isNumberByEvent(event) && isBackspaceClickByEvent(event)) {
                 event.preventDefault();
-            } else {
+            }else {
 
                 let identifier = event.target.dataset.number_partition_identifier;
                 let groupIdentifier = event.target.dataset.number_partition_group_identifier;
@@ -73,5 +121,17 @@ window.addEventListener('load', function () {
             response = true;
         }
         return response;
+    }
+
+    function isPasteClickByEvent(event) {
+        let response = false;
+        if (event.key == 'Control' || event.key == "v") {
+            response = true;
+        }
+        return response;
+    }
+
+    function saoTodosNumeros(texto) {
+        return /^\d+$/.test(texto);
     }
 });

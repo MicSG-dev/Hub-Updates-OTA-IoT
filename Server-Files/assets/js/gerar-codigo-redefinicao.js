@@ -3,7 +3,7 @@ window.addEventListener('load', ()=>{
     const carouselElement = document.querySelector('#carousel');
     carouselElement.classList.remove("slide");
     
-
+    
 
     this.document.getElementById('gerar-codigo-redefinicao').addEventListener('click', ()=>{
         // fazer request POST na API
