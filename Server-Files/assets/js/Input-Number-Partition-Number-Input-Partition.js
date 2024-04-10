@@ -57,9 +57,9 @@ window.addEventListener('load', function () {
 
 
         elementsPartitionInput[i].addEventListener('keyup', function (event) {
-            if (!isNumberByEvent(event) && isBackspaceClickByEvent(event)) {
+            if (!isNumberByEvent(event) && isBackspaceClickByEvent(event) || (isTabClickByEvent(event) && !isShiftClickByEvent(event)) || isShiftClickByEvent(event)) {
                 event.preventDefault();
-            }else {
+            } else {
 
                 let identifier = event.target.dataset.number_partition_identifier;
                 let groupIdentifier = event.target.dataset.number_partition_group_identifier;
@@ -109,6 +109,15 @@ window.addEventListener('load', function () {
         let response = false;
 
         if (event.key == 'Tab') {
+            response = true;
+        }
+        return response;
+    }
+
+    function isShiftClickByEvent(event) {
+        let response = false;
+
+        if (event.key == 'Shift') {
             response = true;
         }
         return response;
