@@ -33,4 +33,18 @@ window.addEventListener('load', ()=>{
         event.preventDefault();
     });
 
+    this.document.getElementById('ja-tem-um-codigo').addEventListener('click', (event)=>{
+        event.preventDefault();
+        const carousel = bootstrap.Carousel.getOrCreateInstance(carouselElement);
+        carousel.to(1);
+    });
+
+    this.document.getElementById('nao-recebeu-codigo').addEventListener('click', (event)=>{
+        event.preventDefault();
+        const carousel = bootstrap.Carousel.getOrCreateInstance(carouselElement);
+        carousel.to(0);
+    });
+
+
+
 });

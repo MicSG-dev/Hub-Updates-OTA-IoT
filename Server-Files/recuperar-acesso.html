@@ -30,10 +30,11 @@
                                     <div class="carousel slide carousel-dark carousel-fade" data-bs-ride="false" data-bs-pause="false" data-bs-keyboard="false" data-bs-touch="false" id="carousel">
                                         <div class="carousel-inner">
                                             <div class="carousel-item active">
-                                                <form id="form-gerar-codigo" style="max-width: 400px;">
+                                                <form id="form-gerar-codigo" style="margin-bottom: 25px;">
                                                     <p class="text-start">Preencha o e-mail cadastrado em sua conta:</p>
                                                     <div class="mb-3"><input class="form-control" type="email" name="email" placeholder="Email"></div>
                                                     <div class="mb-3"><button class="btn btn-primary d-block w-100" id="gerar-codigo-redefinicao" type="submit" style="margin-top: 33px;">Gerar Código de Redefinição</button></div>
+                                                    <div><a id="ja-tem-um-codigo" class="text-muted" href="#">Já tem um código? Clique aqui</a></div>
                                                 </form>
                                             </div>
                                             <div class="carousel-item" style="max-width: 400px;">
@@ -50,18 +51,19 @@
                                                     </div>
                                                 </form>
                                                 <div class="mb-3"><button class="btn btn-primary d-block w-100" id="verificar-codigo-redefinicao" type="submit">Verificar Código de Redefinição</button></div>
+                                                <div><a id="nao-recebeu-codigo" class="text-muted" href="#">Não recebeu o código em seu email? Clique aqui para gerar um novo código (02:00)</a></div>
                                             </div>
                                             <div class="carousel-item">
-                                                <form id="form-redefinir-senha" style="max-width: 400px;">
+                                                <form id="form-redefinir-senha" style="margin-bottom: 64px;">
                                                     <p class="text-start">Preencha com uma nova senha para sua conta:</p>
                                                     <div class="mb-3"><input class="form-control" type="password" placeholder="Nova Senha" name="password"></div>
                                                     <div class="mb-3"><button class="btn btn-primary d-block w-100" id="gerar-codigo-redefinicao-1" type="submit" style="margin-top: 33px;">Redefinir a Senha</button></div>
                                                 </form>
                                             </div>
                                         </div>
-                                    </div><a class="text-muted" href="login.html">Voltar à Home</a>
+                                    </div>
                                 </div>
-                                <div style="height: 50px;"></div>
+                                <div style="height: 50px;"></div><a class="text-muted" href="login.html">Voltar à Home</a>
                             </div>
                         </div>
                     </div>
