@@ -1,7 +1,7 @@
 <?php
 
-$nomeArquivoHtml = str_replace('/','', $_SERVER['SCRIPT_NAME']);
+$nomeArquivoHtml = __FILE__;
 $nomeArquivoHtml = str_replace('.php','.html', $nomeArquivoHtml);
-$pageHtml = file_get_contents("./$nomeArquivoHtml");
+$pageHtml = file_get_contents($nomeArquivoHtml);
 
 echo($pageHtml);
