@@ -45,5 +45,14 @@ if (!defined('database-acesso-privado-rv$he')) {
         // Executar Query aqui
         // ...
         // ...
+
+        $query = "CREATE TABLE IF NOT EXISTS `hub_updates_ota_iot`.`redefinir_senha` 
+        (`EMAIL` VARCHAR(256) NOT NULL , 
+        `COD_REDEF` VARCHAR(6) NOT NULL , 
+        `TIME_REDEF` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , 
+        PRIMARY KEY (`EMAIL`)) ENGINE = InnoDB;
+        ";
+        $mysqli->query($query);
+        $mysqli->close();
     }
 }

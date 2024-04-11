@@ -4,9 +4,13 @@ define('database-acesso-privado-rv$he', TRUE);
 require('./private/database.php');
 require('./private/credentials.php');
 
-$nomeArquivoHtml = __FILE__;
-$nomeArquivoHtml = str_replace('.php', '.html', $nomeArquivoHtml);
-$pageHtml = file_get_contents($nomeArquivoHtml);
+$nomeArquivoHtml = basename(__FILE__ );
+$prePath = str_replace($nomeArquivoHtml,"",__FILE__);
+$interPath = "private\\html\\";
+$fullPath = $prePath . $interPath . $nomeArquivoHtml;
+
+$fullPath = str_replace('.php','.html', $fullPath);
+$pageHtml = file_get_contents($fullPath);
 
 verificarIntegridadeDatabaseSeNaoExistir($host, $username, $password);
 verificarIntegridadeTabelaRedefinicaoSenha($host, $username, $password);

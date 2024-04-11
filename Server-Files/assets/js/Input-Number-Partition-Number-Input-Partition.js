@@ -19,9 +19,9 @@ window.addEventListener('load', function () {
             if (saoTodosNumeros(pastedData)) {
                 let identifier = event.target.dataset.number_partition_identifier;
                 let groupIdentifier = event.target.dataset.number_partition_group_identifier;
-
-                if (identifier == 5 - pastedData.length) {
-                    if (pastedData.length <= 5 && pastedData.length > 0) {
+                
+                if (identifier == getElementsGroup()[groupIdentifier].length - pastedData.length) {
+                    if (pastedData.length <= getElementsGroup()[groupIdentifier].length && pastedData.length > 0) {
                         let arrayNumbers = pastedData.split('');
                         let indexArray = identifier;
                         arrayNumbers.forEach(number => {

@@ -1,7 +1,27 @@
-RewriteEngine On
-RewriteRule ^(.*).html$ /$1.php [L,R]
+# Ativa o Módulo de Reescrita
+RewriteEngine ON
 
-DirectoryIndex login.php
+# Define a Base de Reescrita como o diretório raiz
+RewriteBase /
 
+# Redireciona URLs .php para URLs sem .php
+RewriteCond %{ENV:REDIRECT_STATUS} ^$
+RewriteCond %{THE_REQUEST} \s/([^.]*)\.php/?\s [NC]
+##Performing external redirect here.
+RewriteRule ^  %1? [R,L]
+
+# Reescreve páginas que não existem para seus respectivos arquivos .php
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{DOCUMENT_ROOT}/$1.php -f
+RewriteRule ^(.*)/?$ /$1.php [QSA,L] 
+
+# Reescreve URLs .html para arquivos .php
+RewriteRule ^(.*)\.html$ $1.php [L,R]
+
+# Páginas de Erro Personalizadas
 ErrorDocument 404 /404.php
 ErrorDocument 403 /403.php
+
+# Define login.php como o arquivo padrão quando o diretório raiz é acessado
+DirectoryIndex login.php
