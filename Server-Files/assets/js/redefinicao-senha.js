@@ -10,6 +10,9 @@ window.addEventListener('load', () => {
         let form = document.getElementById('form-gerar-codigo');
         let formData = new FormData(form);
         let email = formData.get("email");
+        formData.set("email-recover", email);
+        formData.set("mode", "generate-code");
+        formData.delete("email");
 
 
         if (email != "") {
@@ -18,15 +21,25 @@ window.addEventListener('load', () => {
 
             const req = new XMLHttpRequest();
             req.addEventListener('load', () => {
-                console.log(this.responseText);
+
+                if (req.status == 200) {
+                    //console.log("req.response : " + req.responseText);
+                    //console.log("req.status: " + req.status);
+
+                    const carousel = bootstrap.Carousel.getOrCreateInstance(carouselElement);
+                    carousel.to(1);
+                }else if(req.status == 400){
+                    document.getElementById("title-modal").innerText = "E-mail inválido";
+                    document.getElementById("content-modal").innerText = "O E-mail é inválido. Por favor, corrija-o e tente novamente";
+                    bootstrap.Modal.getOrCreateInstance('#modal').show();
+                    console.log("Email inválido");
+                }
+
             });
 
-            req.open("POST", "/recuperar-acesso");
-            req.send();
+            req.open("POST", "/recuperar-acesso", true);
 
-
-            /*const carousel = bootstrap.Carousel.getOrCreateInstance(carouselElement);
-        carousel.to(1);*/
+            req.send(formData);
         }
     });
 

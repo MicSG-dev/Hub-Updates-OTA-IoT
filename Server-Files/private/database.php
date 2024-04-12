@@ -55,4 +55,18 @@ if (!defined('database-acesso-privado-rv$he')) {
         $mysqli->query($query);
         $mysqli->close();
     }
+
+    function salvarCodigoRedefinicaoSenha($codigoSeisDigitos, $email_recuperacao){
+
+    }
+
+    function gerarCodigoRedefinicaoSenhaUnico(){
+
+    }
+
+    function emailEstaCadastradoNoSistema(){
+        //verificar se email esta cadastrado
+    
+        return true;
+    }
 }
