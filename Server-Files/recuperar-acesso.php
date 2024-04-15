@@ -22,18 +22,20 @@ isset($_POST["email-recover"]) ? $email_recover = $_POST["email-recover"] : $ema
 // Parâmetro POST mode
 isset($_POST["mode"]) ? $mode = $_POST["mode"] : $mode = null;
 
+
 if ($email_recover != null && $mode == "generate-code") {
 
     if (filter_var($email_recover, FILTER_VALIDATE_EMAIL)) {
-       
+
         // verificar se email esta cadastrado
         $temCadastro = emailEstaCadastradoNoSistema();
 
+
         // se email esta cadastrado, salvar no BD um código aleatório de 6 dígitos e enviar por email para o USER
-        // se não estiver cadastrado, não fazer nada
-        if($temCadastro){
-            $codigo = gerarCodigoRedefinicaoSenhaUnico();
-            salvarCodigoRedefinicaoSenha($codigo, $email_recover);
+
+        if ($temCadastro && !estaJaParaRedefinir($host, $username, $password, $database, $email_recover)) { 
+            $codigo = gerarCodigoRedefinicaoSenha();
+            salvarCodigoRedefinicaoSenha($host, $username, $password, $database, $codigo, $email_recover);
         }
 
         http_response_code(200);
@@ -42,10 +44,58 @@ if ($email_recover != null && $mode == "generate-code") {
         http_response_code(400);
         echo ("Email invalido");
     }
+} else if ($email_recover != null && $mode == "time-next-generate-code") {
+
+    $timeRedef = getTimeRedef($host, $username, $password, $database, $email_recover);
+    if ($timeRedef != "0") {
+
+        $datetimeInitial = new DateTime($timeRedef, new DateTimeZone('America/Sao_Paulo'));
+        $datetimeInitial->setTimezone(new DateTimeZone('UTC'));
+
+        $datetimeEnd = new DateTime();
+        $datetimeEnd->setTimezone(new DateTimeZone('UTC')); 
+
+        $interval = $datetimeEnd->getTimestamp() - $datetimeInitial->getTimestamp();
+
+        $total_seconds = 2*60;
+
+        $result = $total_seconds - $interval;
+        if($result < 0){
+            $result = 0;
+        }
+
+        $m = intval($result /60);
+        $s = $result%60;
+        
+
+
+        
+    } else {
+        $m = 0;
+        $s = 0;
+    }
+
+    http_response_code(200);
+    $json_obj = new stdClass();
+    $json_obj->m = $m;
+    $json_obj->s = $s;
+    $json_obj = json_encode($json_obj);
+    echo $json_obj;
 } else {
 
     echo ($pageHtml);
 }
 
+function gerarCodigoRedefinicaoSenha()
+{
+    $code = null;
 
+    $caracteres = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    $qtdCaracteres = strlen($caracteres);
 
+    for ($i = 0; $i < 6; $i++) {
+        $code .= $caracteres[random_int(0, $qtdCaracteres - 1)];
+    }
+
+    return $code;
+}

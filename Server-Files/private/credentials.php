@@ -8,4 +8,5 @@ if (!defined('database-acesso-privado-rv$he')) {
     $host = "localhost";
     $username = "micsg-tests";
     $password = "micsg-tests";
+    $database = "hub_updates_ota_iot";
 }
