@@ -130,7 +130,31 @@ window.addEventListener('load', () => {
 
     this.document.getElementById('nao-recebeu-codigo').addEventListener('click', (event) => {
         event.preventDefault();
-        const carousel = bootstrap.Carousel.getOrCreateInstance(carouselElement);
-        carousel.to(0);
+        
+        let email = new FormData(document.getElementById('form-gerar-codigo')).get("email");
+
+        let formData = new FormData();
+        formData.set("email-recover", email);
+        formData.set("mode", "regenerate-code");
+
+        const req = new XMLHttpRequest();
+        req.addEventListener('load', () => {
+
+            if (req.status == 200) {
+                console.log("req.response : " + req.responseText);
+                console.log("req.status: " + req.status);
+
+            } else if (req.status == 400) {
+                document.getElementById("title-modal").innerText = "E-mail inválido";
+                document.getElementById("content-modal").innerText = "O E-mail é inválido. Por favor, corrija-o e tente novamente";
+                bootstrap.Modal.getOrCreateInstance('#modal').show();
+                console.log("Email inválido");
+            }
+
+        });
+
+        req.open("POST", "/recuperar-acesso", true);
+
+        req.send(formData);
     });
 });
