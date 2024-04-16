@@ -49,7 +49,7 @@ if (!defined('database-acesso-privado-rv$he')) {
         $query = "CREATE TABLE IF NOT EXISTS `hub_updates_ota_iot`.`redefinir_senha` 
         (`EMAIL` VARCHAR(256) NOT NULL , 
         `COD_REDEF` VARCHAR(6) NOT NULL , 
-        `TIME_REDEF` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , 
+        `TIME_REDEF` TIMESTAMP on update CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , 
         PRIMARY KEY (`EMAIL`)) ENGINE = InnoDB;
         ";
         $mysqli->query($query);
@@ -154,5 +154,25 @@ if (!defined('database-acesso-privado-rv$he')) {
         }
 
         return $result;
+    }
+
+    function regenerateCodeRecover($host, $username, $password, $database, $codigo, $email_recover){
+        $mysqli = null;
+
+        try {
+            $mysqli = new mysqli($host, $username, $password, $database);
+        } catch (mysqli_sql_exception) {
+            echo ("Não foi possível continuar. Informe o seguinte erro ao Administrador do Sistema: Erro de Credenciais no Banco de Dados (REGEN_CODE_REDEF) ");
+            exit();
+        }
+
+        if ($mysqli->connect_errno) {
+            echo ("O sistema apresentou um erro. Informe ao Administrador do Sistema. ERRO: Erro de conexão ao Banco de Dados (REGEN_SAVE_CODE_REDEF) ");
+        }
+        
+        $stmt = $mysqli->prepare("UPDATE redefinir_senha set cod_redef = (?) WHERE email = (?)");
+        $stmt->bind_param("ss", $codigo, $email_recover);
+        $stmt->execute();
+        
     }
 }
