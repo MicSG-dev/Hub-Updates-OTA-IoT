@@ -81,7 +81,59 @@ if ($email_recover != null && $mode == "generate-code") {
     $json_obj->s = $s;
     $json_obj = json_encode($json_obj);
     echo $json_obj;
-} else {
+} else if ($email_recover != null && $mode == "regenerate-code") {
+
+    if (filter_var($email_recover, FILTER_VALIDATE_EMAIL)) {
+
+        // verificar se email esta cadastrado
+        $temCadastro = emailEstaCadastradoNoSistema();
+
+        // se email esta cadastrado, salvar no BD um código aleatório de 6 dígitos e enviar por email para o USER
+
+        if ($temCadastro && estaJaParaRedefinir($host, $username, $password, $database, $email_recover)) { 
+
+            $timeRedef = getTimeRedef($host, $username, $password, $database, $email_recover);
+
+            if ($timeRedef != "0") {
+
+                $datetimeInitial = new DateTime($timeRedef, new DateTimeZone('America/Sao_Paulo'));
+                $datetimeInitial->setTimezone(new DateTimeZone('UTC'));
+        
+                $datetimeEnd = new DateTime();
+                $datetimeEnd->setTimezone(new DateTimeZone('UTC')); 
+        
+                $interval = $datetimeEnd->getTimestamp() - $datetimeInitial->getTimestamp();
+        
+                $total_seconds = 2*60;
+        
+                $result = $total_seconds - $interval;
+                if($result < 0){
+                    $result = 0;
+                }
+        
+                $m = intval($result /60);
+                $s = $result%60;
+                
+            } else {
+                $m = 0;
+                $s = 0;
+            }
+
+            if($m == 0 && $s ==0){
+                // regerar codigo
+                $codigo = gerarCodigoRedefinicaoSenha();
+                regenerateCodeRecover($host, $username, $password, $database, $codigo, $email_recover);
+            }
+        }
+
+        http_response_code(200);
+        echo ("OK");
+    } else {
+        http_response_code(400);
+        echo ("Email invalido");
+    }
+}
+else {
 
     echo ($pageHtml);
 }
