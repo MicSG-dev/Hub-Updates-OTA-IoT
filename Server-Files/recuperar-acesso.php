@@ -19,6 +19,9 @@ verificarIntegridadeTabelaRedefinicaoSenha($host, $username, $password);
 // Parâmetro POST email-recover
 isset($_POST["email-recover"]) ? $email_recover = $_POST["email-recover"] : $email_recover = null;
 
+// Parâmetro POST code
+isset($_POST["code"]) ? $code_recover = $_POST["code"] : $code_recover = null;
+
 // Parâmetro POST mode
 isset($_POST["mode"]) ? $mode = $_POST["mode"] : $mode = null;
 
@@ -78,6 +81,9 @@ if ($email_recover != null && $mode == "generate-code") {
         $json_obj->s = $s;
         $json_obj = json_encode($json_obj);
         echo $json_obj;
+    }else{
+        http_response_code(400);
+        echo ("Email invalido");
     }
 } else if ($email_recover != null && $mode == "regenerate-code") {
 
@@ -128,6 +134,21 @@ if ($email_recover != null && $mode == "generate-code") {
     } else {
         http_response_code(400);
         echo ("Email invalido");
+    }
+} else if ($code_recover != null && $mode == "verify-code") {
+
+    if (filter_var($email_recover, FILTER_VALIDATE_EMAIL)) {
+
+        if (true) {
+            http_response_code(200);
+            echo ("OK");
+        } else {
+            http_response_code(400);
+            echo ("CODE");
+        }
+    } else {
+        http_response_code(400);
+        echo ("EMAIL");
     }
 } else {
 

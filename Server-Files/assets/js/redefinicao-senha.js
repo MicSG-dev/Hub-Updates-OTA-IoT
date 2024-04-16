@@ -34,8 +34,8 @@ window.addEventListener('load', () => {
                             }
 
                         } else if (req.status == 400) {
-                            document.getElementById("title-modal").innerText = "E-mail inválido";
-                            document.getElementById("content-modal").innerText = "O E-mail é inválido. Por favor, corrija-o e tente novamente";
+                            document.getElementById("title-modal").innerText = "E-mail inválido ou inexistente";
+                            document.getElementById("content-modal").innerText = "Não foi possível validar o e-mail informado no campo anterior. Por favor tente novamente. A página será recarregada, para a nova tentativa, quando esta mensagem for fechada.";
                             bootstrap.Modal.getOrCreateInstance('#modal').show();
                             console.log("Email inválido");
                             clearInterval(idTimer);
@@ -114,9 +114,65 @@ window.addEventListener('load', () => {
     this.document.getElementById('verificar-codigo-redefinicao').addEventListener('click', () => {
         // fazer request POST na API
         // ...
+        let email = new FormData(document.getElementById('form-gerar-codigo')).get("email");
 
-        const carousel = bootstrap.Carousel.getOrCreateInstance(carouselElement);
-        carousel.to(2);
+        let code = "";
+        let elementsPartitionInput = document.getElementsByClassName('partition_input');
+        for (let index = 0; index < elementsPartitionInput.length; index++) {
+            const value = elementsPartitionInput[index].value;
+            code += value;
+        }
+
+        let formData = new FormData();
+        formData.set("email-recover", email);
+        formData.set("code", code);
+        formData.set("mode", "verify-code");
+
+        if (code != "") {
+            const req = new XMLHttpRequest();
+
+            req.addEventListener('load', () => {
+
+                if (req.status == 200) {
+                    //console.log("req.response : " + req.responseText);
+                    //console.log("req.status: " + req.status);
+
+                    const carousel = bootstrap.Carousel.getOrCreateInstance(carouselElement);
+                    carousel.to(2);
+
+                } else if (req.status == 400) {
+                    if (req.responseText == "EMAIL") {
+                        document.getElementById("title-modal").innerText = "E-mail inválido ou inexistente";
+                        document.getElementById("content-modal").innerText = "Não foi possível validar o e-mail informado no campo anterior. Por favor tente novamente. A página será recarregada, para a nova tentativa, quando esta mensagem for fechada.";
+                        bootstrap.Modal.getOrCreateInstance('#modal').show();
+
+                        document.getElementById("modal").addEventListener("hide.bs.modal", () => {
+                            window.location.reload();
+                        });
+
+                        console.log("Email inválido");
+                    } else if (req.responseText == "CODE") {
+                        document.getElementById("title-modal").innerText = "Código inválido";
+                        document.getElementById("content-modal").innerText = "Não foi possível comprovar que você realmente é proprietário da conta pois o código informado não é o mesmo que foi enviado via e-mail. A Recuperação de Senha foi cancelada e o código gerado anteriormente foi invalidado. A página será recarregada, para nova tentativa de redefinição, quando esta mensagem for fechada.";
+                        bootstrap.Modal.getOrCreateInstance('#modal').show();
+
+                        document.getElementById("modal").addEventListener("hide.bs.modal", () => {
+                            window.location.reload();
+                        });
+
+                        console.log("Código inválido");
+                    }
+
+                }
+
+            });
+
+            req.open("POST", "/recuperar-acesso", true);
+
+            req.send(formData);
+        }
+
+
     });
 
     this.document.getElementById('form-gerar-codigo').addEventListener('submit', (event) => {
@@ -148,15 +204,16 @@ window.addEventListener('load', () => {
             const req = new XMLHttpRequest();
             req.addEventListener('load', () => {
 
-                if (req.status == 200) {
-                    console.log("req.response : " + req.responseText);
-                    console.log("req.status: " + req.status);
-
-                } else if (req.status == 400) {
-                    document.getElementById("title-modal").innerText = "E-mail inválido";
-                    document.getElementById("content-modal").innerText = "O E-mail é inválido. Por favor, corrija-o e tente novamente";
+                if (req.status == 400) {
+                    document.getElementById("title-modal").innerText = "E-mail inválido ou Inexistente";
+                    document.getElementById("content-modal").innerText = "Não foi possível validar o e-mail informado no campo anterior. Por favor tente novamente. A página será recarregada, para a nova tentativa, quando esta mensagem for fechada.";
                     bootstrap.Modal.getOrCreateInstance('#modal').show();
-                    console.log("Email inválido");
+
+                    document.getElementById("modal").addEventListener("hide.bs.modal", () => {
+                        window.location.reload();
+                    });
+
+                    console.log("Email inválido/inexistente");
                 }
 
             });
@@ -178,5 +235,56 @@ window.addEventListener('load', () => {
 
             console.log("Email não encontrado");
         }
+    });
+
+    this.document.getElementById('cancelar-redefinicao-senha').addEventListener('click', (event) => {
+        event.preventDefault();
+
+        let email = new FormData(document.getElementById('form-gerar-codigo')).get("email");
+
+        let code = "";
+        let elementsPartitionInput = document.getElementsByClassName('partition_input');
+        for (let index = 0; index < elementsPartitionInput.length; index++) {
+            const value = elementsPartitionInput[index].value;
+            code += value;
+        }
+
+        let formData = new FormData();
+        formData.set("email-recover", email);
+        formData.set("code", code);
+        formData.set("mode", "cancel-recover");
+
+        const req = new XMLHttpRequest();
+            req.addEventListener('load', () => {
+
+                if(req.status == 200){
+                    document.getElementById("title-modal").innerText = "Operação realizada com sucesso!";
+                    document.getElementById("content-modal").innerText = "O cancelamento da Redefinição de Senha ocorreu com sucesso. O código gerado anteriormente foi invalidado e não será possível reutilizá-lo novamente para redefinir sua senha. Para refazer o processo de Redefinição de senha, reinicie o processo. Você será redirecionado para a página principal, quando esta mensagem for fechada.";
+                    bootstrap.Modal.getOrCreateInstance('#modal').show();
+
+                    document.getElementById("modal").addEventListener("hide.bs.modal", () => {
+                        window.location.href = '/';
+                    });
+
+                    console.log("Redefinição de senha cancelada com sucesso!");
+                }
+                else if (req.status == 400) {
+                    document.getElementById("title-modal").innerText = "E-mail inválido ou Inexistente";
+                    document.getElementById("content-modal").innerText = "Não foi possível validar o e-mail informado no campo anterior. Por favor tente novamente. A página será recarregada, para a nova tentativa, quando esta mensagem for fechada.";
+                    bootstrap.Modal.getOrCreateInstance('#modal').show();
+
+                    document.getElementById("modal").addEventListener("hide.bs.modal", () => {
+                        window.location.reload();
+                    });
+
+                    console.log("Email inválido/inexistente");
+                }
+
+            });
+
+            req.open("POST", "/recuperar-acesso", true);
+
+            req.send(formData);
+
     });
 });

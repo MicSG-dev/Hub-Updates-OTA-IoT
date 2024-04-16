@@ -20,7 +20,7 @@
                     <div class="col-auto d-xxl-flex mx-auto justify-content-xxl-center" style="min-height: 250px;">
                         <div class="card mb-4" style="height: 100%;padding-left: 32px;padding-right: 32px;">
                             <div class="card-body d-flex flex-column align-items-center">
-                                <div style="width: 100%;">
+                                <div>
                                     <h2 class="fw-bold text-start mb-3" style="color: rgb(0,0,0);">Recuperar Senha</h2>
                                     <p class="text-start mb-4" style="max-width: 400px;">Esqueceu sua senha? Não se preocupe, basta seguir os passos abaixo e você fará a redefinição de senha em sua conta caso tenha um e-mail cadastrado em uma de nossas contas.</p>
                                 </div>
@@ -52,19 +52,20 @@
                                                     </div>
                                                 </form>
                                                 <div class="mb-3"><button class="btn btn-primary d-block w-100" id="verificar-codigo-redefinicao" type="submit">Verificar Código de Redefinição</button></div>
-                                                <div><a class="btn btn-link text-muted" role="button" id="nao-recebeu-codigo" href="#">Não recebeu o código em seu email? Clique aqui para gerar um novo código (<span id="timeGenerateNewCode">02:00</span>)</a></div>
+                                                <div><a class="btn btn-link disabled text-muted" role="button" id="nao-recebeu-codigo" href="#">Não recebeu o código em seu email? Clique aqui para gerar um novo código (<span id="timeGenerateNewCode">02:00</span>)</a></div>
                                             </div>
                                             <div class="carousel-item" style="max-width: 435px;">
                                                 <form id="form-redefinir-senha" style="margin-bottom: 64px;">
                                                     <p class="text-start">Preencha com uma nova senha para sua conta:</p>
                                                     <div class="mb-3"><input class="form-control" type="password" placeholder="Nova Senha" name="password" autocomplete="on"></div>
-                                                    <div class="mb-3"><button class="btn btn-primary d-block w-100" id="gerar-codigo-redefinicao-1" type="submit" style="margin-top: 33px;">Redefinir a Senha</button></div>
+                                                    <div style="margin-bottom: -35px;"><button class="btn btn-primary d-block w-100" id="gerar-codigo-redefinicao-1" type="submit" style="margin-top: 33px;">Redefinir a Senha</button></div>
                                                 </form>
+                                                <div><a class="btn btn-link text-muted" role="button" id="cancelar-redefinicao-senha" href="#">Cancelar Redefinição de Senha</a></div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div style="height: 40px;"></div><a class="text-muted" href="login.html">Voltar à Home</a>
+                                <div style="height: 75px;"></div><a class="text-muted" href="login.html">Voltar à Home</a>
                             </div>
                         </div>
                     </div>
