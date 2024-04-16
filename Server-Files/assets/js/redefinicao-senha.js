@@ -269,8 +269,8 @@ window.addEventListener('load', () => {
                     console.log("Redefinição de senha cancelada com sucesso!");
                 }
                 else if (req.status == 400) {
-                    document.getElementById("title-modal").innerText = "E-mail inválido ou Inexistente";
-                    document.getElementById("content-modal").innerText = "Não foi possível validar o e-mail informado no campo anterior. Por favor tente novamente. A página será recarregada, para a nova tentativa, quando esta mensagem for fechada.";
+                    document.getElementById("title-modal").innerText = "E-mail ou Código inválido/Inexistente";
+                    document.getElementById("content-modal").innerText = "Não foi possível validar o e-mail e/ou código informado(s) anteriormente. Por favor tente novamente. A página será recarregada, para a nova tentativa, quando esta mensagem for fechada.";
                     bootstrap.Modal.getOrCreateInstance('#modal').show();
 
                     document.getElementById("modal").addEventListener("hide.bs.modal", () => {
