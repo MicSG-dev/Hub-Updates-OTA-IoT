@@ -38,6 +38,12 @@ window.addEventListener('load', () => {
                             document.getElementById("content-modal").innerText = "O E-mail é inválido. Por favor, corrija-o e tente novamente";
                             bootstrap.Modal.getOrCreateInstance('#modal').show();
                             console.log("Email inválido");
+                            clearInterval(idTimer);
+                            document.getElementById("modal").addEventListener("hide.bs.modal", () => {
+                                window.location.reload();
+                            });
+
+                            console.log("Email inválido");
                         }
 
                     });
