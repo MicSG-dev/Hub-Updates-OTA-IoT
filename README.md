@@ -5,4 +5,5 @@ Repositório do Hub de Atualizações OTA para dispositivos IoT remotos.
 - **Back-end**: PHP;
 - **Front-end**: HTML, CSS, JS e Framework Bootstrap;
 - **Banco de de Dados**: MySQL;
-- **Firmware Dispositivos de Exemplo e Biblioteca para uso em Dispositivos IoT**: C, C++ e Framework Arduino.
+- **Firmware Dispositivos IoT de Exemplo**: C, C++ e Framework Arduino;
+- **Biblioteca para uso em Dispositivos IoT**: C, C++ e Framework Arduino.
