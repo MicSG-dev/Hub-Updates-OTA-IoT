@@ -149,8 +149,8 @@ window.addEventListener('load', () => {
             req.addEventListener('load', () => {
 
                 if (req.status == 200) {
-
-                    console.log(req.responseText);
+                    console.log("req.response : " + req.responseText);
+                    console.log("req.status: " + req.status);
 
                 } else if (req.status == 400) {
                     document.getElementById("title-modal").innerText = "E-mail inválido";
@@ -178,8 +178,5 @@ window.addEventListener('load', () => {
 
             console.log("Email não encontrado");
         }
-
-        //const carousel = bootstrap.Carousel.getOrCreateInstance(carouselElement);
-        //carousel.to(0);
     });
 });
