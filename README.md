@@ -1,4 +1,4 @@
-# Hub-Updates-OTA-IoT
+# Hub Updates OTA IoT
 Repositório do Hub de Atualizações OTA para dispositivos IoT remotos.
 
 ## Tecnologias utilizadas

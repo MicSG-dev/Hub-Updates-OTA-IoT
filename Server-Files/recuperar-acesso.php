@@ -139,7 +139,7 @@ if ($email_recover != null && $mode == "generate-code") {
 
     if (filter_var($email_recover, FILTER_VALIDATE_EMAIL)) {
 
-        if (true) {
+        if (verificarCodigoRedefinicaoSenha($host, $username, $password, $database, $code_recover, $email_recover)) {
             http_response_code(200);
             echo ("OK");
         } else {
