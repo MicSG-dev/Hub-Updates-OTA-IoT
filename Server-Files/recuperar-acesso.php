@@ -30,15 +30,21 @@ if ($email_recover != null && $mode == "generate-code") {
     if (filter_var($email_recover, FILTER_VALIDATE_EMAIL)) {
 
         // verificar se email esta cadastrado
-        $temCadastro = emailEstaCadastradoNoSistema();
+        $temCadastro = emailEstaCadastradoNoSistema($host, $username, $password, $database, $email_recover);
 
 
         // se email esta cadastrado, salvar no BD um código aleatório de 6 dígitos e enviar por email para o USER
 
-        if ($temCadastro && !estaJaParaRedefinir($host, $username, $password, $database, $email_recover)) {
-            $codigo = gerarCodigoRedefinicaoSenha();
-            salvarCodigoRedefinicaoSenha($host, $username, $password, $database, $codigo, $email_recover);
+        if (!estaJaParaRedefinir($host, $username, $password, $database, $email_recover)) {
+            if ($temCadastro) {
+                $codigo = gerarCodigoRedefinicaoSenha();
+                salvarCodigoRedefinicaoSenha($host, $username, $password, $database, $codigo, $email_recover, true);
+            } else {
+                salvarCodigoRedefinicaoSenha($host, $username, $password, $database, $codigo, $email_recover, false);
+            }
         }
+
+
 
         http_response_code(200);
         echo ("OK");
@@ -89,7 +95,7 @@ if ($email_recover != null && $mode == "generate-code") {
     if (filter_var($email_recover, FILTER_VALIDATE_EMAIL)) {
 
         // verificar se email esta cadastrado
-        $temCadastro = emailEstaCadastradoNoSistema();
+        $temCadastro = emailEstaCadastradoNoSistema($host, $username, $password, $database, $email_recover);
 
         // se email esta cadastrado, salvar no BD um código aleatório de 6 dígitos e enviar por email para o USER
 
@@ -152,15 +158,14 @@ if ($email_recover != null && $mode == "generate-code") {
 } else if ($mode == "cancel-recover") {
 
     if (filter_var($email_recover, FILTER_VALIDATE_EMAIL)) {
-        if(verificarCodigoRedefinicaoSenha($host, $username, $password, $database, $code_recover, $email_recover)){
+        if (verificarCodigoRedefinicaoSenha($host, $username, $password, $database, $code_recover, $email_recover)) {
             efetuarCancelamentoCodigoRedefinicao($host, $username, $password, $database, $code_recover, $email_recover);
             http_response_code(200);
             echo ("OK");
-        }else{
+        } else {
             http_response_code(400);
             echo ("ERROR_CANCEL");
         }
-        
     } else {
         http_response_code(400);
         echo ("ERROR_CANCEL");

@@ -52,10 +52,12 @@ if (!defined('database-acesso-privado-rv$he')) {
         // ...
         // ...
 
+        // O campo PERMITIDO é utilizado para evitar que ocorra falha de segurança de vazamento se determinado e-mail está ou não cadastrado no sistema.
         $query = "CREATE TABLE IF NOT EXISTS `hub_updates_ota_iot`.`redefinir_senha` 
         (`EMAIL` VARCHAR(256) NOT NULL , 
-        `COD_REDEF` VARCHAR(6) NOT NULL , 
+        `COD_REDEF` VARCHAR(6), 
         `TIME_REDEF` TIMESTAMP on update CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , 
+        `PERMITIDO` BOOLEAN NOT NULL, 
         PRIMARY KEY (`EMAIL`)) ENGINE = InnoDB;
         ";
         $mysqli->query($query);
@@ -74,7 +76,7 @@ if (!defined('database-acesso-privado-rv$he')) {
         }
 
         if ($mysqli->connect_errno) {
-            echo ("<script> console.error('O sistema apresentou um erro. Informe ao Administrador do Sistema. ERRO: \\n\\nErro de conexão ao Banco de Dados (USERBDPASS).');</script>");
+            echo ("<script> console.error('O sistema apresentou um erro. Informe ao Administrador do Sistema. ERRO: \\n\\nErro de conexão ao Banco de Dados (USERBD_PASS).');</script>");
         }
 
         // Executar Query aqui
@@ -82,8 +84,8 @@ if (!defined('database-acesso-privado-rv$he')) {
         // ...
 
         $query = "CREATE TABLE IF NOT EXISTS `hub_updates_ota_iot`.`usuarios` 
-        (`ID` INT NOT NULL , 
-        `NICK` VARCHAR(50) NOT NULL , 
+        (`ID` INT NOT NULL AUTO_INCREMENT, 
+        `NOME` VARCHAR(50) NOT NULL UNIQUE, 
         `EMAIL` VARCHAR(256) NOT NULL , 
         `DATA_INSCRICAO` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , 
         `SENHA` VARCHAR(80) NOT NULL , 
@@ -94,7 +96,7 @@ if (!defined('database-acesso-privado-rv$he')) {
     }
 
 
-    function salvarCodigoRedefinicaoSenha($host, $username, $password, $database, $codigoSeisDigitos, $email_recuperacao)
+    function salvarCodigoRedefinicaoSenha($host, $username, $password, $database, $codigoSeisDigitos, $email_recuperacao, $permitidoRedefinir)
     {
         $mysqli = null;
 
@@ -117,18 +119,39 @@ if (!defined('database-acesso-privado-rv$he')) {
         $row = $result->fetch_assoc();
 
 
-        if ($row["COUNT(*)"] != 1) {
-            $stmt = $mysqli->prepare("INSERT INTO redefinir_senha(email, cod_redef) VALUES (?, ?)");
-            $stmt->bind_param("ss", $email_recuperacao, $codigoSeisDigitos);
+        if ($row["COUNT(*)"] == 0) {
+            $stmt = $mysqli->prepare("INSERT INTO redefinir_senha(email, cod_redef, permitido) VALUES (?, ?, ?)");
+            $stmt->bind_param("ssi", $email_recuperacao, $codigoSeisDigitos, $permitidoRedefinir);
             $stmt->execute();
         }
     }
 
-    function emailEstaCadastradoNoSistema()
+    function emailEstaCadastradoNoSistema($host, $username, $password, $database, $email)
     {
-        //verificar se email esta cadastrado
+        $mysqli = null;
 
-        return true;
+        try {
+            $mysqli = new mysqli($host, $username, $password, $database);
+        } catch (mysqli_sql_exception) {
+            echo ("Não foi possível continuar. Informe o seguinte erro ao Administrador do Sistema: Erro de Credenciais no Banco de Dados (EMAIL_IN_DB_VERIFY)");
+            exit();
+        }
+
+        if ($mysqli->connect_errno) {
+            echo ("O sistema apresentou um erro. Informe ao Administrador do Sistema. ERRO: Erro de conexão ao Banco de Dados (EMAIL_IN_DB_VERIFY)");
+        }
+
+        $stmt = $mysqli->prepare("SELECT COUNT(*) FROM usuarios WHERE email = (?)");
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+
+        if ($row["COUNT(*)"] == 1) {
+            return true;
+        }
+
+        return false;
     }
 
     function getTimeRedef($host, $username, $password, $database, $email_recover)
@@ -139,12 +162,12 @@ if (!defined('database-acesso-privado-rv$he')) {
         try {
             $mysqli = new mysqli($host, $username, $password, $database);
         } catch (mysqli_sql_exception) {
-            echo ("Não foi possível continuar. Informe o seguinte erro ao Administrador do Sistema: Erro de Credenciais no Banco de Dados (SAVE_CODE_REDEF)");
+            echo ("Não foi possível continuar. Informe o seguinte erro ao Administrador do Sistema: Erro de Credenciais no Banco de Dados (GETIM_REDEF)");
             exit();
         }
 
         if ($mysqli->connect_errno) {
-            echo ("O sistema apresentou um erro. Informe ao Administrador do Sistema. ERRO: Erro de conexão ao Banco de Dados (SAVE_CODE_REDEF)");
+            echo ("O sistema apresentou um erro. Informe ao Administrador do Sistema. ERRO: Erro de conexão ao Banco de Dados (GETIM_REDEF)");
         }
 
 
@@ -172,15 +195,15 @@ if (!defined('database-acesso-privado-rv$he')) {
         try {
             $mysqli = new mysqli($host, $username, $password, $database);
         } catch (mysqli_sql_exception) {
-            echo ("Não foi possível continuar. Informe o seguinte erro ao Administrador do Sistema: Erro de Credenciais no Banco de Dados (SAVE_CODE_REDEF)");
+            echo ("Não foi possível continuar. Informe o seguinte erro ao Administrador do Sistema: Erro de Credenciais no Banco de Dados (VERI_EXIST_REDEF)");
             exit();
         }
 
         if ($mysqli->connect_errno) {
-            echo ("O sistema apresentou um erro. Informe ao Administrador do Sistema. ERRO: Erro de conexão ao Banco de Dados (SAVE_CODE_REDEF)");
+            echo ("O sistema apresentou um erro. Informe ao Administrador do Sistema. ERRO: Erro de conexão ao Banco de Dados (VERI_EXIST_REDEF)");
         }
 
-        $stmt = $mysqli->prepare("SELECT * FROM redefinir_senha WHERE email = (?)");
+        $stmt = $mysqli->prepare("SELECT * FROM redefinir_senha WHERE email = (?) AND permitido = 1");
         $stmt->bind_param("s", $email_recover);
         $stmt->execute();
 
@@ -210,7 +233,7 @@ if (!defined('database-acesso-privado-rv$he')) {
             echo ("O sistema apresentou um erro. Informe ao Administrador do Sistema. ERRO: Erro de conexão ao Banco de Dados (REGEN_SAVE_CODE_REDEF) ");
         }
 
-        $stmt = $mysqli->prepare("UPDATE redefinir_senha set cod_redef = (?) WHERE email = (?)");
+        $stmt = $mysqli->prepare("UPDATE redefinir_senha set cod_redef = (?) WHERE email = (?) AND permitido = 1");
         $stmt->bind_param("ss", $codigo, $email_recover);
         $stmt->execute();
     }
@@ -222,16 +245,16 @@ if (!defined('database-acesso-privado-rv$he')) {
         try {
             $mysqli = new mysqli($host, $username, $password, $database);
         } catch (mysqli_sql_exception) {
-            echo ("Não foi possível continuar. Informe o seguinte erro ao Administrador do Sistema: Erro de Credenciais no Banco de Dados (REGEN_CODE_REDEF) ");
+            echo ("Não foi possível continuar. Informe o seguinte erro ao Administrador do Sistema: Erro de Credenciais no Banco de Dados (VERI_COD_REF) ");
             exit();
         }
 
         if ($mysqli->connect_errno) {
-            echo ("O sistema apresentou um erro. Informe ao Administrador do Sistema. ERRO: Erro de conexão ao Banco de Dados (REGEN_SAVE_CODE_REDEF) ");
+            echo ("O sistema apresentou um erro. Informe ao Administrador do Sistema. ERRO: Erro de conexão ao Banco de Dados (VERI_COD_REF) ");
         }
 
         if ($codigo != "") {
-            $stmt = $mysqli->prepare("SELECT * FROM redefinir_senha WHERE email = (?) AND cod_redef = (?)");
+            $stmt = $mysqli->prepare("SELECT * FROM redefinir_senha WHERE email = (?) AND cod_redef = (?) AND permitido = 1");
             $stmt->bind_param("ss", $email_recover, $codigo);
             $stmt->execute();
             $result = $stmt->get_result();
@@ -256,12 +279,12 @@ if (!defined('database-acesso-privado-rv$he')) {
         try {
             $mysqli = new mysqli($host, $username, $password, $database);
         } catch (mysqli_sql_exception) {
-            echo ("Não foi possível continuar. Informe o seguinte erro ao Administrador do Sistema: Erro de Credenciais no Banco de Dados (REGEN_CODE_REDEF) ");
+            echo ("Não foi possível continuar. Informe o seguinte erro ao Administrador do Sistema: Erro de Credenciais no Banco de Dados (CANCEL_COD_REDEF) ");
             exit();
         }
 
         if ($mysqli->connect_errno) {
-            echo ("O sistema apresentou um erro. Informe ao Administrador do Sistema. ERRO: Erro de conexão ao Banco de Dados (REGEN_SAVE_CODE_REDEF) ");
+            echo ("O sistema apresentou um erro. Informe ao Administrador do Sistema. ERRO: Erro de conexão ao Banco de Dados (CANCEL_COD_REDEF) ");
         }
 
         $stmt = $mysqli->prepare("DELETE FROM redefinir_senha WHERE email = (?) AND cod_redef = (?)");
