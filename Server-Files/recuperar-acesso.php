@@ -11,8 +11,7 @@ $interPath = "private\\html\\";
 $fullPath = str_replace('.php', '.html', $prePath . $interPath . $nomeArquivoHtml);
 $pageHtml = file_get_contents($fullPath);
 
-verificarIntegridadeDatabaseSeNaoExistir($host, $username, $password);
-verificarIntegridadeTabelaRedefinicaoSenha($host, $username, $password);
+executarFuncoesDeTodasPaginas($host, $username, $password);
 
 // verificar se usuário ESTA ou não logado. Se estiver logado, redirecionar ele para home. Se NÃO estiver logado, continuar.
 
@@ -81,7 +80,7 @@ if ($email_recover != null && $mode == "generate-code") {
         $json_obj->s = $s;
         $json_obj = json_encode($json_obj);
         echo $json_obj;
-    }else{
+    } else {
         http_response_code(400);
         echo ("Email invalido");
     }
@@ -149,6 +148,22 @@ if ($email_recover != null && $mode == "generate-code") {
     } else {
         http_response_code(400);
         echo ("EMAIL");
+    }
+} else if ($mode == "cancel-recover") {
+
+    if (filter_var($email_recover, FILTER_VALIDATE_EMAIL)) {
+        if(verificarCodigoRedefinicaoSenha($host, $username, $password, $database, $code_recover, $email_recover)){
+            efetuarCancelamentoCodigoRedefinicao($host, $username, $password, $database, $code_recover, $email_recover);
+            http_response_code(200);
+            echo ("OK");
+        }else{
+            http_response_code(400);
+            echo ("ERROR_CANCEL");
+        }
+        
+    } else {
+        http_response_code(400);
+        echo ("ERROR_CANCEL");
     }
 } else {
 

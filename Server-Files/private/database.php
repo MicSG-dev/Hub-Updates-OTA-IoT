@@ -4,6 +4,12 @@ if (!defined('database-acesso-privado-rv$he')) {
     die("Acesso direto ao \"private/database\" não permitido.");
 } else {
 
+    function executarFuncoesDeTodasPaginas($host, $username, $password)
+    {
+        verificarIntegridadeDatabaseSeNaoExistir($host, $username, $password);
+        verificarIntegridadeTabelaRedefinicaoSenha($host, $username, $password);
+        verificarIntegridadeTabelaUsuarios($host, $username, $password);
+    }
 
     function verificarIntegridadeDatabaseSeNaoExistir($host, $username, $password)
     {
@@ -51,6 +57,37 @@ if (!defined('database-acesso-privado-rv$he')) {
         `COD_REDEF` VARCHAR(6) NOT NULL , 
         `TIME_REDEF` TIMESTAMP on update CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , 
         PRIMARY KEY (`EMAIL`)) ENGINE = InnoDB;
+        ";
+        $mysqli->query($query);
+        $mysqli->close();
+    }
+
+    function verificarIntegridadeTabelaUsuarios($host, $username, $password)
+    {
+        $mysqli = null;
+
+        try {
+            $mysqli = new mysqli($host, $username, $password);
+        } catch (mysqli_sql_exception) {
+            echo ("<script> alert('Não foi possível continuar. Informe o seguinte erro ao Administrador do Sistema: \\n\\nErro de Credenciais no Banco de Dados (USERBD_PASS).');</script>");
+            exit();
+        }
+
+        if ($mysqli->connect_errno) {
+            echo ("<script> console.error('O sistema apresentou um erro. Informe ao Administrador do Sistema. ERRO: \\n\\nErro de conexão ao Banco de Dados (USERBDPASS).');</script>");
+        }
+
+        // Executar Query aqui
+        // ...
+        // ...
+
+        $query = "CREATE TABLE `hub_updates_ota_iot`.`usuarios` 
+        (`ID` INT NOT NULL , 
+        `NICK` VARCHAR(50) NOT NULL , 
+        `EMAIL` VARCHAR(256) NOT NULL , 
+        `DATA_INSCRICAO` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , 
+        `SENHA` VARCHAR(80) NOT NULL , 
+        PRIMARY KEY (`ID`)) ENGINE = InnoDB;
         ";
         $mysqli->query($query);
         $mysqli->close();
@@ -194,10 +231,15 @@ if (!defined('database-acesso-privado-rv$he')) {
         }
 
         if ($codigo != "") {
-            $stmt = $mysqli->prepare("SELECT * FROM redefinir_senha WHERE email = (?) AND code_redef = (?)");
+            $stmt = $mysqli->prepare("SELECT * FROM redefinir_senha WHERE email = (?) AND cod_redef = (?)");
+            $stmt->bind_param("ss", $email_recover, $codigo);
+            $stmt->execute();
             $result = $stmt->get_result();
-            
+
             if ($stmt->affected_rows == 0) {
+                $stmt = $mysqli->prepare("DELETE FROM redefinir_senha WHERE email = (?)");
+                $stmt->bind_param("s", $email_recover);
+                $stmt->execute();
                 return false;
             }
         } else {
@@ -205,5 +247,25 @@ if (!defined('database-acesso-privado-rv$he')) {
         }
 
         return true;
+    }
+
+    function efetuarCancelamentoCodigoRedefinicao($host, $username, $password, $database, $code_recover, $email_recover)
+    {
+        $mysqli = null;
+
+        try {
+            $mysqli = new mysqli($host, $username, $password, $database);
+        } catch (mysqli_sql_exception) {
+            echo ("Não foi possível continuar. Informe o seguinte erro ao Administrador do Sistema: Erro de Credenciais no Banco de Dados (REGEN_CODE_REDEF) ");
+            exit();
+        }
+
+        if ($mysqli->connect_errno) {
+            echo ("O sistema apresentou um erro. Informe ao Administrador do Sistema. ERRO: Erro de conexão ao Banco de Dados (REGEN_SAVE_CODE_REDEF) ");
+        }
+
+        $stmt = $mysqli->prepare("DELETE FROM redefinir_senha WHERE email = (?) AND cod_redef = (?)");
+        $stmt->bind_param("ss", $email_recover, $code_recover);
+        $stmt->execute();
     }
 }

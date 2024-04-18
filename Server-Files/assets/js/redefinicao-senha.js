@@ -40,7 +40,9 @@ window.addEventListener('load', () => {
                             console.log("Email inválido");
                             clearInterval(idTimer);
                             document.getElementById("modal").addEventListener("hide.bs.modal", () => {
-                                window.location.reload();
+                                setTimeout(() => {
+                                    window.location.reload();
+                                }, 100);
                             });
 
                             console.log("Email inválido");
@@ -60,7 +62,9 @@ window.addEventListener('load', () => {
                     bootstrap.Modal.getOrCreateInstance('#modal').show();
 
                     document.getElementById("modal").addEventListener("hide.bs.modal", () => {
-                        window.location.reload();
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 100);
                     });
 
                     console.log("Email não encontrado");
@@ -147,17 +151,21 @@ window.addEventListener('load', () => {
                         bootstrap.Modal.getOrCreateInstance('#modal').show();
 
                         document.getElementById("modal").addEventListener("hide.bs.modal", () => {
-                            window.location.reload();
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 100);
                         });
 
                         console.log("Email inválido");
                     } else if (req.responseText == "CODE") {
                         document.getElementById("title-modal").innerText = "Código inválido";
-                        document.getElementById("content-modal").innerText = "Não foi possível comprovar que você realmente é proprietário da conta pois o código informado não é o mesmo que foi enviado via e-mail. A Recuperação de Senha foi cancelada e o código gerado anteriormente foi invalidado. A página será recarregada, para nova tentativa de redefinição, quando esta mensagem for fechada.";
+                        document.getElementById("content-modal").innerText = "Não foi possível comprovar que você realmente é proprietário da conta pois o código informado não é válido. A Recuperação de Senha foi cancelada. A página será recarregada, para nova tentativa de redefinição, quando esta mensagem for fechada.";
                         bootstrap.Modal.getOrCreateInstance('#modal').show();
 
                         document.getElementById("modal").addEventListener("hide.bs.modal", () => {
-                            window.location.reload();
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 100);
                         });
 
                         console.log("Código inválido");
@@ -170,6 +178,8 @@ window.addEventListener('load', () => {
             req.open("POST", "/recuperar-acesso", true);
 
             req.send(formData);
+        }else{
+            document.getElementsByClassName('partition_input')[0].focus();
         }
 
 
@@ -210,7 +220,9 @@ window.addEventListener('load', () => {
                     bootstrap.Modal.getOrCreateInstance('#modal').show();
 
                     document.getElementById("modal").addEventListener("hide.bs.modal", () => {
-                        window.location.reload();
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 100);
                     });
 
                     console.log("Email inválido/inexistente");
@@ -230,7 +242,9 @@ window.addEventListener('load', () => {
             bootstrap.Modal.getOrCreateInstance('#modal').show();
 
             document.getElementById("modal").addEventListener("hide.bs.modal", () => {
-                window.location.reload();
+                setTimeout(() => {
+                    window.location.reload();
+                }, 100);
             });
 
             console.log("Email não encontrado");
@@ -274,7 +288,9 @@ window.addEventListener('load', () => {
                     bootstrap.Modal.getOrCreateInstance('#modal').show();
 
                     document.getElementById("modal").addEventListener("hide.bs.modal", () => {
-                        window.location.reload();
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 100);
                     });
 
                     console.log("Email inválido/inexistente");
