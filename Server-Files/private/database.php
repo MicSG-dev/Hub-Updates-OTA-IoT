@@ -52,12 +52,10 @@ if (!defined('database-acesso-privado-rv$he')) {
         // ...
         // ...
 
-        // O campo PERMITIDO é utilizado para evitar que ocorra falha de segurança de vazamento se determinado e-mail está ou não cadastrado no sistema.
         $query = "CREATE TABLE IF NOT EXISTS `hub_updates_ota_iot`.`redefinir_senha` 
         (`EMAIL` VARCHAR(256) NOT NULL , 
         `COD_REDEF` VARCHAR(6), 
         `TIME_REDEF` TIMESTAMP on update CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , 
-        `PERMITIDO` BOOLEAN NOT NULL, 
         PRIMARY KEY (`EMAIL`)) ENGINE = InnoDB;
         ";
         $mysqli->query($query);
@@ -96,7 +94,7 @@ if (!defined('database-acesso-privado-rv$he')) {
     }
 
 
-    function salvarCodigoRedefinicaoSenha($host, $username, $password, $database, $codigoSeisDigitos, $email_recuperacao, $permitidoRedefinir)
+    function salvarCodigoRedefinicaoSenha($host, $username, $password, $database, $codigoSeisDigitos, $email_recuperacao)
     {
         $mysqli = null;
 
@@ -120,8 +118,8 @@ if (!defined('database-acesso-privado-rv$he')) {
 
 
         if ($row["COUNT(*)"] == 0) {
-            $stmt = $mysqli->prepare("INSERT INTO redefinir_senha(email, cod_redef, permitido) VALUES (?, ?, ?)");
-            $stmt->bind_param("ssi", $email_recuperacao, $codigoSeisDigitos, $permitidoRedefinir);
+            $stmt = $mysqli->prepare("INSERT INTO redefinir_senha(email, cod_redef) VALUES (?, ?)");
+            $stmt->bind_param("ss", $email_recuperacao, $codigoSeisDigitos);
             $stmt->execute();
         }
     }
@@ -203,7 +201,7 @@ if (!defined('database-acesso-privado-rv$he')) {
             echo ("O sistema apresentou um erro. Informe ao Administrador do Sistema. ERRO: Erro de conexão ao Banco de Dados (VERI_EXIST_REDEF)");
         }
 
-        $stmt = $mysqli->prepare("SELECT * FROM redefinir_senha WHERE email = (?) AND permitido = 1");
+        $stmt = $mysqli->prepare("SELECT * FROM redefinir_senha WHERE email = (?)");
         $stmt->bind_param("s", $email_recover);
         $stmt->execute();
 
@@ -233,8 +231,15 @@ if (!defined('database-acesso-privado-rv$he')) {
             echo ("O sistema apresentou um erro. Informe ao Administrador do Sistema. ERRO: Erro de conexão ao Banco de Dados (REGEN_SAVE_CODE_REDEF) ");
         }
 
-        $stmt = $mysqli->prepare("UPDATE redefinir_senha set cod_redef = (?) WHERE email = (?) AND permitido = 1");
-        $stmt->bind_param("ss", $codigo, $email_recover);
+        if($codigo != "" && $codigo != null){
+            $stmt = $mysqli->prepare("UPDATE redefinir_senha set cod_redef = (?) WHERE email = (?)");
+            $stmt->bind_param("ss", $codigo, $email_recover);
+        }else{
+            $stmt = $mysqli->prepare("UPDATE redefinir_senha set time_redef = CURRENT_TIMESTAMP() WHERE email = (?)");
+            $stmt->bind_param("s", $email_recover);
+        }
+       
+        
         $stmt->execute();
     }
 
@@ -253,8 +258,8 @@ if (!defined('database-acesso-privado-rv$he')) {
             echo ("O sistema apresentou um erro. Informe ao Administrador do Sistema. ERRO: Erro de conexão ao Banco de Dados (VERI_COD_REF) ");
         }
 
-        if ($codigo != "") {
-            $stmt = $mysqli->prepare("SELECT * FROM redefinir_senha WHERE email = (?) AND cod_redef = (?) AND permitido = 1");
+        if ($codigo != "" && $codigo != null) {
+            $stmt = $mysqli->prepare("SELECT * FROM redefinir_senha WHERE email = (?) AND cod_redef = (?)");
             $stmt->bind_param("ss", $email_recover, $codigo);
             $stmt->execute();
             $result = $stmt->get_result();
@@ -287,8 +292,10 @@ if (!defined('database-acesso-privado-rv$he')) {
             echo ("O sistema apresentou um erro. Informe ao Administrador do Sistema. ERRO: Erro de conexão ao Banco de Dados (CANCEL_COD_REDEF) ");
         }
 
-        $stmt = $mysqli->prepare("DELETE FROM redefinir_senha WHERE email = (?) AND cod_redef = (?)");
-        $stmt->bind_param("ss", $email_recover, $code_recover);
-        $stmt->execute();
+        if($code_recover != "" && $code_recover != null){
+            $stmt = $mysqli->prepare("DELETE FROM redefinir_senha WHERE email = (?) AND cod_redef = (?)");
+            $stmt->bind_param("ss", $email_recover, $code_recover);
+            $stmt->execute();
+        }        
     }
 }

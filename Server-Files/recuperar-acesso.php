@@ -38,9 +38,9 @@ if ($email_recover != null && $mode == "generate-code") {
         if (!estaJaParaRedefinir($host, $username, $password, $database, $email_recover)) {
             if ($temCadastro) {
                 $codigo = gerarCodigoRedefinicaoSenha();
-                salvarCodigoRedefinicaoSenha($host, $username, $password, $database, $codigo, $email_recover, true);
+                salvarCodigoRedefinicaoSenha($host, $username, $password, $database, $codigo, $email_recover);
             } else {
-                salvarCodigoRedefinicaoSenha($host, $username, $password, $database, $codigo, $email_recover, false);
+                salvarCodigoRedefinicaoSenha($host, $username, $password, $database, null, $email_recover);
             }
         }
 
@@ -99,7 +99,7 @@ if ($email_recover != null && $mode == "generate-code") {
 
         // se email esta cadastrado, salvar no BD um código aleatório de 6 dígitos e enviar por email para o USER
 
-        if ($temCadastro && estaJaParaRedefinir($host, $username, $password, $database, $email_recover)) {
+        if (estaJaParaRedefinir($host, $username, $password, $database, $email_recover)) {
 
             $timeRedef = getTimeRedef($host, $username, $password, $database, $email_recover);
 
@@ -129,8 +129,15 @@ if ($email_recover != null && $mode == "generate-code") {
 
             if ($m == 0 && $s == 0) {
                 // regerar codigo
-                $codigo = gerarCodigoRedefinicaoSenha();
-                regenerateCodeRecover($host, $username, $password, $database, $codigo, $email_recover);
+                
+
+                if($temCadastro){
+                    $codigo = gerarCodigoRedefinicaoSenha();
+                    regenerateCodeRecover($host, $username, $password, $database, $codigo, $email_recover);
+                }else{
+                    regenerateCodeRecover($host, $username, $password, $database, null, $email_recover);
+                }
+                
             }
         }
 
