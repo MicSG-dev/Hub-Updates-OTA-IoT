@@ -4,11 +4,12 @@ if (!defined('database-acesso-privado-rv$he')) {
     die("Acesso direto ao \"private/database\" não permitido.");
 } else {
 
-    function executarFuncoesDeTodasPaginas($host, $username, $password)
+    function executarFuncoesDeTodasPaginas($host, $username, $password, $database)
     {
         verificarIntegridadeDatabaseSeNaoExistir($host, $username, $password);
         verificarIntegridadeTabelaRedefinicaoSenha($host, $username, $password);
         verificarIntegridadeTabelaUsuarios($host, $username, $password);
+        verificarValidadeCodigosRecuperacao($host, $username, $password, $database);
     }
 
     function verificarIntegridadeDatabaseSeNaoExistir($host, $username, $password)
@@ -93,6 +94,28 @@ if (!defined('database-acesso-privado-rv$he')) {
         $mysqli->close();
     }
 
+    function verificarValidadeCodigosRecuperacao($host, $username, $password, $database)
+    {
+        $mysqli = null;
+
+        try {
+            $mysqli = new mysqli($host, $username, $password, $database);
+        } catch (mysqli_sql_exception) {
+            echo ("<script> alert('Não foi possível continuar. Informe o seguinte erro ao Administrador do Sistema: \\n\\nErro de Credenciais no Banco de Dados (DB).');</script>");
+            exit();
+        }
+
+
+        if ($mysqli->connect_errno) {
+            echo ("<script> console.error('O sistema apresentou um erro. Informe ao Administrador do Sistema. ERRO: \\n\\nErro de conexão ao Banco de Dados (DB).');</script>");
+        }
+
+
+        $stmt = $mysqli->prepare("DELETE FROM redefinir_senha WHERE CURRENT_TIMESTAMP - time_redef >= 15*60"); // 15*60 = 900 segundos = 15 minutos
+        $stmt->execute();
+    }
+
+    
 
     function salvarCodigoRedefinicaoSenha($host, $username, $password, $database, $codigoSeisDigitos, $email_recuperacao)
     {
@@ -231,15 +254,15 @@ if (!defined('database-acesso-privado-rv$he')) {
             echo ("O sistema apresentou um erro. Informe ao Administrador do Sistema. ERRO: Erro de conexão ao Banco de Dados (REGEN_SAVE_CODE_REDEF) ");
         }
 
-        if($codigo != "" && $codigo != null){
+        if ($codigo != "" && $codigo != null) {
             $stmt = $mysqli->prepare("UPDATE redefinir_senha set cod_redef = (?) WHERE email = (?)");
             $stmt->bind_param("ss", $codigo, $email_recover);
-        }else{
+        } else {
             $stmt = $mysqli->prepare("UPDATE redefinir_senha set time_redef = CURRENT_TIMESTAMP() WHERE email = (?)");
             $stmt->bind_param("s", $email_recover);
         }
-       
-        
+
+
         $stmt->execute();
     }
 
@@ -292,14 +315,15 @@ if (!defined('database-acesso-privado-rv$he')) {
             echo ("O sistema apresentou um erro. Informe ao Administrador do Sistema. ERRO: Erro de conexão ao Banco de Dados (CANCEL_COD_REDEF) ");
         }
 
-        if($code_recover != "" && $code_recover != null){
+        if ($code_recover != "" && $code_recover != null) {
             $stmt = $mysqli->prepare("DELETE FROM redefinir_senha WHERE email = (?) AND cod_redef = (?)");
             $stmt->bind_param("ss", $email_recover, $code_recover);
             $stmt->execute();
-        }        
+        }
     }
 
-    function redefinirSenha($host, $username, $password, $database, $code_recover, $email_recover, $senha){
+    function redefinirSenha($host, $username, $password, $database, $code_recover, $email_recover, $senha)
+    {
         $mysqli = null;
 
         try {
@@ -312,7 +336,24 @@ if (!defined('database-acesso-privado-rv$he')) {
         if ($mysqli->connect_errno) {
             echo ("O sistema apresentou um erro. Informe ao Administrador do Sistema. ERRO: Erro de conexão ao Banco de Dados (CANCEL_COD_REDEF) ");
         }
+
+        $stmt = $mysqli->prepare("SELECT * FROM redefinir_senha WHERE email = (?) AND cod_redef = (?)");
+        $stmt->bind_param("ss", $email_recover, $code_recover);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        
+        if ($stmt->affected_rows == 1) {
+            $stmt = $mysqli->prepare("DELETE FROM redefinir_senha WHERE email = (?)");
+            $stmt->bind_param("s", $email_recover);
+            $stmt->execute();
+            
+            $stmt = $mysqli->prepare("UPDATE usuarios set senha = (?) WHERE email = (?)");
+            $stmt->bind_param("ss", $senha, $email_recover);
+            $stmt->execute();
+           
+            return true;
+        }
+
         return false;
-        /começar aqui
     }
 }

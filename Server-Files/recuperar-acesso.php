@@ -11,7 +11,7 @@ $interPath = "private\\html\\";
 $fullPath = str_replace('.php', '.html', $prePath . $interPath . $nomeArquivoHtml);
 $pageHtml = file_get_contents($fullPath);
 
-executarFuncoesDeTodasPaginas($host, $username, $password);
+executarFuncoesDeTodasPaginas($host, $username, $password, $database);
 
 // verificar se usuário ESTA ou não logado. Se estiver logado, redirecionar ele para home. Se NÃO estiver logado, continuar.
 
@@ -142,7 +142,6 @@ if ($email_recover != null && $mode == "generate-code") {
                 }
             }
         }
-
         http_response_code(200);
         echo ("OK");
     } else {
@@ -212,11 +211,11 @@ function gerarCodigoRedefinicaoSenha()
     return $code;
 }
 
-function senhaEForte($senha){
+function senhaEForte($senha)
+{
 
-    if(strlen($senha) < 6){
+    if (strlen($senha) < 6) {
         return false;
     }
     return true;
 }
-

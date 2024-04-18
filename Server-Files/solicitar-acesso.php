@@ -11,6 +11,6 @@ $interPath = "private\\html\\";
 $fullPath = str_replace('.php', '.html', $prePath . $interPath . $nomeArquivoHtml);
 $pageHtml = file_get_contents($fullPath);
 
-executarFuncoesDeTodasPaginas($host, $username, $password);
+executarFuncoesDeTodasPaginas($host, $username, $password, $database);
 
 echo ($pageHtml);

@@ -159,7 +159,7 @@ window.addEventListener('load', () => {
                         console.log("Email inválido");
                     } else if (req.responseText == "CODE") {
                         document.getElementById("title-modal").innerText = "Código inválido";
-                        document.getElementById("content-modal").innerText = "Não foi possível comprovar que você realmente é proprietário da conta pois o código informado não é válido. A Recuperação de Senha foi cancelada. A página será recarregada, para nova tentativa de redefinição, quando esta mensagem for fechada.";
+                        document.getElementById("content-modal").innerText = "Não foi possível comprovar que você realmente é proprietário da conta pois o código informado não é válido ou o mesmo expirou (ultrapassou a validade de 15 minutos). A Recuperação de Senha foi cancelada. A página será recarregada, para nova tentativa de redefinição, quando esta mensagem for fechada.";
                         bootstrap.Modal.getOrCreateInstance('#modal').show();
 
                         document.getElementById("modal").addEventListener("hide.bs.modal", () => {
@@ -215,6 +215,7 @@ window.addEventListener('load', () => {
             req.addEventListener('load', () => {
 
                 if (req.status == 400) {
+
                     document.getElementById("title-modal").innerText = "E-mail inválido ou Inexistente";
                     document.getElementById("content-modal").innerText = "Não foi possível validar o e-mail informado no campo anterior. Por favor tente novamente. A página será recarregada, para a nova tentativa, quando esta mensagem for fechada.";
                     bootstrap.Modal.getOrCreateInstance('#modal').show();
@@ -226,6 +227,18 @@ window.addEventListener('load', () => {
                     });
 
                     console.log("Email inválido/inexistente");
+
+
+                }else if(req.status == 200){
+                    document.getElementById("title-modal").innerText = "Código Regerado";
+                    document.getElementById("content-modal").innerText = "Caso possua uma conta cadastrada em nosso sistema, o código de verificação para recuperar o acesso foi regerado. Você será direcionado para refazer a validação.";
+                    bootstrap.Modal.getOrCreateInstance('#modal').show();
+
+                    document.getElementById("modal").addEventListener("hide.bs.modal", () => {
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 100);
+                    });
                 }
 
             });
@@ -343,7 +356,7 @@ window.addEventListener('load', () => {
                 else if (req.status == 400) {
 
                     if (req.responseText == "PASS_WEAK") {
-                        
+
                         document.getElementById("title-modal").innerText = "Senha fraca";
                         document.getElementById("content-modal").innerText = "A senha fornecida é muito fraca. Tente novamente informando com pelo menos 6 caracteres.";
                         bootstrap.Modal.getOrCreateInstance('#modal').show();
@@ -351,7 +364,7 @@ window.addEventListener('load', () => {
                         console.log("Senha fraca");
                     } else {
                         document.getElementById("title-modal").innerText = "E-mail ou Código inválido/Inexistente";
-                        document.getElementById("content-modal").innerText = "O e-mail e/ou código informado não é válido. A Recuperação de Senha foi cancelada. A página será recarregada, para nova tentativa de redefinição, quando esta mensagem for fechada.";
+                        document.getElementById("content-modal").innerText = "O e-mail e/ou código informado não é válido ou o código expirou (ultrapassou a validade de 15 minutos). A Recuperação de Senha foi cancelada. A página será recarregada, para nova tentativa de redefinição, quando esta mensagem for fechada.";
                         bootstrap.Modal.getOrCreateInstance('#modal').show();
 
                         document.getElementById("modal").addEventListener("hide.bs.modal", () => {
