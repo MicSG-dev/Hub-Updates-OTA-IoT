@@ -178,7 +178,7 @@ window.addEventListener('load', () => {
             req.open("POST", "/recuperar-acesso", true);
 
             req.send(formData);
-        }else{
+        } else {
             document.getElementsByClassName('partition_input')[0].focus();
         }
 
@@ -269,11 +269,69 @@ window.addEventListener('load', () => {
         formData.set("mode", "cancel-recover");
 
         const req = new XMLHttpRequest();
+        req.addEventListener('load', () => {
+
+            if (req.status == 200) {
+                document.getElementById("title-modal").innerText = "Operação realizada com sucesso!";
+                document.getElementById("content-modal").innerText = "O cancelamento da Redefinição de Senha ocorreu com sucesso. O código gerado anteriormente foi invalidado e não será possível reutilizá-lo novamente para redefinir sua senha. Para refazer o processo de Redefinição de senha, reinicie o processo. Você será redirecionado para a página principal, quando esta mensagem for fechada.";
+                bootstrap.Modal.getOrCreateInstance('#modal').show();
+
+                document.getElementById("modal").addEventListener("hide.bs.modal", () => {
+                    window.location.href = '/';
+                });
+
+                console.log("Redefinição de senha cancelada com sucesso!");
+            }
+            else if (req.status == 400) {
+                document.getElementById("title-modal").innerText = "E-mail ou Código inválido/Inexistente";
+                document.getElementById("content-modal").innerText = "Não foi possível validar o e-mail e/ou código informado(s) anteriormente. Por favor tente novamente. A página será recarregada, para a nova tentativa, quando esta mensagem for fechada.";
+                bootstrap.Modal.getOrCreateInstance('#modal').show();
+
+                document.getElementById("modal").addEventListener("hide.bs.modal", () => {
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 100);
+                });
+
+                console.log("Email inválido/inexistente");
+            }
+
+        });
+
+        req.open("POST", "/recuperar-acesso", true);
+
+        req.send(formData);
+
+    });
+
+    this.document.getElementById('redefinir-senha').addEventListener('click', (event) => {
+        event.preventDefault();
+
+        let email = new FormData(document.getElementById('form-gerar-codigo')).get("email");
+
+        let code = "";
+        let elementsPartitionInput = document.getElementsByClassName('partition_input');
+        for (let index = 0; index < elementsPartitionInput.length; index++) {
+            const value = elementsPartitionInput[index].value;
+            code += value;
+        }
+
+        let password = new FormData(document.getElementById('form-redefinir-senha')).get("password");
+        let passwordConfirmacao = new FormData(document.getElementById('form-redefinir-senha')).get("password-repeat");
+
+        if (password == passwordConfirmacao) {
+            let formData = new FormData();
+            formData.set("email-recover", email);
+            formData.set("code", code);
+            formData.set("mode", "redef-password");
+            formData.set("pass", password);
+
+            const req = new XMLHttpRequest();
             req.addEventListener('load', () => {
 
-                if(req.status == 200){
+                if (req.status == 200) {
                     document.getElementById("title-modal").innerText = "Operação realizada com sucesso!";
-                    document.getElementById("content-modal").innerText = "O cancelamento da Redefinição de Senha ocorreu com sucesso. O código gerado anteriormente foi invalidado e não será possível reutilizá-lo novamente para redefinir sua senha. Para refazer o processo de Redefinição de senha, reinicie o processo. Você será redirecionado para a página principal, quando esta mensagem for fechada.";
+                    document.getElementById("content-modal").innerText = "A Redefinição de Senha ocorreu com sucesso. Para logins futuros, utlize a nova senha cadastrada. Você será redirecionado para a página de login, quando esta mensagem for fechada.";
                     bootstrap.Modal.getOrCreateInstance('#modal').show();
 
                     document.getElementById("modal").addEventListener("hide.bs.modal", () => {
@@ -284,7 +342,7 @@ window.addEventListener('load', () => {
                 }
                 else if (req.status == 400) {
                     document.getElementById("title-modal").innerText = "E-mail ou Código inválido/Inexistente";
-                    document.getElementById("content-modal").innerText = "Não foi possível validar o e-mail e/ou código informado(s) anteriormente. Por favor tente novamente. A página será recarregada, para a nova tentativa, quando esta mensagem for fechada.";
+                    document.getElementById("content-modal").innerText = "O e-mail e/ou código informado não é válido. A Recuperação de Senha foi cancelada. A página será recarregada, para nova tentativa de redefinição, quando esta mensagem for fechada.";
                     bootstrap.Modal.getOrCreateInstance('#modal').show();
 
                     document.getElementById("modal").addEventListener("hide.bs.modal", () => {
@@ -301,6 +359,50 @@ window.addEventListener('load', () => {
             req.open("POST", "/recuperar-acesso", true);
 
             req.send(formData);
+        } else {
+            document.getElementById("title-modal").innerText = "Erro - Confirmação de Senha";
+            document.getElementById("content-modal").innerText = "A confirmação de senha não é igual à senha informada. Por favor verifique as senhas informadas e tente novamente.";
+            bootstrap.Modal.getOrCreateInstance('#modal').show();
+        }
+
 
     });
+
+    let btnsViewPassword = this.document.getElementsByClassName('view-password');
+    for (let index = 0; index < btnsViewPassword.length; index++) {
+        const btn = btnsViewPassword[index];
+        let inputPassword = btn.parentElement.childNodes[0];
+        let iconElement = btn.childNodes[0];
+        btn.addEventListener('click', () => {
+
+            var idInterval = setInterval(() => {
+
+
+                if (document.activeElement !== btn && document.activeElement !== inputPassword || inputPassword.type == "password") {
+                    inputPassword.type = "password";
+                    iconElement.classList.remove("fa-eye");
+                    iconElement.classList.add("fa-eye-slash");
+                    clearInterval(idInterval);
+                }
+                
+            }, 100);
+
+            if (inputPassword.type == "password") {
+                inputPassword.type = "text";
+                iconElement.classList.remove("fa-eye-slash");
+                iconElement.classList.add("fa-eye");
+                inputPassword.focus()
+            } else {
+                inputPassword.type = "password";
+                iconElement.classList.remove("fa-eye");
+                iconElement.classList.add("fa-eye-slash");
+                inputPassword.focus()
+            }
+
+        });
+
+
+    }
+
+
 });

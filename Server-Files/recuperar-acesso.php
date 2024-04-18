@@ -129,15 +129,14 @@ if ($email_recover != null && $mode == "generate-code") {
 
             if ($m == 0 && $s == 0) {
                 // regerar codigo
-                
 
-                if($temCadastro){
+
+                if ($temCadastro) {
                     $codigo = gerarCodigoRedefinicaoSenha();
                     regenerateCodeRecover($host, $username, $password, $database, $codigo, $email_recover);
-                }else{
+                } else {
                     regenerateCodeRecover($host, $username, $password, $database, null, $email_recover);
                 }
-                
             }
         }
 
@@ -177,6 +176,9 @@ if ($email_recover != null && $mode == "generate-code") {
         http_response_code(400);
         echo ("ERROR_CANCEL");
     }
+} else if ($mode == "redef-password") {
+    http_response_code(500);
+    echo ("OK ABC");
 } else {
 
     echo ($pageHtml);
