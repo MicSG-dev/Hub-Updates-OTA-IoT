@@ -341,17 +341,28 @@ window.addEventListener('load', () => {
                     console.log("Redefinição de senha cancelada com sucesso!");
                 }
                 else if (req.status == 400) {
-                    document.getElementById("title-modal").innerText = "E-mail ou Código inválido/Inexistente";
-                    document.getElementById("content-modal").innerText = "O e-mail e/ou código informado não é válido. A Recuperação de Senha foi cancelada. A página será recarregada, para nova tentativa de redefinição, quando esta mensagem for fechada.";
-                    bootstrap.Modal.getOrCreateInstance('#modal').show();
 
-                    document.getElementById("modal").addEventListener("hide.bs.modal", () => {
-                        setTimeout(() => {
-                            window.location.reload();
-                        }, 100);
-                    });
+                    if (req.responseText == "PASS_WEAK") {
+                        
+                        document.getElementById("title-modal").innerText = "Senha fraca";
+                        document.getElementById("content-modal").innerText = "A senha fornecida é muito fraca. Tente novamente informando com pelo menos 6 caracteres.";
+                        bootstrap.Modal.getOrCreateInstance('#modal').show();
 
-                    console.log("Email inválido/inexistente");
+                        console.log("Senha fraca");
+                    } else {
+                        document.getElementById("title-modal").innerText = "E-mail ou Código inválido/Inexistente";
+                        document.getElementById("content-modal").innerText = "O e-mail e/ou código informado não é válido. A Recuperação de Senha foi cancelada. A página será recarregada, para nova tentativa de redefinição, quando esta mensagem for fechada.";
+                        bootstrap.Modal.getOrCreateInstance('#modal').show();
+
+                        document.getElementById("modal").addEventListener("hide.bs.modal", () => {
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 100);
+                        });
+
+                        console.log("Email inválido/inexistente");
+                    }
+
                 }
 
             });
@@ -384,7 +395,7 @@ window.addEventListener('load', () => {
                     iconElement.classList.add("fa-eye-slash");
                     clearInterval(idInterval);
                 }
-                
+
             }, 100);
 
             if (inputPassword.type == "password") {

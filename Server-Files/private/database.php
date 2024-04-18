@@ -298,4 +298,21 @@ if (!defined('database-acesso-privado-rv$he')) {
             $stmt->execute();
         }        
     }
+
+    function redefinirSenha($host, $username, $password, $database, $code_recover, $email_recover, $senha){
+        $mysqli = null;
+
+        try {
+            $mysqli = new mysqli($host, $username, $password, $database);
+        } catch (mysqli_sql_exception) {
+            echo ("Não foi possível continuar. Informe o seguinte erro ao Administrador do Sistema: Erro de Credenciais no Banco de Dados (CANCEL_COD_REDEF) ");
+            exit();
+        }
+
+        if ($mysqli->connect_errno) {
+            echo ("O sistema apresentou um erro. Informe ao Administrador do Sistema. ERRO: Erro de conexão ao Banco de Dados (CANCEL_COD_REDEF) ");
+        }
+        return false;
+        /começar aqui
+    }
 }

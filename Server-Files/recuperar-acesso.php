@@ -21,6 +21,9 @@ isset($_POST["email-recover"]) ? $email_recover = $_POST["email-recover"] : $ema
 // Parâmetro POST code
 isset($_POST["code"]) ? $code_recover = $_POST["code"] : $code_recover = null;
 
+// Parâmetro POST pass
+isset($_POST["pass"]) ? $senha = $_POST["pass"] : $senha = null;
+
 // Parâmetro POST mode
 isset($_POST["mode"]) ? $mode = $_POST["mode"] : $mode = null;
 
@@ -177,8 +180,19 @@ if ($email_recover != null && $mode == "generate-code") {
         echo ("ERROR_CANCEL");
     }
 } else if ($mode == "redef-password") {
-    http_response_code(500);
-    echo ("OK ABC");
+
+    if (senhaEForte($senha)) {
+        if (redefinirSenha($host, $username, $password, $database, $code_recover, $email_recover, $senha)) {
+            http_response_code(200);
+            echo ("OK");
+        } else {
+            http_response_code(400);
+            echo ("Email e/ou código inválido");
+        }
+    } else {
+        http_response_code(400);
+        echo ("PASS_WEAK");
+    }
 } else {
 
     echo ($pageHtml);
@@ -197,3 +211,12 @@ function gerarCodigoRedefinicaoSenha()
 
     return $code;
 }
+
+function senhaEForte($senha){
+
+    if(strlen($senha) < 6){
+        return false;
+    }
+    return true;
+}
+
