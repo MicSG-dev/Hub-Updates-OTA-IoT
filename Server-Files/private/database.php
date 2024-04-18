@@ -81,7 +81,7 @@ if (!defined('database-acesso-privado-rv$he')) {
         // ...
         // ...
 
-        $query = "CREATE TABLE `hub_updates_ota_iot`.`usuarios` 
+        $query = "CREATE TABLE IF NOT EXISTS `hub_updates_ota_iot`.`usuarios` 
         (`ID` INT NOT NULL , 
         `NICK` VARCHAR(50) NOT NULL , 
         `EMAIL` VARCHAR(256) NOT NULL , 
