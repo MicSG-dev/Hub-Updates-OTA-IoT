@@ -21,6 +21,12 @@ window.addEventListener('load', () => {
                 }else if(req.responseText == "USER"){
                     title = "Nome inválido";
                     message = "Não foi possível validar o username informado. Por favor tente novamente, informando um username com no mínimo 3 caracteres e com no máximo 26 caracteres.";
+                }else if(req.responseText == "USER_EXISTS"){
+                    title = "Username não disponível";
+                    message = "Não foi possível utilizar o username informado, pois o mesmo já está em uso ou sua utilização não é permitida. Por favor tente novamente, informando um username diferente.";
+                }else{
+                    title = "Erro desconhecido";
+                    message = "Erro desconhecido: Por favor, informe o suporte sobre este erro (CODE: RETURN_INVALID)";
                 }
 
                 document.getElementById("title-modal").innerText = title;

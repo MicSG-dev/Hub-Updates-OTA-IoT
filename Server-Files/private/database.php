@@ -88,7 +88,8 @@ if (!defined('database-acesso-privado-rv$he')) {
 
         $query = "CREATE TABLE IF NOT EXISTS `hub_updates_ota_iot`.`usuarios` 
         (`ID` INT NOT NULL AUTO_INCREMENT, 
-        `NOME` VARCHAR(50) NOT NULL UNIQUE, 
+        `NOME` VARCHAR(256) NOT NULL UNIQUE, 
+        `USERNAME` VARCHAR(26) NOT NULL UNIQUE,
         `EMAIL` VARCHAR(256) NOT NULL , 
         `DATA_INSCRICAO` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , 
         `SENHA` VARCHAR(80) NOT NULL , 
@@ -120,7 +121,7 @@ if (!defined('database-acesso-privado-rv$he')) {
         $query = "CREATE TABLE IF NOT EXISTS `hub_updates_ota_iot`.`solicitacoes_cadastro` 
         (`EMAIL` VARCHAR(256) NOT NULL , 
         `NOME` VARCHAR(256) NOT NULL , 
-        `USERNAME` VARCHAR(26) NOT NULL , 
+        `USERNAME` VARCHAR(26) NOT NULL UNIQUE, 
         `DATA_INSCRICAO` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , 
         PRIMARY KEY (`EMAIL`)) ENGINE = InnoDB;
         ";
@@ -389,5 +390,92 @@ if (!defined('database-acesso-privado-rv$he')) {
         }
 
         return false;
+    }
+
+    function registrarSolicitacaoNovoCadastro($host, $username, $password, $database, $email, $nome, $username_cadastro)
+    {
+        $mysqli = null;
+
+        try {
+            $mysqli = new mysqli($host, $username, $password, $database);
+        } catch (mysqli_sql_exception) {
+            echo ("Não foi possível continuar. Informe o seguinte erro ao Administrador do Sistema: Erro de Credenciais no Banco de Dados (CANCEL_COD_REDEF) ");
+            exit();
+        }
+
+        if ($mysqli->connect_errno) {
+            echo ("O sistema apresentou um erro. Informe ao Administrador do Sistema. ERRO: Erro de conexão ao Banco de Dados (CANCEL_COD_REDEF) ");
+        }
+
+        $stmt = $mysqli->prepare("INSERT INTO solicitacoes_cadastro(email, nome, username) VALUES (?, ?, ?)");
+        $stmt->bind_param("sss", $email, $nome, $username_cadastro);
+        $stmt->execute();
+    }
+
+    function jaExisteSolicitacaoCadastro($host, $username, $password, $database, $email_cadastro)
+    {
+        $mysqli = null;
+
+        try {
+            $mysqli = new mysqli($host, $username, $password, $database);
+        } catch (mysqli_sql_exception) {
+            echo ("Não foi possível continuar. Informe o seguinte erro ao Administrador do Sistema: Erro de Credenciais no Banco de Dados (CANCEL_COD_REDEF) ");
+            exit();
+        }
+
+        if ($mysqli->connect_errno) {
+            echo ("O sistema apresentou um erro. Informe ao Administrador do Sistema. ERRO: Erro de conexão ao Banco de Dados (CANCEL_COD_REDEF) ");
+        }
+
+        $stmt = $mysqli->prepare("SELECT * FROM solicitacoes_cadastro WHERE email = (?)");
+        $stmt->bind_param("s", $email_cadastro);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($stmt->affected_rows == 1) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    function usernameJaExiste($host, $username, $password, $database, $username_cadastro)
+    {
+        $mysqli = null;
+
+        try {
+            $mysqli = new mysqli($host, $username, $password, $database);
+        } catch (mysqli_sql_exception) {
+            echo ("Não foi possível continuar. Informe o seguinte erro ao Administrador do Sistema: Erro de Credenciais no Banco de Dados (CANCEL_COD_REDEF) ");
+            exit();
+        }
+
+        if ($mysqli->connect_errno) {
+            echo ("O sistema apresentou um erro. Informe ao Administrador do Sistema. ERRO: Erro de conexão ao Banco de Dados (CANCEL_COD_REDEF) ");
+        }
+
+        $stmt = $mysqli->prepare("SELECT * FROM usuarios WHERE username = (?)");
+        $stmt->bind_param("s", $username_cadastro);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($stmt->affected_rows == 1) {
+            return true;
+        } else {
+            $stmt = $mysqli->prepare("SELECT * FROM solicitacoes_cadastro WHERE username = (?)");
+            $stmt->bind_param("s", $username_cadastro);
+            $stmt->execute();
+            $result = $stmt->get_result();
+
+            if ($stmt->affected_rows == 1) {
+                return true;
+            } else {
+                if(in_array($username_cadastro, ['admin', 'gerente','administrador'])){
+                    return true; // retorna true pois usuários não podem ter os usernames acima (listados dentro do array)
+                }else{
+                    return false;
+                }                
+            }
+        }
     }
 }

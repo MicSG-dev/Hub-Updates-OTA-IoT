@@ -17,7 +17,7 @@ executarFuncoesDeTodasPaginas($host, $username, $password, $database);
 isset($_POST["email"]) ? $email_cadastro = $_POST["email"] : $email_cadastro = null;
 
 // Parâmetro POST code
-isset($_POST["user"]) ? $username_cadastro = $_POST["user"] : $username_cadastro = null;
+isset($_POST["user"]) ? $username_cadastro = strtolower($_POST["user"]) : $username_cadastro = null;
 
 // Parâmetro POST pass
 isset($_POST["name"]) ? $nome_cadastro = $_POST["name"] : $nome_cadastro = null;
@@ -26,8 +26,30 @@ isset($_POST["name"]) ? $nome_cadastro = $_POST["name"] : $nome_cadastro = null;
 isset($_POST["mode"]) ? $mode = $_POST["mode"] : $mode = null;
 
 if ($mode == "solicitar-acesso") {
-    http_response_code(200);
-    echo ("Solicitando acesso");
+
+    if (strlen($nome_cadastro) < 3 || strlen($nome_cadastro) > 256) {
+        http_response_code(400);
+        echo ("NOME");
+    } else if (strlen($username_cadastro) < 3 || strlen($username_cadastro) > 26) {
+        http_response_code(400);
+        echo ("USER");
+    } else if (!filter_var($email_cadastro, FILTER_VALIDATE_EMAIL)) {
+        http_response_code(400);
+        echo ("EMAIL");
+    } else if (usernameJaExiste($host, $username, $password, $database, $username_cadastro)) {
+        http_response_code(400);
+        echo ("USER_EXISTS");
+    } else {
+
+        if (!emailEstaCadastradoNoSistema($host, $username, $password, $database, $email_cadastro)) { // verifica se o email já esta cadastrado em outra conta
+            if (!jaExisteSolicitacaoCadastro($host, $username, $password, $database, $email_cadastro)) { // verifica se o email já esta cadastrada em outra solicitação de novo acesso
+                registrarSolicitacaoNovoCadastro($host, $username, $password, $database, $email_cadastro, $nome_cadastro, $username_cadastro);
+            }
+        }
+
+        http_response_code(200);
+        echo ("OK");
+    }
 } else {
     echo ($pageHtml);
 }
