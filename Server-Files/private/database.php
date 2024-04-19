@@ -6,9 +6,13 @@ if (!defined('database-acesso-privado-rv$he')) {
 
     function executarFuncoesDeTodasPaginas($host, $username, $password, $database)
     {
+        // DATABASES
         verificarIntegridadeDatabaseSeNaoExistir($host, $username, $password);
         verificarIntegridadeTabelaRedefinicaoSenha($host, $username, $password);
         verificarIntegridadeTabelaUsuarios($host, $username, $password);
+        verificarIntegridadeTabelaSolicitacoesCadastro($host, $username, $password);
+
+        // TABELAS
         verificarValidadeCodigosRecuperacao($host, $username, $password, $database);
     }
 
@@ -94,6 +98,36 @@ if (!defined('database-acesso-privado-rv$he')) {
         $mysqli->close();
     }
 
+    function verificarIntegridadeTabelaSolicitacoesCadastro($host, $username, $password)
+    {
+        $mysqli = null;
+
+        try {
+            $mysqli = new mysqli($host, $username, $password);
+        } catch (mysqli_sql_exception) {
+            echo ("<script> alert('Não foi possível continuar. Informe o seguinte erro ao Administrador do Sistema: \\n\\nErro de Credenciais no Banco de Dados (USERBD_PASS).');</script>");
+            exit();
+        }
+
+        if ($mysqli->connect_errno) {
+            echo ("<script> console.error('O sistema apresentou um erro. Informe ao Administrador do Sistema. ERRO: \\n\\nErro de conexão ao Banco de Dados (USERBD_PASS).');</script>");
+        }
+
+        // Executar Query aqui
+        // ...
+        // ...
+
+        $query = "CREATE TABLE IF NOT EXISTS `hub_updates_ota_iot`.`solicitacoes_cadastro` 
+        (`EMAIL` VARCHAR(256) NOT NULL , 
+        `NOME` VARCHAR(256) NOT NULL , 
+        `USERNAME` VARCHAR(26) NOT NULL , 
+        `DATA_INSCRICAO` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , 
+        PRIMARY KEY (`EMAIL`)) ENGINE = InnoDB;
+        ";
+        $mysqli->query($query);
+        $mysqli->close();
+    }
+
     function verificarValidadeCodigosRecuperacao($host, $username, $password, $database)
     {
         $mysqli = null;
@@ -115,7 +149,7 @@ if (!defined('database-acesso-privado-rv$he')) {
         $stmt->execute();
     }
 
-    
+
 
     function salvarCodigoRedefinicaoSenha($host, $username, $password, $database, $codigoSeisDigitos, $email_recuperacao)
     {
@@ -341,16 +375,16 @@ if (!defined('database-acesso-privado-rv$he')) {
         $stmt->bind_param("ss", $email_recover, $code_recover);
         $stmt->execute();
         $result = $stmt->get_result();
-        
+
         if ($stmt->affected_rows == 1) {
             $stmt = $mysqli->prepare("DELETE FROM redefinir_senha WHERE email = (?)");
             $stmt->bind_param("s", $email_recover);
             $stmt->execute();
-            
+
             $stmt = $mysqli->prepare("UPDATE usuarios set senha = (?) WHERE email = (?)");
             $stmt->bind_param("ss", $senha, $email_recover);
             $stmt->execute();
-           
+
             return true;
         }
 
