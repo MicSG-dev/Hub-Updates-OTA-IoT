@@ -5,26 +5,26 @@ window.addEventListener('load', () => {
         let form = document.getElementById('form-novo-cadastro');
         let formData = new FormData(form);
         formData.set("mode", "solicitar-acesso");
-        
+
         const req = new XMLHttpRequest();
         req.addEventListener('load', () => {
 
             if (req.status == 400) {
 
                 let title, message;
-                if(req.responseText == "EMAIL"){
+                if (req.responseText == "EMAIL") {
                     title = "E-mail inválido";
                     message = "Não foi possível validar o e-mail informado. Por favor tente novamente, informando um e-mail válido.";
-                }else if(req.responseText == "NOME"){
+                } else if (req.responseText == "NOME") {
                     title = "Nome inválido";
                     message = "Não foi possível validar o nome informado. Por favor tente novamente, informando um nome com no mínimo 3 caracteres e com no máximo 256 caracteres.";
-                }else if(req.responseText == "USER"){
+                } else if (req.responseText == "USER") {
                     title = "Nome inválido";
                     message = "Não foi possível validar o username informado. Por favor tente novamente, informando um username com no mínimo 3 caracteres e com no máximo 26 caracteres.";
-                }else if(req.responseText == "USER_EXISTS"){
+                } else if (req.responseText == "USER_EXISTS") {
                     title = "Username não disponível";
                     message = "Não foi possível utilizar o username informado, pois o mesmo já está em uso ou sua utilização não é permitida. Por favor tente novamente, informando um username diferente.";
-                }else{
+                } else {
                     title = "Erro desconhecido";
                     message = "Erro desconhecido: Por favor, informe o suporte sobre este erro (CODE: RETURN_INVALID)";
                 }
