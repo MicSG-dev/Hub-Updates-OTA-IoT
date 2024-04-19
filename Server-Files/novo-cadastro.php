@@ -13,13 +13,13 @@ $pageHtml = file_get_contents($fullPath);
 
 executarFuncoesDeTodasPaginas($host, $username, $password, $database);
 
-// Parâmetro POST email-recover
+// Parâmetro POST email
 isset($_POST["email"]) ? $email_cadastro = $_POST["email"] : $email_cadastro = null;
 
-// Parâmetro POST code
+// Parâmetro POST user
 isset($_POST["user"]) ? $username_cadastro = strtolower($_POST["user"]) : $username_cadastro = null;
 
-// Parâmetro POST pass
+// Parâmetro POST name
 isset($_POST["name"]) ? $nome_cadastro = $_POST["name"] : $nome_cadastro = null;
 
 // Parâmetro POST mode
