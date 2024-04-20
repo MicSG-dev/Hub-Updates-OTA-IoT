@@ -17,11 +17,32 @@ executarFuncoesDeTodasPaginas($host, $username, $password, $database);
 isset($_POST["email"]) ? $email_login = $_POST["email"] : $email_login = null;
 
 // Parâmetro POST user
-isset($_POST["password"]) ? $senha_login = strtolower($_POST["password"]) : $senha_login = null;
+isset($_POST["password"]) ? $senha_login = $_POST["password"] : $senha_login = null;
 
 // Parâmetro POST mode
 isset($_POST["mode"]) ? $mode = $_POST["mode"] : $mode = null;
 
-//if($mode == )
+if ($mode == "fazer-login") {
 
-echo ($pageHtml);
+    if (strlen($senha_login) < 6 || strlen($senha_login) > 80) {
+        http_response_code(400);
+        echo ("SENHA");
+    } else if (!filter_var($email_login, FILTER_VALIDATE_EMAIL)) {
+        http_response_code(400);
+        echo ("EMAIL");
+    }else{
+
+        if(tentaFazerLogin($host, $username, $password, $database, $email_login, $senha_login) == false){
+            http_response_code(400);
+            echo ("FAILED_LOGIN");
+        }else{
+            http_response_code(200);
+            echo ("OK");
+        }
+
+        
+    }
+    
+} else {
+    echo ($pageHtml);
+}

@@ -10,8 +10,8 @@
 .input-password {
   display: block;
   width: 100%;
-  padding: .375rem .75rem;
-  font-size: 1rem;
+  padding: .5rem 1rem;
+  font-size: .875rem;
   font-weight: 400;
   line-height: 1.5;
   color: var(--bs-body-color);
@@ -20,10 +20,10 @@
   appearance: none;
   background-color: var(--bs-body-bg);
   background-clip: padding-box;
-  border: var(--bs-border-width) solid var(--bs-border-color);
+  border: none;
   border-radius: var(--bs-border-radius);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .05);
   transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
-  border-width: 0px;
 }
 
 .input-password-father {
@@ -32,13 +32,14 @@
   padding: 1px;
   margin-left: 4px;
   margin-right: 4px;
+  background-color: var(--bs-body-bg);
 }
 
 .input-password-father:focus-within {
   color: var(--bs-body-color);
   background-color: var(--bs-body-bg);
-  border-color: rgb(134, 183, 254);
+  border-color: #9aacf3;
   outline: 0;
-  box-shadow: 0 0 0 .25rem rgba(13, 110, 253, .25);
+  box-shadow: 0 1px 2px rgba(0,0,0,.05),0 0 0 .25rem rgba(52,89,230,.25);
 }
 
