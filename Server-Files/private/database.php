@@ -499,6 +499,10 @@ if (!defined('database-acesso-privado-rv$he')) {
         $result = $stmt->get_result();
 
         if ($stmt->affected_rows == 1) {
+
+            // salva sessão aqui
+            // ...
+            // ...
             return true;
         }else{
             return false;
