@@ -9,6 +9,7 @@ if (!defined('database-acesso-privado-rv$he')) {
         // DATABASES
         verificarIntegridadeDatabaseSeNaoExistir($host, $username, $password);
         verificarIntegridadeTabelaRedefinicaoSenha($host, $username, $password);
+        verificarIntegridadeTabelaCargos($host, $username, $password, $database);
         verificarIntegridadeTabelaUsuarios($host, $username, $password);
         verificarIntegridadeTabelaSolicitacoesCadastro($host, $username, $password);
 
@@ -90,12 +91,50 @@ if (!defined('database-acesso-privado-rv$he')) {
         (`ID` INT NOT NULL AUTO_INCREMENT, 
         `NOME` VARCHAR(256) NOT NULL UNIQUE, 
         `USERNAME` VARCHAR(26) NOT NULL UNIQUE,
+        `CARGO_ID` INT NOT NULL, 
         `EMAIL` VARCHAR(256) NOT NULL , 
         `DATA_INSCRICAO` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , 
         `SENHA` VARCHAR(80) NOT NULL , 
-        PRIMARY KEY (`ID`)) ENGINE = InnoDB;
+        PRIMARY KEY (`ID`),
+        FOREIGN KEY (`CARGO_ID`) REFERENCES `cargos`(`ID`) ON DELETE CASCADE ON UPDATE CASCADE) ENGINE = InnoDB;
         ";
         $mysqli->query($query);
+        $mysqli->close();
+    }
+
+    function verificarIntegridadeTabelaCargos($host, $username, $password, $database)
+    {
+        $mysqli = null;
+
+        try {
+            $mysqli = new mysqli($host, $username, $password, $database);
+        } catch (mysqli_sql_exception) {
+            echo ("<script> alert('Não foi possível continuar. Informe o seguinte erro ao Administrador do Sistema: \\n\\nErro de Credenciais no Banco de Dados (USERBD_PASS).');</script>");
+            exit();
+        }
+
+        if ($mysqli->connect_errno) {
+            echo ("<script> console.error('O sistema apresentou um erro. Informe ao Administrador do Sistema. ERRO: \\n\\nErro de conexão ao Banco de Dados (USERBD_PASS).');</script>");
+        }
+
+        // Executar Query aqui
+        // ...
+        // ...
+
+        $query = "SHOW TABLES LIKE 'cargos'";
+        $result = $mysqli->query($query);
+
+        if($result->num_rows != 1){
+            $query = "CREATE TABLE IF NOT EXISTS `hub_updates_ota_iot`.`cargos`
+            (`ID` INT NOT NULL AUTO_INCREMENT , 
+            `CARGO` VARCHAR(15) NOT NULL , 
+            PRIMARY KEY (`ID`)) ENGINE = InnoDB;
+            ";
+            $result = $mysqli->query($query);
+
+            $result = $mysqli->query("INSERT INTO cargos(`cargo`) VALUES ('Gerente'), ('Comum')");
+        }
+
         $mysqli->close();
     }
 
@@ -149,7 +188,6 @@ if (!defined('database-acesso-privado-rv$he')) {
         $stmt = $mysqli->prepare("DELETE FROM redefinir_senha WHERE CURRENT_TIMESTAMP - time_redef >= 15*60"); // 15*60 = 900 segundos = 15 minutos
         $stmt->execute();
     }
-
 
 
     function salvarCodigoRedefinicaoSenha($host, $username, $password, $database, $codigoSeisDigitos, $email_recuperacao)
@@ -470,16 +508,17 @@ if (!defined('database-acesso-privado-rv$he')) {
             if ($stmt->affected_rows == 1) {
                 return true;
             } else {
-                if(in_array($username_cadastro, ['admin', 'gerente','administrador'])){
+                if (in_array($username_cadastro, ['admin', 'gerente', 'administrador'])) {
                     return true; // retorna true pois usuários não podem ter os usernames acima (listados dentro do array)
-                }else{
+                } else {
                     return false;
-                }                
+                }
             }
         }
     }
 
-    function tentaFazerLogin($host, $username, $password, $database, $email, $senha){
+    function tentaFazerLogin($host, $username, $password, $database, $email, $senha)
+    {
         $mysqli = null;
 
         try {
@@ -493,19 +532,17 @@ if (!defined('database-acesso-privado-rv$he')) {
             echo ("O sistema apresentou um erro. Informe ao Administrador do Sistema. ERRO: Erro de conexão ao Banco de Dados (CANCEL_COD_REDEF) ");
         }
 
-        $stmt = $mysqli->prepare("SELECT * FROM usuarios WHERE email = (?) AND senha = (?)");
+        $stmt = $mysqli->prepare("SELECT nome FROM usuarios WHERE email = (?) AND senha = (?)");
         $stmt->bind_param("ss", $email, $senha);
         $stmt->execute();
         $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
 
         if ($stmt->affected_rows == 1) {
 
-            // salva sessão aqui
-            // ...
-            // ...
-            return true;
-        }else{
-            return false;
-        }        
+            return $row;
+        } else {
+            return -1;
+        }
     }
 }

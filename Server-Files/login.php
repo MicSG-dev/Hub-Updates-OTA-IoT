@@ -4,6 +4,9 @@ define('database-acesso-privado-rv$he', TRUE);
 require('./private/database.php');
 require('./private/credentials.php');
 
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
+
 $nomeArquivoHtml = basename(__FILE__);
 $prePath = str_replace($nomeArquivoHtml, "", __FILE__);
 $interPath = "private\\html\\";
@@ -30,19 +33,24 @@ if ($mode == "fazer-login") {
     } else if (!filter_var($email_login, FILTER_VALIDATE_EMAIL)) {
         http_response_code(400);
         echo ("EMAIL");
-    }else{
+    } else {
 
-        if(tentaFazerLogin($host, $username, $password, $database, $email_login, $senha_login) == false){
-            http_response_code(400);
-            echo ("FAILED_LOGIN");
-        }else{
+        $resultadoLogin = tentaFazerLogin($host, $username, $password, $database, $email_login, $senha_login);
+
+        if ($resultadoLogin != -1) {
+
+            $chaveJwt;
+            $payload = [
+                "name" => $resultadoLogin["nome"],
+                "role" => "admin"
+            ];
             http_response_code(200);
             echo ("OK");
+        } else {
+            http_response_code(400);
+            echo ("FAILED_LOGIN");
         }
-
-        
     }
-    
 } else {
     echo ($pageHtml);
 }

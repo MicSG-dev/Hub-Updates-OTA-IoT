@@ -9,4 +9,5 @@ if (!defined('database-acesso-privado-rv$he')) {
     $username = "micsg-tests";
     $password = "micsg-tests";
     $database = "hub_updates_ota_iot";
+    $chaveJwt = "micsg-tests";
 }
