@@ -42,8 +42,9 @@ if ($mode == "fazer-login") {
             $chaveJwt;
             $payload = [
                 "name" => $resultadoLogin["nome"],
-                "role" => "admin"
+                "role" => $cargo_id
             ];
+
             http_response_code(200);
             echo ("OK");
         } else {
