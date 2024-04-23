@@ -39,10 +39,11 @@ if ($mode == "fazer-login") {
         $resultadoLogin = tentaFazerLogin($host, $username, $password, $database, $email_login, $senha_login);
 
         if ($resultadoLogin != -1) {
-
+            $identificador = "12346g3tsf3";
             $payload = [
                 "name" => $resultadoLogin["nome"],
-                "role" => $resultadoLogin["cargo_id"]
+                "role" => $resultadoLogin["cargo_id"],
+                "sub" => $identificador
             ];
 
             $token= JWT::encode($payload, $chaveJwt, 'HS256');
