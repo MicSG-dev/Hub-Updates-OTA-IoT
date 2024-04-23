@@ -3,7 +3,7 @@ define('database-acesso-privado-rv$he', TRUE);
 
 require('./private/database.php');
 require('./private/credentials.php');
-require ('./private/vendor/autoload.php');
+require('./private/vendor/autoload.php');
 
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
@@ -43,13 +43,15 @@ if ($mode == "fazer-login") {
             $payload = [
                 "name" => $resultadoLogin["nome"],
                 "role" => $resultadoLogin["cargo_id"],
-                "sub" => $identificador
+                "sub" => $identificador,
+                "exp" => time() + 60 * 60 * 2 // 2 horas
             ];
 
-            $token= JWT::encode($payload, $chaveJwt, 'HS256');
-
+            $token = JWT::encode($payload, $chaveJwt, 'HS256');
+            
+            header("Authorization: Bearer " . $token);
             http_response_code(200);
-            echo ("OK: $token");
+            echo ("OK");
         } else {
             http_response_code(400);
             echo ("FAILED_LOGIN");
