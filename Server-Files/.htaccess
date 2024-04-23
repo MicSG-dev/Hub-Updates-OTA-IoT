@@ -1,5 +1,5 @@
 # Ativa o Módulo de Reescrita
-RewriteEngine ON
+RewriteEngine On
 
 # Define a Base de Reescrita como o diretório raiz
 RewriteBase /
@@ -8,7 +8,7 @@ RewriteBase /
 RewriteCond %{ENV:REDIRECT_STATUS} ^$
 RewriteCond %{THE_REQUEST} \s/([^.]*)\.php/?\s [NC]
 ##Performing external redirect here.
-RewriteRule ^  %1? [R,L]
+RewriteRule ^ %1 [R,L]
 
 # Reescreve páginas que não existem para seus respectivos arquivos .php
 RewriteCond %{REQUEST_FILENAME} !-f
