@@ -41,7 +41,11 @@ if ($mode == "fazer-login") {
             $resultadoLogin = tentaFazerLogin($host, $username, $password, $database, $email_login, $senha_login);
 
             if ($resultadoLogin != -1) {
-                $identificador = "12346g3tsf3";
+
+                $identificador = $resultadoLogin["id"];
+                
+                //$idEncriptado = openssl_encrypt($identificador, "AES-256-CBC", "micsg-tests", 0,$iv); // utilizar este exemplo: https://www.php.net/manual/pt_BR/function.openssl-encrypt.php#:~:text=Exemplo%20%232%20AES%20Authenticated%20Encryption%20example%20prior%20to%20PHP%207.1
+
                 $payload = [
                     "name" => $resultadoLogin["nome"],
                     "role" => $resultadoLogin["cargo_id"],
@@ -58,7 +62,7 @@ if ($mode == "fazer-login") {
                         "expires" => time() + (60 * 60 * 24 * 365), // 1 ano (tempo do cookie tem de ser maior que o do JWT, sendo que este tempo não terá relevância no sistema e somente do JWT)
                         "path" => '/',
                         "domain" => '',
-                        "secure" => false, 
+                        "secure" => false,
                         "httponly" => true, // previne ataques XSS
                         "samesite" => 'Strict' // previne ataques CSRF
                     ]

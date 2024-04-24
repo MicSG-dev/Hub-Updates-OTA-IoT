@@ -540,7 +540,7 @@ if (!defined('database-acesso-privado-rv$he')) {
             echo ("O sistema apresentou um erro. Informe ao Administrador do Sistema. ERRO: Erro de conexão ao Banco de Dados (CANCEL_COD_REDEF) ");
         }
 
-        $stmt = $mysqli->prepare("SELECT nome, cargo_id FROM usuarios WHERE email = (?) AND senha = (?)");
+        $stmt = $mysqli->prepare("SELECT id, nome, cargo_id FROM usuarios WHERE email = (?) AND senha = (?)");
         $stmt->bind_param("ss", $email, $senha);
         $stmt->execute();
         $result = $stmt->get_result();

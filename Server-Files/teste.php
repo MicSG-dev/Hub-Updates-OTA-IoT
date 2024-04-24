@@ -16,7 +16,13 @@ if ($senha != null) {
 
     $hash = password_hash($senhaComPepper, PASSWORD_DEFAULT, $options);
     echo ("hash: $hash<br>");
+
+    if (password_verify($senhaComPepper, $hash)) {
+        echo "Login efetuado com sucesso!";
+    } else {
+        echo "Usuário ou Senha Incorreta!";
+    }
 } else {
-   
+
     echo ("nada");
 }
