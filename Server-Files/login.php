@@ -1,9 +1,9 @@
 <?php
 define('database-acesso-privado-rv$he', TRUE);
 
-require ('./private/database.php');
-require ('./private/credentials.php');
-require ('./private/vendor/autoload.php');
+require('./private/database.php');
+require('./private/credentials.php');
+require('./private/vendor/autoload.php');
 
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
@@ -27,6 +27,7 @@ isset($_POST["password"]) ? $senha_login = $_POST["password"] : $senha_login = n
 isset($_POST["mode"]) ? $mode = $_POST["mode"] : $mode = null;
 
 if ($mode == "fazer-login") {
+
     $token = isset($_COOKIE["key"]) ? $_COOKIE["key"] : null;
     if (!estaLogado($token, $chaveJwt)) {
         if (strlen($senha_login) < 6 || strlen($senha_login) > 80) {
@@ -51,13 +52,17 @@ if ($mode == "fazer-login") {
                 $token = JWT::encode($payload, $chaveJwt, 'HS256');
 
                 setcookie(
-                    $name = "key",
-                    $value = $token,
-                    $expires_or_options = time() + (60 * 60 * 24 * 365), // 1 ano (quem gerencia o tempo de expiração é o JWT e não o cookie, por isso do alto tempo definido aqui)
-                    $path = '/',
-                    $domain = '',
-                    $secure = false,
-                    $httponly = true
+                    "key",
+                    $token,
+                    [
+                        "expires" => time() + (60 * 60 * 24 * 365), // 1 ano (tempo do cookie tem de ser maior que o do JWT, sendo que este tempo não terá relevância no sistema e somente do JWT)
+                        "path" => '/',
+                        "domain" => '',
+                        "secure" => false, 
+                        "httponly" => true, // previne ataques XSS
+                        "samesite" => 'Strict' // previne ataques CSRF
+                    ]
+
                 );
 
                 http_response_code(200);
@@ -71,7 +76,6 @@ if ($mode == "fazer-login") {
         http_response_code(400);
         echo ("JA_LOGADO");
     }
-
 } else {
     echo ($pageHtml);
 }
