@@ -1,5 +1,6 @@
 <?php
-require ('private/vendor/autoload.php');
+require('private/vendor/autoload.php');
+
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 use Firebase\JWT\ExpiredException;
@@ -101,10 +102,10 @@ if (!defined('database-acesso-privado-rv$he')) {
         `CARGO_ID` INT NOT NULL, 
         `EMAIL` VARCHAR(256) NOT NULL , 
         `DATA_INSCRICAO` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , 
-        `SENHA` VARCHAR(80) NOT NULL , 
+        `SENHA` VARCHAR(255) NOT NULL , 
         PRIMARY KEY (`ID`),
         FOREIGN KEY (`CARGO_ID`) REFERENCES `cargos`(`ID`) ON DELETE CASCADE ON UPDATE CASCADE) ENGINE = InnoDB;
-        ";
+        "; // Em senha, se tem o limite de 80 caracteres, mas como ela é armazenada como hash, deve-se ter capacidade de até 255 caracteres (ver fonte: https://www.php.net/manual/pt_BR/password.constants.php#constant.password-default:~:text=255%20%C3%A9%20o%20comprimento%20recomendado).
         $mysqli->query($query);
         $mysqli->close();
     }
@@ -567,6 +568,5 @@ if (!defined('database-acesso-privado-rv$he')) {
         }
 
         return $result;
-
     }
 }
