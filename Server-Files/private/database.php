@@ -1,8 +1,15 @@
 <?php
+require ('private/vendor/autoload.php');
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
+use Firebase\JWT\ExpiredException;
+use Firebase\JWT\SignatureInvalidException;
+
 if (!defined('database-acesso-privado-rv$he')) {
     // Acesso direto não permitido.
     die("Acesso direto ao \"private/database\" não permitido.");
 } else {
+
 
     function executarFuncoesDeTodasPaginas($host, $username, $password, $database)
     {
@@ -124,7 +131,7 @@ if (!defined('database-acesso-privado-rv$he')) {
         $query = "SHOW TABLES LIKE 'cargos'";
         $result = $mysqli->query($query);
 
-        if($result->num_rows != 1){
+        if ($result->num_rows != 1) {
             $query = "CREATE TABLE IF NOT EXISTS `hub_updates_ota_iot`.`cargos`
             (`ID` INT NOT NULL AUTO_INCREMENT , 
             `CARGO` VARCHAR(15) NOT NULL , 
@@ -544,5 +551,22 @@ if (!defined('database-acesso-privado-rv$he')) {
         } else {
             return -1;
         }
+    }
+
+    function estaLogado($token, $chaveJwt)
+    {
+        $result = false;
+        if ($token != null) {
+
+
+            try {
+                $decoded = JWT::decode($token, new Key($chaveJwt, 'HS256'));
+                $result = true;
+            } catch (Exception $e) {
+            }
+        }
+
+        return $result;
+
     }
 }

@@ -1,9 +1,9 @@
 <?php
 define('database-acesso-privado-rv$he', TRUE);
 
-require('./private/database.php');
-require('./private/credentials.php');
-require('./private/vendor/autoload.php');
+require ('./private/database.php');
+require ('./private/credentials.php');
+require ('./private/vendor/autoload.php');
 
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
@@ -33,5 +33,12 @@ if ($token != null) {
     header("Content-Type: application/json");
 
     $headers = getallheaders();
-    print_r($headers);
+    //print_r($headers);
+    echo (time());
+    echo ("\n");
+    
+    $expire = new DateTime();
+    $expire = new DateTime($expire->format('Y-m-d H:i:s'), new DateTimeZone('America/Sao_Paulo'));
+    
+    echo ($expire->format('U'));
 }

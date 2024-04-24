@@ -1,9 +1,9 @@
 <?php
 define('database-acesso-privado-rv$he', TRUE);
 
-require('./private/database.php');
-require('./private/credentials.php');
-require('./private/vendor/autoload.php');
+require ('./private/database.php');
+require ('./private/credentials.php');
+require ('./private/vendor/autoload.php');
 
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
@@ -27,36 +27,51 @@ isset($_POST["password"]) ? $senha_login = $_POST["password"] : $senha_login = n
 isset($_POST["mode"]) ? $mode = $_POST["mode"] : $mode = null;
 
 if ($mode == "fazer-login") {
-
-    if (strlen($senha_login) < 6 || strlen($senha_login) > 80) {
-        http_response_code(400);
-        echo ("SENHA");
-    } else if (!filter_var($email_login, FILTER_VALIDATE_EMAIL)) {
-        http_response_code(400);
-        echo ("EMAIL");
-    } else {
-
-        $resultadoLogin = tentaFazerLogin($host, $username, $password, $database, $email_login, $senha_login);
-
-        if ($resultadoLogin != -1) {
-            $identificador = "12346g3tsf3";
-            $payload = [
-                "name" => $resultadoLogin["nome"],
-                "role" => $resultadoLogin["cargo_id"],
-                "sub" => $identificador,
-                "exp" => time() + 60 * 60 * 2 // 2 horas
-            ];
-
-            $token = JWT::encode($payload, $chaveJwt, 'HS256');
-            
-            header("Authorization: Bearer " . $token);
-            http_response_code(200);
-            echo ("OK");
-        } else {
+    $token = isset($_COOKIE["key"]) ? $_COOKIE["key"] : null;
+    if (!estaLogado($token, $chaveJwt)) {
+        if (strlen($senha_login) < 6 || strlen($senha_login) > 80) {
             http_response_code(400);
-            echo ("FAILED_LOGIN");
+            echo ("SENHA");
+        } else if (!filter_var($email_login, FILTER_VALIDATE_EMAIL)) {
+            http_response_code(400);
+            echo ("EMAIL");
+        } else {
+
+            $resultadoLogin = tentaFazerLogin($host, $username, $password, $database, $email_login, $senha_login);
+
+            if ($resultadoLogin != -1) {
+                $identificador = "12346g3tsf3";
+                $payload = [
+                    "name" => $resultadoLogin["nome"],
+                    "role" => $resultadoLogin["cargo_id"],
+                    "sub" => $identificador,
+                    "exp" => time() + 60 * 60 * 2 // 2 horas
+                ];
+
+                $token = JWT::encode($payload, $chaveJwt, 'HS256');
+
+                setcookie(
+                    $name = "key",
+                    $value = $token,
+                    $expires_or_options = time() + (60 * 60 * 24 * 365), // 1 ano (quem gerencia o tempo de expiração é o JWT e não o cookie, por isso do alto tempo definido aqui)
+                    $path = '/',
+                    $domain = '',
+                    $secure = false,
+                    $httponly = true
+                );
+
+                http_response_code(200);
+                echo ("OK");
+            } else {
+                http_response_code(400);
+                echo ("FAILED_LOGIN");
+            }
         }
+    } else {
+        http_response_code(400);
+        echo ("JA_LOGADO");
     }
+
 } else {
     echo ($pageHtml);
 }
