@@ -612,15 +612,21 @@ if (!defined('database-acesso-privado-rv$he')) {
         }
     }
 
-    function estaLogado($token, $chaveJwt)
+    function estaLogado($token, $chaveJwt, $versaoSistema)
     {
         $result = false;
         if ($token != null) {
 
             try {
                 $decoded = JWT::decode($token, new Key($chaveJwt, 'HS256'));
-                $result = true;
+                $decoded = json_decode(json_encode($decoded), true);
+                if ($decoded["version"] == $versaoSistema) {
+                    $result = true;
+                }
             } catch (Exception $e) {
+            }
+
+            if ($result == false) {
                 setcookie("key", "");
             }
         }

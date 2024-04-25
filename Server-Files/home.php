@@ -19,7 +19,7 @@ executarFuncoesDeTodasPaginas($host, $username, $password, $database, $emailDemo
 
 $token = isset($_COOKIE["key"]) ? $_COOKIE["key"] : null;
 
-if (estaLogado($token, $chaveJwt) && !estaNaTokenBlackList($host, $username, $password, $database, $token)) {
+if (estaLogado($token, $chaveJwt, $versaoSistema) && !estaNaTokenBlackList($host, $username, $password, $database, $token)) {
     $infoJwt = getInfoTokenJwt($token, $chaveJwt);
     if ($infoJwt["sub"] == "demo") {
         header("Location: /novo-cadastro");

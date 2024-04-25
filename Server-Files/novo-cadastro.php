@@ -34,7 +34,7 @@ if ($mode == "solicitar-acesso") {
 
     $infoJwt = getInfoTokenJwt($token, $chaveJwt);
 
-    if (estaLogado($token, $chaveJwt) && $infoJwt["sub"] != "demo") {
+    if (estaLogado($token, $chaveJwt, $versaoSistema) && $infoJwt["sub"] != "demo") {
         http_response_code(400);
         echo ("JA_LOGADO");
     } else if (strlen($nome_cadastro) < 3 || strlen($nome_cadastro) > 256) {
@@ -73,7 +73,7 @@ if ($mode == "solicitar-acesso") {
     }
 } else {
 
-    if (estaLogado($token, $chaveJwt)) {
+    if (estaLogado($token, $chaveJwt, $versaoSistema)) {
         $infoJwt = getInfoTokenJwt($token, $chaveJwt);
         if ($infoJwt["sub"] == "demo") {
             $pageHtml = replaceSubstrByIdHtml($pageHtml, "Cadastrar Gerente", "titulo-pagina", "</h2>");

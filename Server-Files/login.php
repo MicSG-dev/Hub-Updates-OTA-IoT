@@ -30,7 +30,7 @@ $token = isset($_COOKIE["key"]) ? $_COOKIE["key"] : null;
 
 if ($mode == "fazer-login") {
 
-    if (!estaLogado($token, $chaveJwt)) {
+    if (!estaLogado($token, $chaveJwt, $versaoSistema)) {
         if (strlen($senha_login) < 6 || strlen($senha_login) > 80) {
             http_response_code(400);
             echo ("SENHA");
@@ -84,7 +84,7 @@ if ($mode == "fazer-login") {
         echo ("JA_LOGADO");
     }
 } else {
-    if (estaLogado($token, $chaveJwt) && !estaNaTokenBlackList($host, $username, $password, $database, $token)) {
+    if (estaLogado($token, $chaveJwt, $versaoSistema) && !estaNaTokenBlackList($host, $username, $password, $database, $token)) {
         $infoJwt = getInfoTokenJwt($token, $chaveJwt);
         if ($infoJwt["sub"] == "demo") {
             header("Location: /novo-cadastro");

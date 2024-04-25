@@ -36,7 +36,7 @@ window.addEventListener('load', () => {
 
             } else if (req.status == 200) {
                 document.getElementById("title-modal").innerText = "Solicitação de cadastro realizada";
-                document.getElementById("content-modal").innerText = "Caso seu e-mail não já esteja cadastrado em nosso sistema a sua solicitação de cadastro em nosso sistema foi efetuada com sucesso. A resposta desta solicitação efetuada pelo nosso Gerente será enviada em seu e-mail assim que feita. Caso necessário, envie as informações solicitadas no e-mail. Caso confirmada a sua solicitação, você também receberá um e-mail solicitando a definição da senha de sua conta.";
+                document.getElementById("content-modal").innerText = "Caso seu e-mail não já esteja cadastrado em nosso sistema a sua solicitação de cadastro em nosso sistema foi efetuada com sucesso. A resposta desta solicitação efetuada será enviada em seu e-mail assim que feita. Caso necessário, envie as informações solicitadas no e-mail.";
                 bootstrap.Modal.getOrCreateInstance('#modal').show();
 
                 document.getElementById("modal").addEventListener("hide.bs.modal", () => {
