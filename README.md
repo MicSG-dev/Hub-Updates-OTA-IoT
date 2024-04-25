@@ -14,7 +14,7 @@ Repositório do Hub de Atualizações OTA para dispositivos IoT remotos.
 
 - Biblioteca php-jwt da Firebase, Google: https://github.com/firebase/php-jwt
 
-## Instruções para utilizar este sistema
+## Instruções para preparar este sistema para uso
 ### Bibliotecas PHP
 Ao fazer download via .zip ou via git clone, deve-se instalar os packages composer. Para isso , siga o seguinte passo a passo:
 1. Com o projeto baixado em seu computador, abra o terminal cmd dentro da pasta do projeto;
