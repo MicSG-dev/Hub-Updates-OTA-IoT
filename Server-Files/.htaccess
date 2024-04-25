@@ -24,4 +24,4 @@ ErrorDocument 404 /404.php
 ErrorDocument 403 /403.php
 
 # Define login.php como o arquivo padrão quando o diretório raiz é acessado
-DirectoryIndex login.php
+DirectoryIndex home.php
