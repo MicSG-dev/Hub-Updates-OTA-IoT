@@ -18,11 +18,13 @@ if (!defined('database-acesso-privado-rv$he')) {
         verificarIntegridadeDatabaseSeNaoExistir($host, $username, $password);
         verificarIntegridadeTabelaRedefinicaoSenha($host, $username, $password);
         verificarIntegridadeTabelaCargos($host, $username, $password, $database);
-        verificarIntegridadeTabelaUsuarios($host, $username, $password);
+        verificarIntegridadeTabelaUsuarios($host, $username, $password, $database);
         verificarIntegridadeTabelaSolicitacoesCadastro($host, $username, $password);
+        verificarIntegridadeTabelaTokenBlackList($host, $username, $password);
 
         // TABELAS
         verificarValidadeCodigosRecuperacao($host, $username, $password, $database);
+        verificarValidadeTokensBlackList($host, $username, $password, $database);
     }
 
     function verificarIntegridadeDatabaseSeNaoExistir($host, $username, $password)
@@ -76,12 +78,40 @@ if (!defined('database-acesso-privado-rv$he')) {
         $mysqli->close();
     }
 
-    function verificarIntegridadeTabelaUsuarios($host, $username, $password)
+    function verificarIntegridadeTabelaTokenBlackList($host, $username, $password)
     {
         $mysqli = null;
 
         try {
             $mysqli = new mysqli($host, $username, $password);
+        } catch (mysqli_sql_exception) {
+            echo ("<script> alert('Não foi possível continuar. Informe o seguinte erro ao Administrador do Sistema: \\n\\nErro de Credenciais no Banco de Dados (TK_BLACK_LIST).');</script>");
+            exit();
+        }
+
+        if ($mysqli->connect_errno) {
+            echo ("<script> console.error('O sistema apresentou um erro. Informe ao Administrador do Sistema. ERRO: \\n\\nErro de conexão ao Banco de Dados (TK_BLACK_LIST).');</script>");
+        }
+
+        // Executar Query aqui
+        // ...
+        // ...
+
+        $query = "CREATE TABLE IF NOT EXISTS `hub_updates_ota_iot`.`lista_tokens_bloqueados` 
+        (`TOKEN` VARCHAR(256) NOT NULL,
+        `TIME_EXPIRACAO` TIMESTAMP NOT NULL, 
+        PRIMARY KEY (`TOKEN`)) ENGINE = InnoDB;
+        ";
+        $mysqli->query($query);
+        $mysqli->close();
+    }
+
+    function verificarIntegridadeTabelaUsuarios($host, $username, $password, $database)
+    {
+        $mysqli = null;
+
+        try {
+            $mysqli = new mysqli($host, $username, $password, $database);
         } catch (mysqli_sql_exception) {
             echo ("<script> alert('Não foi possível continuar. Informe o seguinte erro ao Administrador do Sistema: \\n\\nErro de Credenciais no Banco de Dados (USERBD_PASS).');</script>");
             exit();
@@ -91,22 +121,26 @@ if (!defined('database-acesso-privado-rv$he')) {
             echo ("<script> console.error('O sistema apresentou um erro. Informe ao Administrador do Sistema. ERRO: \\n\\nErro de conexão ao Banco de Dados (USERBD_PASS).');</script>");
         }
 
-        // Executar Query aqui
-        // ...
-        // ...
+        $query = "SHOW TABLES LIKE 'usuarios'";
+        $result = $mysqli->query($query);
 
-        $query = "CREATE TABLE IF NOT EXISTS `hub_updates_ota_iot`.`usuarios` 
-        (`ID` INT NOT NULL AUTO_INCREMENT, 
-        `NOME` VARCHAR(256) NOT NULL, 
-        `USERNAME` VARCHAR(26) NOT NULL UNIQUE,
-        `CARGO_ID` INT NOT NULL, 
-        `EMAIL` VARCHAR(256) NOT NULL , 
-        `DATA_INSCRICAO` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , 
-        `SENHA` VARCHAR(255) NOT NULL , 
-        PRIMARY KEY (`ID`),
-        FOREIGN KEY (`CARGO_ID`) REFERENCES `cargos`(`ID`) ON DELETE CASCADE ON UPDATE CASCADE) ENGINE = InnoDB;
-        "; // Em senha, se tem o limite de 80 caracteres, mas como ela é armazenada como hash, deve-se ter capacidade de até 255 caracteres (ver fonte: https://www.php.net/manual/pt_BR/password.constants.php#constant.password-default:~:text=255%20%C3%A9%20o%20comprimento%20recomendado).
-        $mysqli->query($query);
+        if ($result->num_rows != 1) {
+            $query = "CREATE TABLE IF NOT EXISTS `hub_updates_ota_iot`.`usuarios` 
+            (`ID` INT NOT NULL AUTO_INCREMENT, 
+            `NOME` VARCHAR(256) NOT NULL, 
+            `USERNAME` VARCHAR(26) NOT NULL UNIQUE,
+            `CARGO_ID` INT NOT NULL, 
+            `EMAIL` VARCHAR(256) NOT NULL , 
+            `DATA_INSCRICAO` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , 
+            `SENHA` VARCHAR(255) NOT NULL , 
+            PRIMARY KEY (`ID`),
+            FOREIGN KEY (`CARGO_ID`) REFERENCES `cargos`(`ID`) ON DELETE CASCADE ON UPDATE CASCADE) ENGINE = InnoDB;
+            "; // Em senha, se tem o limite de 80 caracteres, mas como ela é armazenada como hash, deve-se ter capacidade de até 255 caracteres (ver fonte: https://www.php.net/manual/pt_BR/password.constants.php#constant.password-default:~:text=255%20%C3%A9%20o%20comprimento%20recomendado).
+            $result = $mysqli->query($query);
+
+            $result = $mysqli->query("INSERT INTO usuarios(`nome`, `username`, `cargo_id`, `email`, `senha`) VALUES ('Demo', 'demo', 1, 'demo-hub@email.com', 'demo-hub')");
+        }
+
         $mysqli->close();
     }
 
@@ -169,6 +203,7 @@ if (!defined('database-acesso-privado-rv$he')) {
         (`EMAIL` VARCHAR(256) NOT NULL , 
         `NOME` VARCHAR(256) NOT NULL , 
         `USERNAME` VARCHAR(26) NOT NULL UNIQUE, 
+        `SENHA` VARCHAR(255) NOT NULL,
         `DATA_INSCRICAO` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , 
         PRIMARY KEY (`EMAIL`)) ENGINE = InnoDB;
         ";
@@ -194,6 +229,27 @@ if (!defined('database-acesso-privado-rv$he')) {
 
 
         $stmt = $mysqli->prepare("DELETE FROM redefinir_senha WHERE CURRENT_TIMESTAMP - time_redef >= 15*60"); // 15*60 = 900 segundos = 15 minutos
+        $stmt->execute();
+    }
+
+    function verificarValidadeTokensBlackList($host, $username, $password, $database)
+    {
+        $mysqli = null;
+
+        try {
+            $mysqli = new mysqli($host, $username, $password, $database);
+        } catch (mysqli_sql_exception) {
+            echo ("<script> alert('Não foi possível continuar. Informe o seguinte erro ao Administrador do Sistema: \\n\\nErro de Credenciais no Banco de Dados (DB).');</script>");
+            exit();
+        }
+
+
+        if ($mysqli->connect_errno) {
+            echo ("<script> console.error('O sistema apresentou um erro. Informe ao Administrador do Sistema. ERRO: \\n\\nErro de conexão ao Banco de Dados (DB).');</script>");
+        }
+
+
+        $stmt = $mysqli->prepare("DELETE FROM lista_tokens_bloqueados WHERE CURRENT_TIMESTAMP >= time_expiracao");
         $stmt->execute();
     }
 
@@ -516,7 +572,7 @@ if (!defined('database-acesso-privado-rv$he')) {
             if ($stmt->affected_rows == 1) {
                 return true;
             } else {
-                if (in_array($username_cadastro, ['admin', 'gerente', 'administrador'])) {
+                if (in_array($username_cadastro, ['admin', 'gerente', 'administrador', 'demo'])) {
                     return true; // retorna true pois usuários não podem ter os usernames acima (listados dentro do array)
                 } else {
                     return false;
@@ -559,14 +615,107 @@ if (!defined('database-acesso-privado-rv$he')) {
         $result = false;
         if ($token != null) {
 
-
             try {
                 $decoded = JWT::decode($token, new Key($chaveJwt, 'HS256'));
                 $result = true;
             } catch (Exception $e) {
+                setcookie("key", "");
             }
         }
 
         return $result;
+    }
+
+    function getInfoTokenJwt($token, $chaveJwt)
+    {
+        $result = null;
+        if ($token != null) {
+
+            try {
+                $decoded = JWT::decode($token, new Key($chaveJwt, 'HS256'));
+                $result = json_decode(json_encode($decoded), true);
+            } catch (Exception $e) {
+                setcookie("key", "");
+            }
+        }
+
+        return $result;
+    }
+
+    function atualizarUsuarioDemoParaGerente($host, $username, $password, $database, $email, $senha, $nome, $username_cadastro)
+    {
+        $mysqli = null;
+
+        try {
+            $mysqli = new mysqli($host, $username, $password, $database);
+        } catch (mysqli_sql_exception) {
+            echo ("Não foi possível continuar. Informe o seguinte erro ao Administrador do Sistema: Erro de Credenciais no Banco de Dados (UPDATE_DEMO) ");
+            exit();
+        }
+
+        if ($mysqli->connect_errno) {
+            echo ("O sistema apresentou um erro. Informe ao Administrador do Sistema. ERRO: Erro de conexão ao Banco de Dados (UPDATE_DEMO) ");
+        }
+
+        $stmt = $mysqli->prepare("UPDATE usuarios set email = (?), senha = (?), username = (?), nome = (?) WHERE username = 'demo'");
+        $stmt->bind_param("ssss", $email, $senha, $username_cadastro, $nome);
+        $stmt->execute();
+    }
+
+    function addTokenToBlackList($host, $username, $password, $database, $token, $chaveJwt)
+    {
+        $mysqli = null;
+
+        try {
+            $mysqli = new mysqli($host, $username, $password, $database);
+        } catch (mysqli_sql_exception) {
+            echo ("Não foi possível continuar. Informe o seguinte erro ao Administrador do Sistema: Erro de Credenciais no Banco de Dados (UPDATE_DEMO) ");
+            exit();
+        }
+
+        if ($mysqli->connect_errno) {
+            echo ("O sistema apresentou um erro. Informe ao Administrador do Sistema. ERRO: Erro de conexão ao Banco de Dados (UPDATE_DEMO) ");
+        }
+
+        $infoJwt = getInfoTokenJwt($token, $chaveJwt);
+        $expiracao = $infoJwt['exp'];
+
+        $datetime = new \DateTime('now', new \DateTimeZone('America/Sao_Paulo'));
+        $datetime->setTimestamp($expiracao);
+        $expiracao = $datetime->format('Y-m-d H:i:s');
+
+        $stmt = $mysqli->prepare("INSERT INTO lista_tokens_bloqueados(token, time_expiracao) VALUES (?, ?)");
+        $stmt->bind_param("ss", $token, $expiracao);
+        $stmt->execute();
+    }
+
+    function estaNaTokenBlackList($host, $username, $password, $database, $token)
+    {
+        $mysqli = null;
+
+        try {
+            $mysqli = new mysqli($host, $username, $password, $database);
+        } catch (mysqli_sql_exception) {
+            echo ("Não foi possível continuar. Informe o seguinte erro ao Administrador do Sistema: Erro de Credenciais no Banco de Dados (UPDATE_DEMO) ");
+            exit();
+        }
+
+        if ($mysqli->connect_errno) {
+            echo ("O sistema apresentou um erro. Informe ao Administrador do Sistema. ERRO: Erro de conexão ao Banco de Dados (UPDATE_DEMO) ");
+        }
+
+
+        $stmt = $mysqli->prepare("SELECT * FROM lista_tokens_bloqueados WHERE token = (?)");
+        $stmt->bind_param("s", $token);
+        $stmt->execute();
+
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        if ($stmt->affected_rows != 0) {
+            setcookie("key", "");
+            return true;
+        }
+
+        return false;
     }
 }

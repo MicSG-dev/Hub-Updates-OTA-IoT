@@ -26,9 +26,10 @@ isset($_POST["password"]) ? $senha_login = $_POST["password"] : $senha_login = n
 // Parâmetro POST mode
 isset($_POST["mode"]) ? $mode = $_POST["mode"] : $mode = null;
 
+$token = isset($_COOKIE["key"]) ? $_COOKIE["key"] : null;
+
 if ($mode == "fazer-login") {
 
-    $token = isset($_COOKIE["key"]) ? $_COOKIE["key"] : null;
     if (!estaLogado($token, $chaveJwt)) {
         if (strlen($senha_login) < 6 || strlen($senha_login) > 80) {
             http_response_code(400);
@@ -46,7 +47,8 @@ if ($mode == "fazer-login") {
                     "name" => $resultadoLogin["nome"],
                     "role" => $resultadoLogin["cargo_id"],
                     "sub" => $resultadoLogin["username"],
-                    "exp" => time() + 60 * 60 * 2 // 2 horas
+                    "exp" => time() + 60 * 60 * 2, // 2 horas
+                    "version" => $versaoSistema
                 ];
 
                 $token = JWT::encode($payload, $chaveJwt, 'HS256');
@@ -65,8 +67,13 @@ if ($mode == "fazer-login") {
 
                 );
 
-                http_response_code(200);
-                echo ("OK");
+                if ($resultadoLogin["username"] != "demo") {
+                    http_response_code(200);
+                    echo ("OK");
+                } else {
+                    http_response_code(400);
+                    echo ("DEMO_REDEF");
+                }
             } else {
                 http_response_code(400);
                 echo ("FAILED_LOGIN");
@@ -77,5 +84,16 @@ if ($mode == "fazer-login") {
         echo ("JA_LOGADO");
     }
 } else {
-    echo ($pageHtml);
+    if (estaLogado($token, $chaveJwt) && !estaNaTokenBlackList($host, $username, $password, $database, $token)) {
+        $infoJwt = getInfoTokenJwt($token, $chaveJwt);
+        if ($infoJwt["sub"] == "demo") {
+            header("Location: /novo-cadastro");
+        }else{
+            header("Location: /");
+        }
+        
+        die();
+    } else {
+        echo ($pageHtml);
+    }
 }
