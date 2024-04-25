@@ -11,7 +11,7 @@ $interPath = "private\\html\\";
 $fullPath = str_replace('.php', '.html', $prePath . $interPath . $nomeArquivoHtml);
 $pageHtml = file_get_contents($fullPath);
 
-executarFuncoesDeTodasPaginas($host, $username, $password, $database);
+executarFuncoesDeTodasPaginas($host, $username, $password, $database, $emailDemoAccount, $senhaDemoAccount);
 
 // Parâmetro POST email
 isset($_POST["email"]) ? $email_cadastro = $_POST["email"] : $email_cadastro = null;

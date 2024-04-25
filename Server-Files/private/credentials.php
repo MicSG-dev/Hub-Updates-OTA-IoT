@@ -14,6 +14,8 @@ if (!defined('database-acesso-privado-rv$he')) {
     
     // OPCIONAL - ALTERE OS VALORES DAS SEGUINTES VARIÁVEIS
     $versaoSistema = "1.0"; // a versão do sistema (possibilita o ADMIN do servidor apagar as tabelas do banco de dados, ou quando fazer alguma alteração significativa, e, quando incrementar a versão do sistema, os usuários que estejam logados anteriormente estarão 'deslogados')
+    $emailDemoAccount = "demo-hub@email.com"; // o e-mail da conta inicial para o gerente poder criar a conta dele
+    $senhaDemoAccount = "demo-hub"; // a senha da conta inicial para o gerente poder criar a conta dele
 
     // NÃO ALTERAR
     $database = "hub_updates_ota_iot"; // (NÃO é necessário alterar) este é o nome da database no banco de dados 

@@ -12,13 +12,13 @@ if (!defined('database-acesso-privado-rv$he')) {
 } else {
 
 
-    function executarFuncoesDeTodasPaginas($host, $username, $password, $database)
+    function executarFuncoesDeTodasPaginas($host, $username, $password, $database, $emailDemoAccount, $senhaDemoAccount)
     {
         // DATABASES
         verificarIntegridadeDatabaseSeNaoExistir($host, $username, $password);
         verificarIntegridadeTabelaRedefinicaoSenha($host, $username, $password);
         verificarIntegridadeTabelaCargos($host, $username, $password, $database);
-        verificarIntegridadeTabelaUsuarios($host, $username, $password, $database);
+        verificarIntegridadeTabelaUsuarios($host, $username, $password, $database, $emailDemoAccount, $senhaDemoAccount);
         verificarIntegridadeTabelaSolicitacoesCadastro($host, $username, $password);
         verificarIntegridadeTabelaTokenBlackList($host, $username, $password);
 
@@ -106,7 +106,7 @@ if (!defined('database-acesso-privado-rv$he')) {
         $mysqli->close();
     }
 
-    function verificarIntegridadeTabelaUsuarios($host, $username, $password, $database)
+    function verificarIntegridadeTabelaUsuarios($host, $username, $password, $database, $emailDemoAccount, $senhaDemoAccount)
     {
         $mysqli = null;
 
@@ -138,7 +138,7 @@ if (!defined('database-acesso-privado-rv$he')) {
             "; // Em senha, se tem o limite de 80 caracteres, mas como ela é armazenada como hash, deve-se ter capacidade de até 255 caracteres (ver fonte: https://www.php.net/manual/pt_BR/password.constants.php#constant.password-default:~:text=255%20%C3%A9%20o%20comprimento%20recomendado).
             $result = $mysqli->query($query);
 
-            $result = $mysqli->query("INSERT INTO usuarios(`nome`, `username`, `cargo_id`, `email`, `senha`) VALUES ('Demo', 'demo', 1, 'demo-hub@email.com', 'demo-hub')");
+            $result = $mysqli->query("INSERT INTO usuarios(`nome`, `username`, `cargo_id`, `email`, `senha`) VALUES ('Demo', 'demo', 1, '$emailDemoAccount', '$senhaDemoAccount')");
         }
 
         $mysqli->close();
@@ -474,21 +474,23 @@ if (!defined('database-acesso-privado-rv$he')) {
             echo ("O sistema apresentou um erro. Informe ao Administrador do Sistema. ERRO: Erro de conexão ao Banco de Dados (CANCEL_COD_REDEF) ");
         }
 
-        $stmt = $mysqli->prepare("SELECT * FROM redefinir_senha WHERE email = (?) AND cod_redef = (?)");
-        $stmt->bind_param("ss", $email_recover, $code_recover);
-        $stmt->execute();
-        $result = $stmt->get_result();
-
-        if ($stmt->affected_rows == 1) {
-            $stmt = $mysqli->prepare("DELETE FROM redefinir_senha WHERE email = (?)");
-            $stmt->bind_param("s", $email_recover);
+        if ($code_recover != "" && $code_recover != null && $email_recover != "" && $email_recover != null) {
+            $stmt = $mysqli->prepare("SELECT * FROM redefinir_senha WHERE email = (?) AND cod_redef = (?)");
+            $stmt->bind_param("ss", $email_recover, $code_recover);
             $stmt->execute();
+            $result = $stmt->get_result();
 
-            $stmt = $mysqli->prepare("UPDATE usuarios set senha = (?) WHERE email = (?)");
-            $stmt->bind_param("ss", $senha, $email_recover);
-            $stmt->execute();
+            if ($stmt->affected_rows == 1) {
+                $stmt = $mysqli->prepare("DELETE FROM redefinir_senha WHERE email = (?)");
+                $stmt->bind_param("s", $email_recover);
+                $stmt->execute();
 
-            return true;
+                $stmt = $mysqli->prepare("UPDATE usuarios set senha = (?) WHERE email = (?)");
+                $stmt->bind_param("ss", $senha, $email_recover);
+                $stmt->execute();
+
+                return true;
+            }
         }
 
         return false;

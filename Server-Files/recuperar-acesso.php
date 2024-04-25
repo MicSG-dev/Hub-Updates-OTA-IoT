@@ -11,7 +11,7 @@ $interPath = "private\\html\\";
 $fullPath = str_replace('.php', '.html', $prePath . $interPath . $nomeArquivoHtml);
 $pageHtml = file_get_contents($fullPath);
 
-executarFuncoesDeTodasPaginas($host, $username, $password, $database);
+executarFuncoesDeTodasPaginas($host, $username, $password, $database, $emailDemoAccount, $senhaDemoAccount);
 
 // verificar se usuário ESTA ou não logado. Se estiver logado, redirecionar ele para home. Se NÃO estiver logado, continuar.
 
@@ -39,7 +39,7 @@ if ($email_recover != null && $mode == "generate-code") {
         // se email esta cadastrado, salvar no BD um código aleatório de 6 dígitos e enviar por email para o USER
 
         if (!estaJaParaRedefinir($host, $username, $password, $database, $email_recover)) {
-            if ($temCadastro) {
+            if ($temCadastro && $email_recover != $emailDemoAccount) {
                 $codigo = gerarCodigoRedefinicaoSenha();
                 salvarCodigoRedefinicaoSenha($host, $username, $password, $database, $codigo, $email_recover);
             } else {

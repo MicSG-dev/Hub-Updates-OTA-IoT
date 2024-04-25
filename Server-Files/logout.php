@@ -5,7 +5,7 @@ require('./private/database.php');
 require('./private/credentials.php');
 require('./private/vendor/autoload.php');
 
-executarFuncoesDeTodasPaginas($host, $username, $password, $database);
+executarFuncoesDeTodasPaginas($host, $username, $password, $database, $emailDemoAccount, $senhaDemoAccount);
 
 $token = isset($_COOKIE["key"]) ? $_COOKIE["key"] : null;
 setcookie("key", "");

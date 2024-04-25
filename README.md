@@ -45,5 +45,7 @@ cd .\Server-Files\private\
     
     // OPCIONAL - ALTERE OS VALORES DAS SEGUINTES VARIÁVEIS
     $versaoSistema = "1.0"; // a versão do sistema (possibilita o ADMIN do servidor apagar as tabelas do banco de dados, ou quando fazer alguma alteração significativa, e, quando incrementar a versão do sistema, os usuários que estejam logados anteriormente estarão 'deslogados')
+    $emailDemoAccount = "demo-hub@email.com"; // o e-mail da conta inicial para o gerente poder criar a conta dele
+    $senhaDemoAccount = "demo-hub"; // a senha da conta inicial para o gerente poder criar a conta dele
 ```
 Com os passos anteriores realizados, seu projeto está pronto para funcionar.
