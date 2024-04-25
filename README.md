@@ -36,10 +36,14 @@ cd .\Server-Files\private\
 2. Abra o arquivo `credentials.php`;
 3. Dentro do arquivo, altere o valor das variáveis que armazenam as credenciais:
 ```
-$host = "localhost"; // o host do banco de dados
-$username = "micsg-tests"; // o username do banco de dados
-$password = "micsg-tests"; // a senha do banco de dados
-$pepperHash = "micsg-tests"; // o pepper para geração de hash das senhas dos users (altere para qualquer termo, mas que seja SEGURO)
-$chaveJwt = "micsg-tests"; // a chave secreta utilizada para assinar os tokens JWT (altere para qualquer termo, mas que seja SEGURO)
+    // OBRIGATÓRIO - ALTERE OS VALORES DAS SEGUINTES VARIÁVEIS
+    $host = "localhost"; // o host do banco de dados
+    $username = "micsg-tests"; // o username do banco de dados
+    $password = "micsg-tests"; // a senha do banco de dados
+    $pepperHash = "micsg-tests"; // o pepper para geração de hash das senhas dos users (altere para qualquer termo, mas que seja SEGURO)
+    $chaveJwt = "micsg-tests"; // a chave secreta utilizada para assinar os tokens JWT (altere para qualquer termo, mas que seja SEGURO)
+    
+    // OPCIONAL - ALTERE OS VALORES DAS SEGUINTES VARIÁVEIS
+    $versaoSistema = "1.0"; // a versão do sistema (possibilita o ADMIN do servidor apagar as tabelas do banco de dados, ou quando fazer alguma alteração significativa, e, quando incrementar a versão do sistema, os usuários que estejam logados anteriormente estarão 'deslogados')
 ```
 Com os passos anteriores realizados, seu projeto está pronto para funcionar.
