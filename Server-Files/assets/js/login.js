@@ -22,8 +22,9 @@ window.addEventListener('load', () => {
                     title = "Login não efetuado";
                     message = "Não foi possível fazer login com o e-mail e a senha informados. Por favor tente novamente, informando a senha e e-mail corretos.";
                 } else if (req.responseText == "JA_LOGADO") {
-                    //window.location.href = '/';
-                    console.log("Redirecionar, pois o login foi sucesso");
+                    window.location.href = '/';
+                } else if (req.responseText == "DEMO_REDEF") {
+                    window.location.href = '/novo-cadastro';
                 } else {
                     title = "Erro desconhecido";
                     message = "Erro desconhecido: Por favor, informe o suporte sobre este erro (CODE: RETURN_INVALID)";
@@ -35,10 +36,8 @@ window.addEventListener('load', () => {
                     bootstrap.Modal.getOrCreateInstance('#modal').show();
                 }
 
-
             } else if (req.status == 200) {
-                //window.location.href = '/';
-                console.log("Redirecionar, pois o login foi sucesso");
+                window.location.href = '/';
             }
 
         });

@@ -1,4 +1,5 @@
 window.addEventListener('load', () => {
+    
     document.getElementById("form-novo-cadastro").addEventListener('submit', (event) => {
         event.preventDefault();
 
