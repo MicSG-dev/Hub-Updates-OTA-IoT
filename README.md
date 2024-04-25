@@ -22,11 +22,11 @@ Ao fazer download via .zip ou via git clone, deve-se instalar os packages compos
 ```
 cd .\Server-Files\private\
 ```
-3. Atualize os packages via composer (caso não tenha o Composer em seu computador, faça o download no link oficial: https://getcomposer.org/download/):
+3. Atualize os packages via Composer (caso não tenha o Composer em seu computador, faça o download no link oficial: https://getcomposer.org/download/):
 ```
 composer update
 ```
-Com os passos anteriores realizados, seu projeto conterá todos os arquivo necessários para o funcionamento do projeto.
+Com os passos anteriores realizados, seu projeto conterá todos os arquivos necessários para o funcionamento do projeto.
 ### Credenciais do Sistema
 Antes de iniciar o projeto no servidor, é necessário alterar as credenciais gerais do sistema. Para isso, siga o passo a passo à seguir:
 1. Navegue até a pasta Server-Files/private:
@@ -41,6 +41,5 @@ $username = "micsg-tests"; // o username do banco de dados
 $password = "micsg-tests"; // a senha do banco de dados
 $pepperHash = "micsg-tests"; // o pepper para geração de hash das senhas dos users (altere para qualquer termo, mas que seja SEGURO)
 $chaveJwt = "micsg-tests"; // a chave secreta utilizada para assinar os tokens JWT (altere para qualquer termo, mas que seja SEGURO)
-$database = "hub_updates_ota_iot"; // (NÃO é necessário alterar) este é o nome da database no banco de dados 
 ```
 Com os passos anteriores realizados, seu projeto está pronto para funcionar.

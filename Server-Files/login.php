@@ -42,14 +42,10 @@ if ($mode == "fazer-login") {
 
             if ($resultadoLogin != -1) {
 
-                $identificador = $resultadoLogin["id"];
-                
-                //$idEncriptado = openssl_encrypt($identificador, "AES-256-CBC", "micsg-tests", 0,$iv); // utilizar este exemplo: https://www.php.net/manual/pt_BR/function.openssl-encrypt.php#:~:text=Exemplo%20%232%20AES%20Authenticated%20Encryption%20example%20prior%20to%20PHP%207.1
-
                 $payload = [
                     "name" => $resultadoLogin["nome"],
                     "role" => $resultadoLogin["cargo_id"],
-                    "sub" => $identificador,
+                    "sub" => $resultadoLogin["username"],
                     "exp" => time() + 60 * 60 * 2 // 2 horas
                 ];
 

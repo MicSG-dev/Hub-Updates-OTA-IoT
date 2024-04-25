@@ -97,7 +97,7 @@ if (!defined('database-acesso-privado-rv$he')) {
 
         $query = "CREATE TABLE IF NOT EXISTS `hub_updates_ota_iot`.`usuarios` 
         (`ID` INT NOT NULL AUTO_INCREMENT, 
-        `NOME` VARCHAR(256) NOT NULL UNIQUE, 
+        `NOME` VARCHAR(256) NOT NULL, 
         `USERNAME` VARCHAR(26) NOT NULL UNIQUE,
         `CARGO_ID` INT NOT NULL, 
         `EMAIL` VARCHAR(256) NOT NULL , 
@@ -540,7 +540,7 @@ if (!defined('database-acesso-privado-rv$he')) {
             echo ("O sistema apresentou um erro. Informe ao Administrador do Sistema. ERRO: Erro de conexão ao Banco de Dados (CANCEL_COD_REDEF) ");
         }
 
-        $stmt = $mysqli->prepare("SELECT id, nome, cargo_id FROM usuarios WHERE email = (?) AND senha = (?)");
+        $stmt = $mysqli->prepare("SELECT username, nome, cargo_id FROM usuarios WHERE email = (?) AND senha = (?)");
         $stmt->bind_param("ss", $email, $senha);
         $stmt->execute();
         $result = $stmt->get_result();
