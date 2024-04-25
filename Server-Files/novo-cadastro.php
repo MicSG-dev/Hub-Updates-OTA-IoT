@@ -37,18 +37,21 @@ if ($mode == "solicitar-acesso") {
     if (estaLogado($token, $chaveJwt, $versaoSistema) && $infoJwt["sub"] != "demo") {
         http_response_code(400);
         echo ("JA_LOGADO");
-    } else if (strlen($nome_cadastro) < 3 || strlen($nome_cadastro) > 256) {
+    } else if ($nome_cadastro == null || strlen($nome_cadastro) < 3 || strlen($nome_cadastro) > 256) {
         http_response_code(400);
         echo ("NOME");
-    } else if (strlen($username_cadastro) < 3 || strlen($username_cadastro) > 26) {
+    } else if ($username_cadastro == null || strlen($username_cadastro) < 3 || strlen($username_cadastro) > 26) {
         http_response_code(400);
         echo ("USER");
-    } else if (!filter_var($email_cadastro, FILTER_VALIDATE_EMAIL)) {
+    } else if ($email_cadastro == null || !filter_var($email_cadastro, FILTER_VALIDATE_EMAIL)) {
         http_response_code(400);
         echo ("EMAIL");
     } else if (usernameJaExiste($host, $username, $password, $database, $username_cadastro)) {
         http_response_code(400);
         echo ("USER_EXISTS");
+    } else if ($password_cadastro == null || strlen($password_cadastro) < 6 || strlen($password_cadastro) > 80) {
+        http_response_code(400);
+        echo ("PASS");
     } else {
 
 
@@ -63,7 +66,7 @@ if ($mode == "solicitar-acesso") {
         } else {
             if (!emailEstaCadastradoNoSistema($host, $username, $password, $database, $email_cadastro)) { // verifica se o email já esta cadastrado em outra conta
                 if (!jaExisteSolicitacaoCadastro($host, $username, $password, $database, $email_cadastro)) { // verifica se o email já esta cadastrada em outra solicitação de novo acesso
-                    registrarSolicitacaoNovoCadastro($host, $username, $password, $database, $email_cadastro, $nome_cadastro, $username_cadastro,$password_cadastro);
+                    registrarSolicitacaoNovoCadastro($host, $username, $password, $database, $email_cadastro, $nome_cadastro, $username_cadastro, $password_cadastro);
                 }
             }
         }

@@ -150,7 +150,7 @@ if ($email_recover != null && $mode == "generate-code") {
     }
 } else if ($code_recover != null && $mode == "verify-code") {
 
-    if (filter_var($email_recover, FILTER_VALIDATE_EMAIL)) {
+    if ($email_recover != null && filter_var($email_recover, FILTER_VALIDATE_EMAIL)) {
 
         if (verificarCodigoRedefinicaoSenha($host, $username, $password, $database, $code_recover, $email_recover)) {
             http_response_code(200);
@@ -165,8 +165,8 @@ if ($email_recover != null && $mode == "generate-code") {
     }
 } else if ($mode == "cancel-recover") {
 
-    if (filter_var($email_recover, FILTER_VALIDATE_EMAIL)) {
-        if (verificarCodigoRedefinicaoSenha($host, $username, $password, $database, $code_recover, $email_recover)) {
+    if ($email_recover != null && filter_var($email_recover, FILTER_VALIDATE_EMAIL)) {
+        if ($code_recover != null && verificarCodigoRedefinicaoSenha($host, $username, $password, $database, $code_recover, $email_recover)) {
             efetuarCancelamentoCodigoRedefinicao($host, $username, $password, $database, $code_recover, $email_recover);
             http_response_code(200);
             echo ("OK");
@@ -180,8 +180,8 @@ if ($email_recover != null && $mode == "generate-code") {
     }
 } else if ($mode == "redef-password") {
 
-    if (senhaEForte($senha)) {
-        if (redefinirSenha($host, $username, $password, $database, $code_recover, $email_recover, $senha)) {
+    if ($senha != null && senhaEForte($senha)) {
+        if ($email_recover != null && $code_recover != null && redefinirSenha($host, $username, $password, $database, $code_recover, $email_recover, $senha)) {
             http_response_code(200);
             echo ("OK");
         } else {

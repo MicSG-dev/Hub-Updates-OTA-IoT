@@ -31,10 +31,10 @@ $token = isset($_COOKIE["key"]) ? $_COOKIE["key"] : null;
 if ($mode == "fazer-login") {
 
     if (!estaLogado($token, $chaveJwt, $versaoSistema)) {
-        if (strlen($senha_login) < 6 || strlen($senha_login) > 80) {
+        if ($senha_login == null || strlen($senha_login) < 6 || strlen($senha_login) > 80) {
             http_response_code(400);
             echo ("SENHA");
-        } else if (!filter_var($email_login, FILTER_VALIDATE_EMAIL)) {
+        } else if ($email_login == null || !filter_var($email_login, FILTER_VALIDATE_EMAIL)) {
             http_response_code(400);
             echo ("EMAIL");
         } else {
@@ -88,10 +88,10 @@ if ($mode == "fazer-login") {
         $infoJwt = getInfoTokenJwt($token, $chaveJwt);
         if ($infoJwt["sub"] == "demo") {
             header("Location: /novo-cadastro");
-        }else{
+        } else {
             header("Location: /");
         }
-        
+
         die();
     } else {
         echo ($pageHtml);

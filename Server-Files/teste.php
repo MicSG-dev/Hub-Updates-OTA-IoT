@@ -28,6 +28,11 @@ if ($senha != null) {
         echo "Usuário ou Senha Incorreta!";
     }
 } else {
-
-    echo ("nada");
+    $nome_cadastro = isset($_GET["key"]) ? $_GET["key"] : null;
+    if("" == null){
+        echo ("\"\" e null são a mesma coisa");
+    }else{
+        echo ("\"\" e null são diferentes");
+    }
+    
 }
