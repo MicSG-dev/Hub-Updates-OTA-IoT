@@ -63,7 +63,7 @@ if ($mode == "solicitar-acesso") {
         } else {
             if (!emailEstaCadastradoNoSistema($host, $username, $password, $database, $email_cadastro)) { // verifica se o email já esta cadastrado em outra conta
                 if (!jaExisteSolicitacaoCadastro($host, $username, $password, $database, $email_cadastro)) { // verifica se o email já esta cadastrada em outra solicitação de novo acesso
-                    registrarSolicitacaoNovoCadastro($host, $username, $password, $database, $email_cadastro, $nome_cadastro, $username_cadastro);
+                    registrarSolicitacaoNovoCadastro($host, $username, $password, $database, $email_cadastro, $nome_cadastro, $username_cadastro,$password_cadastro);
                 }
             }
         }

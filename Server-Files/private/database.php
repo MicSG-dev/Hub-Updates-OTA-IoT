@@ -494,7 +494,7 @@ if (!defined('database-acesso-privado-rv$he')) {
         return false;
     }
 
-    function registrarSolicitacaoNovoCadastro($host, $username, $password, $database, $email, $nome, $username_cadastro)
+    function registrarSolicitacaoNovoCadastro($host, $username, $password, $database, $email, $nome, $username_cadastro, $password_cadastro)
     {
         $mysqli = null;
 
@@ -509,8 +509,8 @@ if (!defined('database-acesso-privado-rv$he')) {
             echo ("O sistema apresentou um erro. Informe ao Administrador do Sistema. ERRO: Erro de conexão ao Banco de Dados (CANCEL_COD_REDEF) ");
         }
 
-        $stmt = $mysqli->prepare("INSERT INTO solicitacoes_cadastro(email, nome, username) VALUES (?, ?, ?)");
-        $stmt->bind_param("sss", $email, $nome, $username_cadastro);
+        $stmt = $mysqli->prepare("INSERT INTO solicitacoes_cadastro(email, nome, username, senha) VALUES (?, ?, ?, ?)");
+        $stmt->bind_param("ssss", $email, $nome, $username_cadastro, $password_cadastro);
         $stmt->execute();
     }
 
