@@ -42,6 +42,7 @@ cd .\Server-Files\private\
     $password = "micsg-tests"; // a senha do banco de dados
     $pepperHash = "micsg-tests"; // o pepper para geração de hash das senhas dos users (altere para qualquer termo, mas que seja SEGURO)
     $chaveJwt = "micsg-tests"; // a chave secreta utilizada para assinar os tokens JWT (altere para qualquer termo, mas que seja SEGURO)
+    $chaveCrypto = "SUBSTITUA_ESTE_VALOR_AQUI"; // a chave secreta utilizada para criptografar os hash das senhas dos users (para gerar um valor válido siga os passos da documentação neste link: https://github.com/MicSG-dev/Hub-Updates-OTA-IoT#gerar-key-de-criptografia-da-biblioteca-defusephp-encryption)
     
     // OPCIONAL - ALTERE OS VALORES DAS SEGUINTES VARIÁVEIS
     $versaoSistema = "1.0"; // a versão do sistema (possibilita o ADMIN do servidor apagar as tabelas do banco de dados, ou quando fazer alguma alteração significativa, e, quando incrementar a versão do sistema, os usuários que estejam logados anteriormente estarão 'deslogados')
@@ -60,7 +61,7 @@ vendor/bin/generate-defuse-key
 ```
 3. Com a chave de criptografia gerada, copie ela e cole o seu valor na variável `$chaveCrypto` que está dentro do arquivo `credentials.php` (na pasta Server-Files/private):
 ```
-$chaveCrypto = "SUBSTITUA_ESTE_VALOR_AQUI"; // a chave secreta utilizada para criptografar os hashs das senhas dos users (para gerar um valor válido: siga os passos da documentação neste link: )
+$chaveCrypto = "SUBSTITUA_ESTE_VALOR_AQUI"; // a chave secreta utilizada para criptografar os hash das senhas dos users
 ```
 
 Com os passos anteriores realizados, seu projeto está pronto para funcionar.
