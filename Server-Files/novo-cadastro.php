@@ -49,15 +49,16 @@ if ($mode == "solicitar-acesso") {
     } else if (usernameJaExiste($host, $username, $password, $database, $username_cadastro)) {
         http_response_code(400);
         echo ("USER_EXISTS");
-    } else if ($password_cadastro == null || strlen($password_cadastro) < 6 || strlen($password_cadastro) > 80) {
+    } else if ($password_cadastro == null || strlen($password_cadastro) < 12 || strlen($password_cadastro) > 4096) {
         http_response_code(400);
         echo ("PASS");
     } else {
 
+        $passwordCadastroHash = converterSenhaParaHash($password_cadastro, $pepperHash);
 
         if ($infoJwt["sub"] == "demo") {
 
-            atualizarUsuarioDemoParaGerente($host, $username, $password, $database, $email_cadastro, $password_cadastro, $nome_cadastro, $username_cadastro);
+            atualizarUsuarioDemoParaGerente($host, $username, $password, $database, $email_cadastro, $passwordCadastroHash, $nome_cadastro, $username_cadastro);
 
             setcookie("key", "");
             if ($token != null) {
@@ -66,7 +67,7 @@ if ($mode == "solicitar-acesso") {
         } else {
             if (!emailEstaCadastradoNoSistema($host, $username, $password, $database, $email_cadastro)) { // verifica se o email já esta cadastrado em outra conta
                 if (!jaExisteSolicitacaoCadastro($host, $username, $password, $database, $email_cadastro)) { // verifica se o email já esta cadastrada em outra solicitação de novo acesso
-                    registrarSolicitacaoNovoCadastro($host, $username, $password, $database, $email_cadastro, $nome_cadastro, $username_cadastro, $password_cadastro);
+                    registrarSolicitacaoNovoCadastro($host, $username, $password, $database, $email_cadastro, $nome_cadastro, $username_cadastro, $passwordCadastroHash);
                 }
             }
         }

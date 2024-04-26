@@ -130,7 +130,7 @@ if (!defined('database-acesso-privado-rv$he')) {
             `NOME` VARCHAR(256) NOT NULL, 
             `USERNAME` VARCHAR(26) NOT NULL UNIQUE,
             `CARGO_ID` INT NOT NULL, 
-            `EMAIL` VARCHAR(256) NOT NULL , 
+            `EMAIL` VARCHAR(256) NOT NULL UNIQUE, 
             `DATA_INSCRICAO` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , 
             `SENHA` VARCHAR(255) NOT NULL , 
             PRIMARY KEY (`ID`),
@@ -583,7 +583,7 @@ if (!defined('database-acesso-privado-rv$he')) {
         }
     }
 
-    function tentaFazerLogin($host, $username, $password, $database, $email, $senha)
+    function tentaFazerLogin($host, $username, $password, $database, $email, $senha, $pepperHash)
     {
         $mysqli = null;
 
@@ -598,18 +598,22 @@ if (!defined('database-acesso-privado-rv$he')) {
             echo ("O sistema apresentou um erro. Informe ao Administrador do Sistema. ERRO: Erro de conexão ao Banco de Dados (CANCEL_COD_REDEF) ");
         }
 
-        $stmt = $mysqli->prepare("SELECT username, nome, cargo_id FROM usuarios WHERE email = (?) AND senha = (?)");
-        $stmt->bind_param("ss", $email, $senha);
+
+
+        $stmt = $mysqli->prepare("SELECT username, nome, cargo_id, senha FROM usuarios WHERE email = (?)");
+        $stmt->bind_param("s", $email);
         $stmt->execute();
         $result = $stmt->get_result();
         $row = $result->fetch_assoc();
 
         if ($stmt->affected_rows == 1) {
-
-            return $row;
-        } else {
-            return -1;
+            $hash = $row["senha"];
+            if (password_verify(hash_hmac("sha256", $senha, $pepperHash), $hash)) {
+                return $row;
+            }
         }
+
+        return -1;
     }
 
     function estaLogado($token, $chaveJwt, $versaoSistema)
@@ -725,5 +729,21 @@ if (!defined('database-acesso-privado-rv$he')) {
         }
 
         return false;
+    }
+
+    function converterSenhaParaHash($senha, $pepperHash)
+    {
+        if ($senha == null)
+            return null;
+
+        $senhaComPepper = hash_hmac("sha256", $senha, $pepperHash);
+
+        $options = [
+            'cost' => 11,
+        ];
+
+        $hash = password_hash($senhaComPepper, PASSWORD_DEFAULT, $options);
+
+        return $hash;
     }
 }

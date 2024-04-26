@@ -48,4 +48,19 @@ cd .\Server-Files\private\
     $emailDemoAccount = "demo-hub@email.com"; // o e-mail da conta inicial para o gerente poder criar a conta dele
     $senhaDemoAccount = "demo-hub"; // a senha da conta inicial para o gerente poder criar a conta dele
 ```
+### Gerar key de Criptografia da biblioteca defuse/php-encryption
+Antes de iniciar o projeto no servidor, é necessário gerar e salvar em uma variável a key de Criptografia. Para isso, siga o passo á seguir:
+1. Navegue até a pasta Server-Files/private (caso ainda não esteja nela):
+```
+cd .\Server-Files\private\
+```
+2. Execute o comando à seguir para gerar uma chave de criptografia aleatória e à imprime na saída do prompt de comando:
+```
+vendor/bin/generate-defuse-key
+```
+3. Com a chave de criptografia gerada, copie ela e cole o seu valor na variável `$chaveCrypto` que está dentro do arquivo `credentials.php` (na pasta Server-Files/private):
+```
+$chaveCrypto = "SUBSTITUA_ESTE_VALOR_AQUI"; // a chave secreta utilizada para criptografar os hashs das senhas dos users (para gerar um valor válido: siga os passos da documentação neste link: )
+```
+
 Com os passos anteriores realizados, seu projeto está pronto para funcionar.

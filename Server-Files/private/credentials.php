@@ -11,6 +11,7 @@ if (!defined('database-acesso-privado-rv$he')) {
     $password = "micsg-tests"; // a senha do banco de dados
     $pepperHash = "micsg-tests"; // o pepper para geração de hash das senhas dos users (altere para qualquer termo, mas que seja SEGURO)
     $chaveJwt = "micsg-tests"; // a chave secreta utilizada para assinar os tokens JWT (altere para qualquer termo, mas que seja SEGURO)
+    $chaveCrypto = "SUBSTITUA_ESTE_VALOR_AQUI"; // a chave secreta utilizada para criptografar os hashs das senhas dos users (para gerar um valor válido: siga os passos da documentação neste link: )
     
     // OPCIONAL - ALTERE OS VALORES DAS SEGUINTES VARIÁVEIS
     $versaoSistema = "1.0"; // a versão do sistema (possibilita o ADMIN do servidor apagar as tabelas do banco de dados, ou quando fazer alguma alteração significativa, e, quando incrementar a versão do sistema, os usuários que estejam logados anteriormente estarão 'deslogados')

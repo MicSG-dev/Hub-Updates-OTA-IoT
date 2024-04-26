@@ -180,7 +180,7 @@ if ($email_recover != null && $mode == "generate-code") {
     }
 } else if ($mode == "redef-password") {
 
-    if ($senha != null && senhaEForte($senha)) {
+    if ($senha != null && strlen($senha) <= 4096 && senhaEForte($senha)) {
         if ($email_recover != null && $code_recover != null && redefinirSenha($host, $username, $password, $database, $code_recover, $email_recover, $senha)) {
             http_response_code(200);
             echo ("OK");
@@ -214,7 +214,7 @@ function gerarCodigoRedefinicaoSenha()
 function senhaEForte($senha)
 {
 
-    if (strlen($senha) < 6) {
+    if (strlen($senha) < 12) {
         return false;
     }
     return true;

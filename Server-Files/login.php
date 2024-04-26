@@ -31,7 +31,7 @@ $token = isset($_COOKIE["key"]) ? $_COOKIE["key"] : null;
 if ($mode == "fazer-login") {
 
     if (!estaLogado($token, $chaveJwt, $versaoSistema)) {
-        if ($senha_login == null || strlen($senha_login) < 6 || strlen($senha_login) > 80) {
+        if ($senha_login == null || strlen($senha_login) < 12 || strlen($senha_login) > 4096) {
             http_response_code(400);
             echo ("SENHA");
         } else if ($email_login == null || !filter_var($email_login, FILTER_VALIDATE_EMAIL)) {
@@ -39,7 +39,7 @@ if ($mode == "fazer-login") {
             echo ("EMAIL");
         } else {
 
-            $resultadoLogin = tentaFazerLogin($host, $username, $password, $database, $email_login, $senha_login);
+            $resultadoLogin = tentaFazerLogin($host, $username, $password, $database, $email_login, $senha_login, $pepperHash);
 
             if ($resultadoLogin != -1) {
 
