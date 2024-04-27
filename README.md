@@ -13,6 +13,7 @@ Repositório do Hub de Atualizações OTA para dispositivos IoT remotos.
 ## Tecnologias utilizadas
 
 - Biblioteca php-jwt da Firebase, Google: https://github.com/firebase/php-jwt
+- Biblioteca php-encryption da defuse: https://github.com/defuse/php-encryption
 
 ## Instruções para preparar este sistema para uso
 ### Bibliotecas PHP
@@ -47,7 +48,7 @@ cd .\Server-Files\private\
     // OPCIONAL - ALTERE OS VALORES DAS SEGUINTES VARIÁVEIS
     $versaoSistema = "1.0"; // a versão do sistema (possibilita o ADMIN do servidor apagar as tabelas do banco de dados, ou quando fazer alguma alteração significativa, e, quando incrementar a versão do sistema, os usuários que estejam logados anteriormente estarão 'deslogados')
     $emailDemoAccount = "demo-hub@email.com"; // o e-mail da conta inicial para o gerente poder criar a conta dele
-    $senhaDemoAccount = "demo-hub"; // a senha da conta inicial para o gerente poder criar a conta dele
+    $senhaDemoAccount = "senha-demo-hub"; // a senha da conta inicial para o gerente poder criar a conta dele (mínimo de 12 caracteres, máximo de 4096 caracteres)
 ```
 ### Gerar key de Criptografia da biblioteca defuse/php-encryption
 Antes de iniciar o projeto no servidor, é necessário gerar e salvar em uma variável a key de Criptografia. Para isso, siga o passo á seguir:
