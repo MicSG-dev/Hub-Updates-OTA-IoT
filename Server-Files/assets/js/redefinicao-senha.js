@@ -221,11 +221,13 @@ window.addEventListener('load', () => {
 
                 if (req.status == 200) {
                     document.getElementById("title-modal").innerText = "Operação realizada com sucesso!";
-                    document.getElementById("content-modal").innerText = "A Redefinição de Senha ocorreu com sucesso. Para logins futuros, utlize a nova senha cadastrada. Você será redirecionado para a página de login, quando esta mensagem for fechada.";
+                    document.getElementById("content-modal").innerText = "A Redefinição de Senha ocorreu com sucesso. Para logins futuros, utilize a nova senha cadastrada. Você será redirecionado para a página de login, quando esta mensagem for fechada.";
                     bootstrap.Modal.getOrCreateInstance('#modal').show();
 
                     document.getElementById("modal").addEventListener("hide.bs.modal", () => {
-                        window.location.href = '/';
+                        setTimeout(() => {
+                            window.location.href = '/';
+                        }, 100);
                     });
 
                     console.log("Redefinição de senha cancelada com sucesso!");
