@@ -37,7 +37,7 @@ if ($mode == "solicitar-acesso") {
     if (estaLogado($token, $chaveJwt, $versaoSistema) && $infoJwt["sub"] != "demo") {
         http_response_code(400);
         echo ("JA_LOGADO");
-    } else if ($nome_cadastro == null || strlen($nome_cadastro) < 3 || strlen($nome_cadastro) > 256) {
+    } else if ($nome_cadastro == null || mb_strlen($nome_cadastro) < 3 || mb_strlen($nome_cadastro) > 256) {
         http_response_code(400);
         echo ("NOME");
     } else if ($username_cadastro == null || strlen($username_cadastro) < 3 || strlen($username_cadastro) > 26) {

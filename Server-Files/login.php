@@ -57,7 +57,7 @@ if ($mode == "fazer-login") {
                     "version" => $versaoSistema
                 ];
 
-                $token = JWT::encode($payload, $chaveJwt, 'HS256');
+                $token = JWT::encode($payload, $chaveJwt, 'HS384');
 
                 setcookie(
                     "key",

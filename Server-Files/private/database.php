@@ -100,9 +100,10 @@ if (!defined('database-acesso-privado-rv$he')) {
         // ...
 
         $query = "CREATE TABLE IF NOT EXISTS `hub_updates_ota_iot`.`lista_tokens_bloqueados` 
-        (`TOKEN` VARCHAR(256) NOT NULL,
+        (`ID` INT NOT NULL AUTO_INCREMENT,
+        `TOKEN` VARCHAR(1024) NOT NULL,
         `TIME_EXPIRACAO` TIMESTAMP NOT NULL, 
-        PRIMARY KEY (`TOKEN`)) ENGINE = InnoDB;
+        PRIMARY KEY (`ID`)) ENGINE = InnoDB;
         ";
         $mysqli->query($query);
         $mysqli->close();
@@ -636,7 +637,7 @@ if (!defined('database-acesso-privado-rv$he')) {
         if ($token != null) {
 
             try {
-                $decoded = JWT::decode($token, new Key($chaveJwt, 'HS256'));
+                $decoded = JWT::decode($token, new Key($chaveJwt, 'HS384'));
                 $decoded = json_decode(json_encode($decoded), true);
                 if ($decoded["version"] == $versaoSistema) {
                     $result = true;
@@ -658,7 +659,7 @@ if (!defined('database-acesso-privado-rv$he')) {
         if ($token != null) {
 
             try {
-                $decoded = JWT::decode($token, new Key($chaveJwt, 'HS256'));
+                $decoded = JWT::decode($token, new Key($chaveJwt, 'HS384'));
                 $result = json_decode(json_encode($decoded), true);
             } catch (Exception $e) {
                 setcookie("key", "");
