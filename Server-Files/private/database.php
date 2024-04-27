@@ -765,4 +765,16 @@ if (!defined('database-acesso-privado-rv$he')) {
 
         return $ciphertext;
     }
+
+    function ehAccountDemo($token, $chaveJwt)
+    {
+        $infoJwt = getInfoTokenJwt($token, $chaveJwt);
+
+        if ($infoJwt != null && $infoJwt["sub"] == "demo") {
+            header("Location: /novo-cadastro");
+            die();
+        }
+
+        return false;
+    }
 }

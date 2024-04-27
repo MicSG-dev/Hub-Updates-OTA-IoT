@@ -27,85 +27,49 @@ isset($_POST["pass"]) ? $senha = $_POST["pass"] : $senha = null;
 // Parâmetro POST mode
 isset($_POST["mode"]) ? $mode = $_POST["mode"] : $mode = null;
 
-
-if ($email_recover != null && $mode == "generate-code") {
-
-    if (filter_var($email_recover, FILTER_VALIDATE_EMAIL)) {
-
-        // verificar se email esta cadastrado
-        $temCadastro = emailEstaCadastradoNoSistema($host, $username, $password, $database, $email_recover);
+$token = isset($_COOKIE["key"]) ? $_COOKIE["key"] : null;
 
 
-        // se email esta cadastrado, salvar no BD um código aleatório de 6 dígitos e enviar por email para o USER
-
-        if (!estaJaParaRedefinir($host, $username, $password, $database, $email_recover)) {
-            if ($temCadastro && $email_recover != $emailDemoAccount) {
-                $codigo = gerarCodigoRedefinicaoSenha();
-                salvarCodigoRedefinicaoSenha($host, $username, $password, $database, $codigo, $email_recover);
-            } else {
-                salvarCodigoRedefinicaoSenha($host, $username, $password, $database, null, $email_recover);
-            }
-        }
-
-
-
+if (estaLogado($token, $chaveJwt, $versaoSistema)) {
+    if ($mode != "") {
         http_response_code(200);
-        echo ("OK");
+        echo ("JA_LOGADO");
     } else {
-        http_response_code(400);
-        echo ("Email invalido");
+        header("Location: /");
+        die();
     }
-} else if ($email_recover != null && $mode == "time-next-generate-code") {
+} else {
+    if ($email_recover != null && $mode == "generate-code") {
 
-    if (filter_var($email_recover, FILTER_VALIDATE_EMAIL)) {
-        $timeRedef = getTimeRedef($host, $username, $password, $database, $email_recover);
-        if ($timeRedef != "0") {
+        if (filter_var($email_recover, FILTER_VALIDATE_EMAIL)) {
 
-            $datetimeInitial = new DateTime($timeRedef, new DateTimeZone('America/Sao_Paulo'));
-            $datetimeInitial->setTimezone(new DateTimeZone('UTC'));
+            // verificar se email esta cadastrado
+            $temCadastro = emailEstaCadastradoNoSistema($host, $username, $password, $database, $email_recover);
 
-            $datetimeEnd = new DateTime();
-            $datetimeEnd->setTimezone(new DateTimeZone('UTC'));
 
-            $interval = $datetimeEnd->getTimestamp() - $datetimeInitial->getTimestamp();
+            // se email esta cadastrado, salvar no BD um código aleatório de 6 dígitos e enviar por email para o USER
 
-            $total_seconds = 2 * 60;
-
-            $result = $total_seconds - $interval;
-            if ($result < 0) {
-                $result = 0;
+            if (!estaJaParaRedefinir($host, $username, $password, $database, $email_recover)) {
+                if ($temCadastro && $email_recover != $emailDemoAccount) {
+                    $codigo = gerarCodigoRedefinicaoSenha();
+                    salvarCodigoRedefinicaoSenha($host, $username, $password, $database, $codigo, $email_recover);
+                } else {
+                    salvarCodigoRedefinicaoSenha($host, $username, $password, $database, null, $email_recover);
+                }
             }
 
-            $m = intval($result / 60);
-            $s = $result % 60;
+
+
+            http_response_code(200);
+            echo ("OK");
         } else {
-            $m = 0;
-            $s = 0;
+            http_response_code(400);
+            echo ("Email invalido");
         }
+    } else if ($email_recover != null && $mode == "time-next-generate-code") {
 
-        http_response_code(200);
-        $json_obj = new stdClass();
-        $json_obj->m = $m;
-        $json_obj->s = $s;
-        $json_obj = json_encode($json_obj);
-        echo $json_obj;
-    } else {
-        http_response_code(400);
-        echo ("Email invalido");
-    }
-} else if ($email_recover != null && $mode == "regenerate-code") {
-
-    if (filter_var($email_recover, FILTER_VALIDATE_EMAIL)) {
-
-        // verificar se email esta cadastrado
-        $temCadastro = emailEstaCadastradoNoSistema($host, $username, $password, $database, $email_recover);
-
-        // se email esta cadastrado, salvar no BD um código aleatório de 6 dígitos e enviar por email para o USER
-
-        if (estaJaParaRedefinir($host, $username, $password, $database, $email_recover)) {
-
+        if (filter_var($email_recover, FILTER_VALIDATE_EMAIL)) {
             $timeRedef = getTimeRedef($host, $username, $password, $database, $email_recover);
-
             if ($timeRedef != "0") {
 
                 $datetimeInitial = new DateTime($timeRedef, new DateTimeZone('America/Sao_Paulo'));
@@ -130,80 +94,128 @@ if ($email_recover != null && $mode == "generate-code") {
                 $s = 0;
             }
 
-            if ($m == 0 && $s == 0) {
-                // regerar codigo
+            http_response_code(200);
+            $json_obj = new stdClass();
+            $json_obj->m = $m;
+            $json_obj->s = $s;
+            $json_obj = json_encode($json_obj);
+            echo $json_obj;
+        } else {
+            http_response_code(400);
+            echo ("Email invalido");
+        }
+    } else if ($email_recover != null && $mode == "regenerate-code") {
 
+        if (filter_var($email_recover, FILTER_VALIDATE_EMAIL)) {
 
-                if ($temCadastro) {
-                    $codigo = gerarCodigoRedefinicaoSenha();
-                    regenerateCodeRecover($host, $username, $password, $database, $codigo, $email_recover);
+            // verificar se email esta cadastrado
+            $temCadastro = emailEstaCadastradoNoSistema($host, $username, $password, $database, $email_recover);
+
+            // se email esta cadastrado, salvar no BD um código aleatório de 6 dígitos e enviar por email para o USER
+
+            if (estaJaParaRedefinir($host, $username, $password, $database, $email_recover)) {
+
+                $timeRedef = getTimeRedef($host, $username, $password, $database, $email_recover);
+
+                if ($timeRedef != "0") {
+
+                    $datetimeInitial = new DateTime($timeRedef, new DateTimeZone('America/Sao_Paulo'));
+                    $datetimeInitial->setTimezone(new DateTimeZone('UTC'));
+
+                    $datetimeEnd = new DateTime();
+                    $datetimeEnd->setTimezone(new DateTimeZone('UTC'));
+
+                    $interval = $datetimeEnd->getTimestamp() - $datetimeInitial->getTimestamp();
+
+                    $total_seconds = 2 * 60;
+
+                    $result = $total_seconds - $interval;
+                    if ($result < 0) {
+                        $result = 0;
+                    }
+
+                    $m = intval($result / 60);
+                    $s = $result % 60;
                 } else {
-                    regenerateCodeRecover($host, $username, $password, $database, null, $email_recover);
+                    $m = 0;
+                    $s = 0;
+                }
+
+                if ($m == 0 && $s == 0) {
+                    // regerar codigo
+
+
+                    if ($temCadastro) {
+                        $codigo = gerarCodigoRedefinicaoSenha();
+                        regenerateCodeRecover($host, $username, $password, $database, $codigo, $email_recover);
+                    } else {
+                        regenerateCodeRecover($host, $username, $password, $database, null, $email_recover);
+                    }
                 }
             }
-        }
-        http_response_code(200);
-        echo ("OK");
-    } else {
-        http_response_code(400);
-        echo ("Email invalido");
-    }
-} else if ($code_recover != null && $mode == "verify-code") {
-
-    if ($email_recover != null && filter_var($email_recover, FILTER_VALIDATE_EMAIL)) {
-
-        if (verificarCodigoRedefinicaoSenha($host, $username, $password, $database, $code_recover, $email_recover)) {
             http_response_code(200);
             echo ("OK");
         } else {
             http_response_code(400);
-            echo ("CODE");
+            echo ("Email invalido");
         }
-    } else {
-        http_response_code(400);
-        echo ("EMAIL");
-    }
-} else if ($mode == "cancel-recover") {
+    } else if ($code_recover != null && $mode == "verify-code") {
 
-    if ($email_recover != null && filter_var($email_recover, FILTER_VALIDATE_EMAIL)) {
-        if ($code_recover != null && verificarCodigoRedefinicaoSenha($host, $username, $password, $database, $code_recover, $email_recover)) {
-            efetuarCancelamentoCodigoRedefinicao($host, $username, $password, $database, $code_recover, $email_recover);
-            http_response_code(200);
-            echo ("OK");
-        } else {
-            http_response_code(400);
-            echo ("ERROR_CANCEL");
-        }
-    } else {
-        http_response_code(400);
-        echo ("ERROR_CANCEL");
-    }
-} else if ($mode == "redef-password") {
-    if ($senha != null) {
+        if ($email_recover != null && filter_var($email_recover, FILTER_VALIDATE_EMAIL)) {
 
-        if(mb_strlen($senha) < 12){
-            http_response_code(400);
-            echo ("PASS_MIN");
-        }else if(mb_strlen($senha) > 4096){
-            http_response_code(400);
-            echo ("PASS_MAX");
-        }else {
-            if ($email_recover != null && $code_recover != null && redefinirSenha($host, $username, $password, $database, $code_recover, $email_recover, $senha, $chaveCrypto)) {
+            if (verificarCodigoRedefinicaoSenha($host, $username, $password, $database, $code_recover, $email_recover)) {
                 http_response_code(200);
                 echo ("OK");
             } else {
                 http_response_code(400);
-                echo ("Email e/ou código inválido");
+                echo ("CODE");
             }
+        } else {
+            http_response_code(400);
+            echo ("EMAIL");
+        }
+    } else if ($mode == "cancel-recover") {
+
+        if ($email_recover != null && filter_var($email_recover, FILTER_VALIDATE_EMAIL)) {
+            if ($code_recover != null && verificarCodigoRedefinicaoSenha($host, $username, $password, $database, $code_recover, $email_recover)) {
+                efetuarCancelamentoCodigoRedefinicao($host, $username, $password, $database, $code_recover, $email_recover);
+                http_response_code(200);
+                echo ("OK");
+            } else {
+                http_response_code(400);
+                echo ("ERROR_CANCEL");
+            }
+        } else {
+            http_response_code(400);
+            echo ("ERROR_CANCEL");
+        }
+    } else if ($mode == "redef-password") {
+        if ($senha != null) {
+
+            if (mb_strlen($senha) < 12) {
+                http_response_code(400);
+                echo ("PASS_MIN");
+            } else if (mb_strlen($senha) > 4096) {
+                http_response_code(400);
+                echo ("PASS_MAX");
+            } else {
+                if ($email_recover != null && $code_recover != null && redefinirSenha($host, $username, $password, $database, $code_recover, $email_recover, $senha, $chaveCrypto)) {
+                    http_response_code(200);
+                    echo ("OK");
+                } else {
+                    http_response_code(400);
+                    echo ("Email e/ou código inválido");
+                }
+            }
+        } else {
+            http_response_code(400);
+            echo ("PASS");
         }
     } else {
-        http_response_code(400);
-        echo ("PASS");
+        echo ($pageHtml);
     }
-} else {
-
-    echo ($pageHtml);
 }
+
 
 function gerarCodigoRedefinicaoSenha()
 {

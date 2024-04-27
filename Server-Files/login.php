@@ -90,15 +90,11 @@ if ($mode == "fazer-login") {
         echo ("JA_LOGADO");
     }
 } else {
-    if (estaLogado($token, $chaveJwt, $versaoSistema) && !estaNaTokenBlackList($host, $username, $password, $database, $token)) {
-        $infoJwt = getInfoTokenJwt($token, $chaveJwt);
-        if ($infoJwt["sub"] == "demo") {
-            header("Location: /novo-cadastro");
-        } else {
-            header("Location: /");
-        }
+    if (estaLogado($token, $chaveJwt, $versaoSistema) && !estaNaTokenBlackList($host, $username, $password, $database, $token) && !ehAccountDemo($token, $chaveJwt)) {
 
+        header("Location: /");
         die();
+
     } else {
         echo ($pageHtml);
     }

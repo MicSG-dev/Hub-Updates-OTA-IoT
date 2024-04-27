@@ -19,14 +19,10 @@ executarFuncoesDeTodasPaginas($host, $username, $password, $database, $emailDemo
 
 $token = isset($_COOKIE["key"]) ? $_COOKIE["key"] : null;
 
-if (estaLogado($token, $chaveJwt, $versaoSistema) && !estaNaTokenBlackList($host, $username, $password, $database, $token)) {
-    $infoJwt = getInfoTokenJwt($token, $chaveJwt);
-    if ($infoJwt["sub"] == "demo") {
-        header("Location: /novo-cadastro");
-        die();
-    } else {
-        echo ($pageHtml);
-    }
+if (estaLogado($token, $chaveJwt, $versaoSistema) && !estaNaTokenBlackList($host, $username, $password, $database, $token) && !ehAccountDemo($token, $chaveJwt)) {
+
+    echo ($pageHtml);
+
 } else {
     header("Location: /login");
     die();
