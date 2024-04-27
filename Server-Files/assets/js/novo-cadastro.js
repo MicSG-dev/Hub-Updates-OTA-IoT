@@ -12,7 +12,7 @@ window.addEventListener('load', () => {
 
             if (req.status == 400) {
 
-                let title, message;
+                let title, message, messageHtml;
                 if (req.responseText == "EMAIL") {
                     title = "E-mail inválido";
                     message = "Não foi possível validar o e-mail informado. Por favor tente novamente, informando um e-mail válido.";
@@ -20,8 +20,14 @@ window.addEventListener('load', () => {
                     title = "Nome inválido";
                     message = "Não foi possível validar o nome informado. Por favor tente novamente, informando um nome com no mínimo 3 caracteres e com no máximo 256 caracteres.";
                 } else if (req.responseText == "USER") {
-                    title = "Nome inválido";
-                    message = "Não foi possível validar o username informado. Por favor tente novamente, informando um username com no mínimo 3 caracteres e com no máximo 26 caracteres.";
+                    title = "Username inválido";
+                    messageHtml = "<p>Não foi possível validar o username informado. Por favor tente novamente, informando um username válido seguindo as seguintes regras: </p>" +
+                        "<ul><li>não são permitidos caracteres Maiúsculos;</li>" +
+                        "<li>são permitidos caracteres númericos;</li>" +
+                        "<li>são permitidos pontos, desde que inseridos somente no meio do username, nunca no início ou final;</li>" +
+                        "<li>são permitidos underlines, desde que inseridos somente no meio do username, nunca no início ou final;</li>" +
+                        "<li>o username deve ter no mínimo 3 caracteres;</li>" +
+                        "<li>o username deve ter no máximo 26 caracteres.</li></ul>";
                 } else if (req.responseText == "USER_EXISTS") {
                     title = "Username não disponível";
                     message = "Não foi possível utilizar o username informado, pois o mesmo já está em uso ou sua utilização não é permitida. Por favor tente novamente, informando um username diferente.";
@@ -40,7 +46,10 @@ window.addEventListener('load', () => {
                 }
 
                 document.getElementById("title-modal").innerText = title;
-                document.getElementById("content-modal").innerText = message;
+                if (messageHtml != null)
+                    document.getElementById("content-modal").innerHTML = messageHtml;
+                if (message != null)
+                    document.getElementById("content-modal").innerText = message;
                 bootstrap.Modal.getOrCreateInstance('#modal').show();
 
             } else if (req.status == 200) {

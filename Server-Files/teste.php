@@ -16,25 +16,25 @@ isset($_GET["hash"]) ? $hash = $_GET["hash"] : $hash = null;
 isset($_GET["email"]) ? $email = $_GET["email"] : $email = null;
 isset($_POST["password"]) ? $password = $_POST["password"] : $password = null;
 isset($_POST["senha_pre"]) ? $senha_pre = $_POST["senha_pre"] : $senha_pre = null;
+isset($_GET["username"]) ? $username = $_GET["username"] : $username = null;
 
 if ($hash != null && $senha != null && $email != null) {
     $result = tentaFazerLogin($host, $username, $password, $database, $email, $senha, $chaveCrypto);
     if ($result != -1) {
         echo ("Logado!");
-    }else{
+    } else {
         echo ("Nao Logado :(");
     }
 } else if ($senha != null && $hash != null) {
 
     $senhaComPepper = hash_hmac("sha384", $senha, $pepperHash);
-    
+
     if (password_verify($senhaComPepper, $hash)) {
         echo "Login efetuado com sucesso!";
     } else {
         echo "Usuário ou Senha Incorreta!";
     }
-} 
-else if ($senha != null) {
+} else if ($senha != null) {
     echo ("senha: $senha<br>");
 
     $senhaComPepper = hash_hmac("sha384", $senha, $pepperHash);
@@ -51,34 +51,14 @@ else if ($senha != null) {
     } else {
         echo "Usuário ou Senha Incorreta!";
     }
-}else {
-    
-   echo ("<h1>PHP Tests</h1>");
-   
-    $senha1 = $senha_pre;
-    echo("<b>Senha antes: </b>".$senha1."<br><br>");
-    $cifherHash = converterSenhaParaHash($senha1,$chaveCrypto);
-    echo("<b>Senha do código em cifrada: </b>".$cifherHash."<br><br>");
-    $hash = null;
-    
-    try {
-        $key = KeyCrypto::loadFromAsciiSafeString($chaveCrypto);
-        $hash = Crypto::decrypt($cifherHash, $key);
-        
-    } catch (\Defuse\Crypto\Exception\WrongKeyOrModifiedCiphertextException $ex) {}
-    
-    echo("<b>Hash obtido após descriptografar: </b>".$hash."<br><br>");
+} else {
 
-    $senha = $password == null? "": $password;
-    echo("<b>Resultado: </b>");
-    if (password_verify(hash('sha384', $senha, true), $hash)) {
-        echo "Login efetuado com sucesso!"."<br><br>";
+    echo ("<h1>PHP Tests</h1>");
+
+    $padrao = '/^(?!.*[._]{2})[a-z0-9]+(?:[._][a-z0-9]+)*$/';
+    if (preg_match($padrao, $username)) {
+        echo ("ok: $username");
     } else {
-        echo "Usuário ou Senha Incorreta!"."<br><br>";
+        echo ("falhado: $username");
     }
-
-    echo("<b>Senha do param HTTP: </b>".$password."<br><br>");
-    echo("<b>Tamanho da Senha do param HTTP: </b>".mb_strlen($password)."<br><br>");
-
 }
-

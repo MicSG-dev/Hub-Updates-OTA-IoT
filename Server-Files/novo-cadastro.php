@@ -40,7 +40,7 @@ if ($mode == "solicitar-acesso") {
     } else if ($nome_cadastro == null || mb_strlen($nome_cadastro) < 3 || mb_strlen($nome_cadastro) > 256) {
         http_response_code(400);
         echo ("NOME");
-    } else if ($username_cadastro == null || strlen($username_cadastro) < 3 || strlen($username_cadastro) > 26) {
+    } else if ($username_cadastro == null || strlen($username_cadastro) < 3 || strlen($username_cadastro) > 26 || !usernameEhValido($username_cadastro)) {
         http_response_code(400);
         echo ("USER");
     } else if ($email_cadastro == null || !filter_var($email_cadastro, FILTER_VALIDATE_EMAIL)) {
@@ -60,7 +60,7 @@ if ($mode == "solicitar-acesso") {
         echo ("PASS_MAX");
     } else {
 
-        
+
         if ($infoJwt["sub"] == "demo") {
 
             atualizarUsuarioDemoParaGerente($host, $username, $password, $database, $email_cadastro, $password_cadastro, $nome_cadastro, $username_cadastro, $chaveCrypto);
@@ -118,4 +118,12 @@ function replaceSubstrByIdHtml($str, $replace, $idHtml, $endTagHtml)
     }
 
     return substr_replace($str, $replace, $inicioPosicaoStr, $length);
+}
+
+function usernameEhValido($username)
+{
+    if(preg_match('/^(?!.*[._]{2})[a-z0-9]+(?:[._][a-z0-9]+)*$/',$username)){
+        return true;
+    }
+    return false;
 }
