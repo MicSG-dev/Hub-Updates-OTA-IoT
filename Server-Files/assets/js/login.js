@@ -15,9 +15,15 @@ window.addEventListener('load', () => {
                 if (req.responseText == "EMAIL") {
                     title = "E-mail inválido";
                     message = "Não foi possível validar o e-mail informado. Por favor tente novamente, informando um e-mail válido.";
-                } else if (req.responseText == "SENHA") {
-                    title = "Senha inválida";
-                    message = "Não foi possível validar a senha informada. Por favor tente novamente, informando uma senha com no mínimo 6 caracteres e com no máximo 80 caracteres.";
+                } else if (req.responseText == "PASS") {
+                    title = "Senha inexistente";
+                    message = "Nenhuma senha foi fornecida. Tente novamente informando uma senha.";
+                } else if (req.responseText == "PASS_MIN") {
+                    title = "Senha fraca";
+                    message = "A senha fornecida é muito fraca. Tente novamente informando uma com pelo menos 12 caracteres.";
+                } else if (req.responseText == "PASS_MAX") {
+                    title = "Senha muito grande";
+                    message = "A senha fornecida é muito grande. Tente novamente informando uma com no máximo 4096 caracteres.";
                 } else if (req.responseText == "FAILED_LOGIN") {
                     title = "Login não efetuado";
                     message = "Não foi possível fazer login com o e-mail e a senha informados. Por favor tente novamente, informando a senha e e-mail corretos.";

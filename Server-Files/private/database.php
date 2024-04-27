@@ -5,6 +5,8 @@ use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 use Firebase\JWT\ExpiredException;
 use Firebase\JWT\SignatureInvalidException;
+use Defuse\Crypto\Crypto;
+use Defuse\Crypto\Key as KeyCrypto;
 
 if (!defined('database-acesso-privado-rv$he')) {
     // Acesso direto não permitido.
@@ -12,13 +14,13 @@ if (!defined('database-acesso-privado-rv$he')) {
 } else {
 
 
-    function executarFuncoesDeTodasPaginas($host, $username, $password, $database, $emailDemoAccount, $senhaDemoAccount)
+    function executarFuncoesDeTodasPaginas($host, $username, $password, $database, $emailDemoAccount, $senhaDemoAccount, $chaveCrypto)
     {
         // DATABASES
         verificarIntegridadeDatabaseSeNaoExistir($host, $username, $password);
         verificarIntegridadeTabelaRedefinicaoSenha($host, $username, $password);
         verificarIntegridadeTabelaCargos($host, $username, $password, $database);
-        verificarIntegridadeTabelaUsuarios($host, $username, $password, $database, $emailDemoAccount, $senhaDemoAccount);
+        verificarIntegridadeTabelaUsuarios($host, $username, $password, $database, $emailDemoAccount, $senhaDemoAccount, $chaveCrypto);
         verificarIntegridadeTabelaSolicitacoesCadastro($host, $username, $password);
         verificarIntegridadeTabelaTokenBlackList($host, $username, $password);
 
@@ -106,7 +108,7 @@ if (!defined('database-acesso-privado-rv$he')) {
         $mysqli->close();
     }
 
-    function verificarIntegridadeTabelaUsuarios($host, $username, $password, $database, $emailDemoAccount, $senhaDemoAccount)
+    function verificarIntegridadeTabelaUsuarios($host, $username, $password, $database, $emailDemoAccount, $senhaDemoAccount, $chaveCrypto)
     {
         $mysqli = null;
 
@@ -132,13 +134,13 @@ if (!defined('database-acesso-privado-rv$he')) {
             `CARGO_ID` INT NOT NULL, 
             `EMAIL` VARCHAR(256) NOT NULL UNIQUE, 
             `DATA_INSCRICAO` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , 
-            `SENHA` VARCHAR(255) NOT NULL , 
+            `SENHA` VARCHAR(400) NOT NULL , 
             PRIMARY KEY (`ID`),
             FOREIGN KEY (`CARGO_ID`) REFERENCES `cargos`(`ID`) ON DELETE CASCADE ON UPDATE CASCADE) ENGINE = InnoDB;
-            "; // Em senha, se tem o limite de 80 caracteres, mas como ela é armazenada como hash, deve-se ter capacidade de até 255 caracteres (ver fonte: https://www.php.net/manual/pt_BR/password.constants.php#constant.password-default:~:text=255%20%C3%A9%20o%20comprimento%20recomendado).
+            "; // Em senha, se tem o limite de 4096 caracteres, mas como ela é armazenada como hash (com algoritmo sha384) e criptografada após, deve-se ter capacidade de até 400 caracteres
             $result = $mysqli->query($query);
-
-            $result = $mysqli->query("INSERT INTO usuarios(`nome`, `username`, `cargo_id`, `email`, `senha`) VALUES ('Demo', 'demo', 1, '$emailDemoAccount', '$senhaDemoAccount')");
+            $passwordCifherHash = converterSenhaParaHash($senhaDemoAccount, $chaveCrypto);
+            $result = $mysqli->query("INSERT INTO usuarios(`nome`, `username`, `cargo_id`, `email`, `senha`) VALUES ('Demo', 'demo', 1, '$emailDemoAccount', '$passwordCifherHash')");
         }
 
         $mysqli->close();
@@ -203,7 +205,7 @@ if (!defined('database-acesso-privado-rv$he')) {
         (`EMAIL` VARCHAR(256) NOT NULL , 
         `NOME` VARCHAR(256) NOT NULL , 
         `USERNAME` VARCHAR(26) NOT NULL UNIQUE, 
-        `SENHA` VARCHAR(255) NOT NULL,
+        `SENHA` VARCHAR(400) NOT NULL,
         `DATA_INSCRICAO` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , 
         PRIMARY KEY (`EMAIL`)) ENGINE = InnoDB;
         ";
@@ -459,7 +461,7 @@ if (!defined('database-acesso-privado-rv$he')) {
         }
     }
 
-    function redefinirSenha($host, $username, $password, $database, $code_recover, $email_recover, $senha)
+    function redefinirSenha($host, $username, $password, $database, $code_recover, $email_recover, $senha, $chaveCrypto)
     {
         $mysqli = null;
 
@@ -485,8 +487,10 @@ if (!defined('database-acesso-privado-rv$he')) {
                 $stmt->bind_param("s", $email_recover);
                 $stmt->execute();
 
+                $senhaCifherHash = converterSenhaParaHash($senha, $chaveCrypto);
+
                 $stmt = $mysqli->prepare("UPDATE usuarios set senha = (?) WHERE email = (?)");
-                $stmt->bind_param("ss", $senha, $email_recover);
+                $stmt->bind_param("ss", $senhaCifherHash, $email_recover);
                 $stmt->execute();
 
                 return true;
@@ -496,7 +500,7 @@ if (!defined('database-acesso-privado-rv$he')) {
         return false;
     }
 
-    function registrarSolicitacaoNovoCadastro($host, $username, $password, $database, $email, $nome, $username_cadastro, $password_cadastro)
+    function registrarSolicitacaoNovoCadastro($host, $username, $password, $database, $email, $nome, $username_cadastro, $password_cadastro, $chaveCrypto)
     {
         $mysqli = null;
 
@@ -511,8 +515,10 @@ if (!defined('database-acesso-privado-rv$he')) {
             echo ("O sistema apresentou um erro. Informe ao Administrador do Sistema. ERRO: Erro de conexão ao Banco de Dados (CANCEL_COD_REDEF) ");
         }
 
+        $senhaCifherHash = converterSenhaParaHash($password_cadastro, $chaveCrypto);
+
         $stmt = $mysqli->prepare("INSERT INTO solicitacoes_cadastro(email, nome, username, senha) VALUES (?, ?, ?, ?)");
-        $stmt->bind_param("ssss", $email, $nome, $username_cadastro, $password_cadastro);
+        $stmt->bind_param("ssss", $email, $nome, $username_cadastro, $senhaCifherHash);
         $stmt->execute();
     }
 
@@ -583,7 +589,7 @@ if (!defined('database-acesso-privado-rv$he')) {
         }
     }
 
-    function tentaFazerLogin($host, $username, $password, $database, $email, $senha, $pepperHash)
+    function tentaFazerLogin($host, $username, $password, $database, $email, $senha, $chaveCrypto)
     {
         $mysqli = null;
 
@@ -607,8 +613,16 @@ if (!defined('database-acesso-privado-rv$he')) {
         $row = $result->fetch_assoc();
 
         if ($stmt->affected_rows == 1) {
-            $hash = $row["senha"];
-            if (password_verify(hash_hmac("sha256", $senha, $pepperHash), $hash)) {
+            $cifherHash = $row["senha"];
+            $hash = null;
+
+            try {
+                $key = KeyCrypto::loadFromAsciiSafeString($chaveCrypto);
+                $hash = Crypto::decrypt($cifherHash, $key);
+            } catch (\Defuse\Crypto\Exception\WrongKeyOrModifiedCiphertextException $ex) {
+            }
+
+            if ($hash != null && password_verify(hash("sha384", $senha, true), $hash)) {
                 return $row;
             }
         }
@@ -654,7 +668,7 @@ if (!defined('database-acesso-privado-rv$he')) {
         return $result;
     }
 
-    function atualizarUsuarioDemoParaGerente($host, $username, $password, $database, $email, $senha, $nome, $username_cadastro)
+    function atualizarUsuarioDemoParaGerente($host, $username, $password, $database, $email, $senha, $nome, $username_cadastro, $chaveCrypto)
     {
         $mysqli = null;
 
@@ -669,8 +683,10 @@ if (!defined('database-acesso-privado-rv$he')) {
             echo ("O sistema apresentou um erro. Informe ao Administrador do Sistema. ERRO: Erro de conexão ao Banco de Dados (UPDATE_DEMO) ");
         }
 
+        $senhaCifherHash = converterSenhaParaHash($senha, $chaveCrypto);
+
         $stmt = $mysqli->prepare("UPDATE usuarios set email = (?), senha = (?), username = (?), nome = (?) WHERE username = 'demo'");
-        $stmt->bind_param("ssss", $email, $senha, $username_cadastro, $nome);
+        $stmt->bind_param("ssss", $email, $senhaCifherHash, $username_cadastro, $nome);
         $stmt->execute();
     }
 
@@ -731,19 +747,22 @@ if (!defined('database-acesso-privado-rv$he')) {
         return false;
     }
 
-    function converterSenhaParaHash($senha, $pepperHash)
+    function converterSenhaParaHash($senha, $chaveCrypto)
     {
         if ($senha == null)
             return null;
 
-        $senhaComPepper = hash_hmac("sha256", $senha, $pepperHash);
+        //$senhaComPepper = hash_hmac("sha384", $senha, $pepperHash);
 
         $options = [
             'cost' => 11,
         ];
 
-        $hash = password_hash($senhaComPepper, PASSWORD_DEFAULT, $options);
+        $hash = password_hash(hash('sha384', $senha, true), PASSWORD_ARGON2ID, $options);
 
-        return $hash;
+        $key = KeyCrypto::loadFromAsciiSafeString($chaveCrypto);
+        $ciphertext = Crypto::encrypt($hash, $key);
+
+        return $ciphertext;
     }
 }

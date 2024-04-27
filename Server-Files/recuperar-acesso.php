@@ -11,7 +11,7 @@ $interPath = "private\\html\\";
 $fullPath = str_replace('.php', '.html', $prePath . $interPath . $nomeArquivoHtml);
 $pageHtml = file_get_contents($fullPath);
 
-executarFuncoesDeTodasPaginas($host, $username, $password, $database, $emailDemoAccount, $senhaDemoAccount);
+executarFuncoesDeTodasPaginas($host, $username, $password, $database, $emailDemoAccount, $senhaDemoAccount, $chaveCrypto);
 
 // verificar se usuário ESTA ou não logado. Se estiver logado, redirecionar ele para home. Se NÃO estiver logado, continuar.
 
@@ -179,18 +179,26 @@ if ($email_recover != null && $mode == "generate-code") {
         echo ("ERROR_CANCEL");
     }
 } else if ($mode == "redef-password") {
+    if ($senha != null) {
 
-    if ($senha != null && strlen($senha) <= 4096 && senhaEForte($senha)) {
-        if ($email_recover != null && $code_recover != null && redefinirSenha($host, $username, $password, $database, $code_recover, $email_recover, $senha)) {
-            http_response_code(200);
-            echo ("OK");
-        } else {
+        if(mb_strlen($senha) < 12){
             http_response_code(400);
-            echo ("Email e/ou código inválido");
+            echo ("PASS_MIN");
+        }else if(mb_strlen($senha) > 4096){
+            http_response_code(400);
+            echo ("PASS_MAX");
+        }else {
+            if ($email_recover != null && $code_recover != null && redefinirSenha($host, $username, $password, $database, $code_recover, $email_recover, $senha, $chaveCrypto)) {
+                http_response_code(200);
+                echo ("OK");
+            } else {
+                http_response_code(400);
+                echo ("Email e/ou código inválido");
+            }
         }
     } else {
         http_response_code(400);
-        echo ("PASS_WEAK");
+        echo ("PASS");
     }
 } else {
 
@@ -209,13 +217,4 @@ function gerarCodigoRedefinicaoSenha()
     }
 
     return $code;
-}
-
-function senhaEForte($senha)
-{
-
-    if (strlen($senha) < 12) {
-        return false;
-    }
-    return true;
 }

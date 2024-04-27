@@ -196,6 +196,91 @@ window.addEventListener('load', () => {
 
     this.document.getElementById('form-redefinir-senha').addEventListener('submit', (event) => {
         event.preventDefault();
+
+        let email = new FormData(document.getElementById('form-gerar-codigo')).get("email");
+
+        let code = "";
+        let elementsPartitionInput = document.getElementsByClassName('partition_input');
+        for (let index = 0; index < elementsPartitionInput.length; index++) {
+            const value = elementsPartitionInput[index].value;
+            code += value;
+        }
+
+        let password = new FormData(document.getElementById('form-redefinir-senha')).get("password");
+        let passwordConfirmacao = new FormData(document.getElementById('form-redefinir-senha')).get("password-repeat");
+
+        if (password == passwordConfirmacao) {
+            let formData = new FormData();
+            formData.set("email-recover", email);
+            formData.set("code", code);
+            formData.set("mode", "redef-password");
+            formData.set("pass", password);
+
+            const req = new XMLHttpRequest();
+            req.addEventListener('load', () => {
+
+                if (req.status == 200) {
+                    document.getElementById("title-modal").innerText = "Operação realizada com sucesso!";
+                    document.getElementById("content-modal").innerText = "A Redefinição de Senha ocorreu com sucesso. Para logins futuros, utlize a nova senha cadastrada. Você será redirecionado para a página de login, quando esta mensagem for fechada.";
+                    bootstrap.Modal.getOrCreateInstance('#modal').show();
+
+                    document.getElementById("modal").addEventListener("hide.bs.modal", () => {
+                        window.location.href = '/';
+                    });
+
+                    console.log("Redefinição de senha cancelada com sucesso!");
+                }
+                else if (req.status == 400) {
+
+                    if (req.responseText == "PASS") {
+
+                        document.getElementById("title-modal").innerText = "Senha inexistente";
+                        document.getElementById("content-modal").innerText = "Nenhuma senha foi fornecida. Tente novamente informando uma senha.";
+                        bootstrap.Modal.getOrCreateInstance('#modal').show();
+
+                        console.log("Senha inexistente");
+                    } else if (req.responseText == "PASS_MIN") {
+
+                        document.getElementById("title-modal").innerText = "Senha fraca";
+                        document.getElementById("content-modal").innerText = "A senha fornecida é muito fraca. Tente novamente informando uma com pelo menos 12 caracteres.";
+                        bootstrap.Modal.getOrCreateInstance('#modal').show();
+
+                        console.log("Senha fraca");
+                    } else if (req.responseText == "PASS_MAX") {
+
+                        document.getElementById("title-modal").innerText = "Senha muito grande";
+                        document.getElementById("content-modal").innerText = "A senha fornecida é muito grande. Tente novamente informando uma com no máximo 4096 caracteres.";
+                        bootstrap.Modal.getOrCreateInstance('#modal').show();
+
+                        console.log("Senha muito grande");
+                    }
+                    else {
+                        document.getElementById("title-modal").innerText = "E-mail ou Código inválido/Inexistente";
+                        document.getElementById("content-modal").innerText = "O e-mail e/ou código informado não é válido ou o código expirou (ultrapassou a validade de 15 minutos). Não foi possível continuar. A página será recarregada, para nova tentativa de redefinição, quando esta mensagem for fechada.";
+                        bootstrap.Modal.getOrCreateInstance('#modal').show();
+
+                        document.getElementById("modal").addEventListener("hide.bs.modal", () => {
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 100);
+                        });
+
+                        console.log("Email inválido/inexistente");
+                    }
+
+                }
+
+            });
+
+            req.open("POST", "/recuperar-acesso", true);
+
+            req.send(formData);
+        } else {
+            document.getElementById("title-modal").innerText = "Erro - Confirmação de Senha";
+            document.getElementById("content-modal").innerText = "A confirmação de senha não é igual à senha informada. Por favor verifique as senhas informadas e tente novamente.";
+            bootstrap.Modal.getOrCreateInstance('#modal').show();
+        }
+
     });
 
 
@@ -229,7 +314,7 @@ window.addEventListener('load', () => {
                     console.log("Email inválido/inexistente");
 
 
-                }else if(req.status == 200){
+                } else if (req.status == 200) {
                     document.getElementById("title-modal").innerText = "Código Regerado";
                     document.getElementById("content-modal").innerText = "Caso possua uma conta cadastrada em nosso sistema, o código de verificação para recuperar o acesso foi regerado. Você será direcionado para refazer a validação.";
                     bootstrap.Modal.getOrCreateInstance('#modal').show();
@@ -314,81 +399,6 @@ window.addEventListener('load', () => {
         req.open("POST", "/recuperar-acesso", true);
 
         req.send(formData);
-
-    });
-
-    this.document.getElementById('redefinir-senha').addEventListener('click', (event) => {
-        event.preventDefault();
-
-        let email = new FormData(document.getElementById('form-gerar-codigo')).get("email");
-
-        let code = "";
-        let elementsPartitionInput = document.getElementsByClassName('partition_input');
-        for (let index = 0; index < elementsPartitionInput.length; index++) {
-            const value = elementsPartitionInput[index].value;
-            code += value;
-        }
-
-        let password = new FormData(document.getElementById('form-redefinir-senha')).get("password");
-        let passwordConfirmacao = new FormData(document.getElementById('form-redefinir-senha')).get("password-repeat");
-
-        if (password == passwordConfirmacao) {
-            let formData = new FormData();
-            formData.set("email-recover", email);
-            formData.set("code", code);
-            formData.set("mode", "redef-password");
-            formData.set("pass", password);
-
-            const req = new XMLHttpRequest();
-            req.addEventListener('load', () => {
-
-                if (req.status == 200) {
-                    document.getElementById("title-modal").innerText = "Operação realizada com sucesso!";
-                    document.getElementById("content-modal").innerText = "A Redefinição de Senha ocorreu com sucesso. Para logins futuros, utlize a nova senha cadastrada. Você será redirecionado para a página de login, quando esta mensagem for fechada.";
-                    bootstrap.Modal.getOrCreateInstance('#modal').show();
-
-                    document.getElementById("modal").addEventListener("hide.bs.modal", () => {
-                        window.location.href = '/';
-                    });
-
-                    console.log("Redefinição de senha cancelada com sucesso!");
-                }
-                else if (req.status == 400) {
-
-                    if (req.responseText == "PASS_WEAK") {
-
-                        document.getElementById("title-modal").innerText = "Senha fraca";
-                        document.getElementById("content-modal").innerText = "A senha fornecida é muito fraca. Tente novamente informando com pelo menos 6 caracteres.";
-                        bootstrap.Modal.getOrCreateInstance('#modal').show();
-
-                        console.log("Senha fraca");
-                    } else {
-                        document.getElementById("title-modal").innerText = "E-mail ou Código inválido/Inexistente";
-                        document.getElementById("content-modal").innerText = "O e-mail e/ou código informado não é válido ou o código expirou (ultrapassou a validade de 15 minutos). A Recuperação de Senha foi cancelada. A página será recarregada, para nova tentativa de redefinição, quando esta mensagem for fechada.";
-                        bootstrap.Modal.getOrCreateInstance('#modal').show();
-
-                        document.getElementById("modal").addEventListener("hide.bs.modal", () => {
-                            setTimeout(() => {
-                                window.location.reload();
-                            }, 100);
-                        });
-
-                        console.log("Email inválido/inexistente");
-                    }
-
-                }
-
-            });
-
-            req.open("POST", "/recuperar-acesso", true);
-
-            req.send(formData);
-        } else {
-            document.getElementById("title-modal").innerText = "Erro - Confirmação de Senha";
-            document.getElementById("content-modal").innerText = "A confirmação de senha não é igual à senha informada. Por favor verifique as senhas informadas e tente novamente.";
-            bootstrap.Modal.getOrCreateInstance('#modal').show();
-        }
-
 
     });
 

@@ -1,5 +1,5 @@
 window.addEventListener('load', () => {
-    
+
     document.getElementById("form-novo-cadastro").addEventListener('submit', (event) => {
         event.preventDefault();
 
@@ -25,9 +25,15 @@ window.addEventListener('load', () => {
                 } else if (req.responseText == "USER_EXISTS") {
                     title = "Username não disponível";
                     message = "Não foi possível utilizar o username informado, pois o mesmo já está em uso ou sua utilização não é permitida. Por favor tente novamente, informando um username diferente.";
-                }  else if (req.responseText == "PASS") {
-                    title = "Senha inválida";
-                    message = "Não foi possível validar a senha informada. Por favor tente novamente, informando uma senha com no mínimo 6 caracteres e com no máximo 80 caracteres.";
+                } else if (req.responseText == "PASS") {
+                    title = "Senha inexistente";
+                    message = "Nenhuma senha foi fornecida. Tente novamente informando uma senha.";
+                } else if (req.responseText == "PASS_MIN") {
+                    title = "Senha fraca";
+                    message = "A senha fornecida é muito fraca. Tente novamente informando uma com pelo menos 12 caracteres.";
+                } else if (req.responseText == "PASS_MAX") {
+                    title = "Senha muito grande";
+                    message = "A senha fornecida é muito grande. Tente novamente informando uma com no máximo 4096 caracteres.";
                 } else {
                     title = "Erro desconhecido";
                     message = "Erro desconhecido: Por favor, informe o suporte sobre este erro (CODE: RETURN_INVALID)";

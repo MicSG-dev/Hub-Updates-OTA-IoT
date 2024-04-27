@@ -15,7 +15,7 @@ $interPath = "private\\html\\";
 $fullPath = str_replace('.php', '.html', $prePath . $interPath . $nomeArquivoHtml);
 $pageHtml = file_get_contents($fullPath);
 
-executarFuncoesDeTodasPaginas($host, $username, $password, $database, $emailDemoAccount, $senhaDemoAccount);
+executarFuncoesDeTodasPaginas($host, $username, $password, $database, $emailDemoAccount, $senhaDemoAccount, $chaveCrypto);
 
 // Parâmetro POST email
 isset($_POST["email"]) ? $email_login = $_POST["email"] : $email_login = null;
@@ -31,15 +31,21 @@ $token = isset($_COOKIE["key"]) ? $_COOKIE["key"] : null;
 if ($mode == "fazer-login") {
 
     if (!estaLogado($token, $chaveJwt, $versaoSistema)) {
-        if ($senha_login == null || strlen($senha_login) < 12 || strlen($senha_login) > 4096) {
+        if ($senha_login == null) {
             http_response_code(400);
-            echo ("SENHA");
+            echo ("PASS");
+        } else if (mb_strlen($senha_login) < 12) {
+            http_response_code(400);
+            echo ("PASS_MIN");
+        } else if (mb_strlen($senha_login) > 4096) {
+            http_response_code(400);
+            echo ("PASS_MAX");
         } else if ($email_login == null || !filter_var($email_login, FILTER_VALIDATE_EMAIL)) {
             http_response_code(400);
             echo ("EMAIL");
         } else {
 
-            $resultadoLogin = tentaFazerLogin($host, $username, $password, $database, $email_login, $senha_login, $pepperHash);
+            $resultadoLogin = tentaFazerLogin($host, $username, $password, $database, $email_login, $senha_login, $chaveCrypto);
 
             if ($resultadoLogin != -1) {
 
