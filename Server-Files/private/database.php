@@ -706,15 +706,17 @@ if (!defined('database-acesso-privado-rv$he')) {
         }
 
         $infoJwt = getInfoTokenJwt($token, $chaveJwt);
-        $expiracao = $infoJwt['exp'];
+        if ($infoJwt != null) {
+            $expiracao = $infoJwt['exp'];
 
-        $datetime = new \DateTime('now', new \DateTimeZone('America/Sao_Paulo'));
-        $datetime->setTimestamp($expiracao);
-        $expiracao = $datetime->format('Y-m-d H:i:s');
+            $datetime = new \DateTime('now', new \DateTimeZone('America/Sao_Paulo'));
+            $datetime->setTimestamp($expiracao);
+            $expiracao = $datetime->format('Y-m-d H:i:s');
 
-        $stmt = $mysqli->prepare("INSERT INTO lista_tokens_bloqueados(token, time_expiracao) VALUES (?, ?)");
-        $stmt->bind_param("ss", $token, $expiracao);
-        $stmt->execute();
+            $stmt = $mysqli->prepare("INSERT INTO lista_tokens_bloqueados(token, time_expiracao) VALUES (?, ?)");
+            $stmt->bind_param("ss", $token, $expiracao);
+            $stmt->execute();
+        }
     }
 
     function estaNaTokenBlackList($host, $username, $password, $database, $token)
