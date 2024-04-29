@@ -48,3 +48,20 @@
   color: rgb(88,88,88);
 }
 
+.shadow {
+  /*box-shadow: var(--bs-box-shadow) !important;*/
+}
+
+.dropdown-header {
+  display: block;
+  padding: var(--bs-dropdown-header-padding-y) var(--bs-dropdown-header-padding-x);
+  margin-bottom: 0;
+  font-size: 0.875rem;
+  color: var(--bs-dropdown-header-color);
+  white-space: nowrap;
+}
+
+.no-link {
+  text-decoration: none;
+}
+

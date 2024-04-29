@@ -1,0 +1,4 @@
+.text-uppercase, .sidebar .sidebar-heading, .dropdown .dropdown-menu .dropdown-header {
+  text-transform: uppercase !important;
+}
+
