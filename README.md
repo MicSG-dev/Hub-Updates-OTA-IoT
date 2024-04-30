@@ -10,10 +10,16 @@ Repositório do Hub de Atualizações OTA para dispositivos IoT remotos.
 - **Firmware Dispositivos IoT de Exemplo**: C, C++ e Framework Arduino;
 - **Biblioteca para uso em Dispositivos IoT**: C, C++ e Framework Arduino.
 
-## Tecnologias utilizadas
+## Dependências externas utilizadas
 
-- Biblioteca php-jwt da Firebase, Google: https://github.com/firebase/php-jwt
+
+### Back-end
+- Biblioteca php-jwt da firebase, Google: https://github.com/firebase/php-jwt
 - Biblioteca php-encryption da defuse: https://github.com/defuse/php-encryption
+
+### Front-end
+- Biblioteca Chart.js da chartjs: https://github.com/chartjs/Chart.js
+
 
 ## Instruções para preparar este sistema para uso
 ### Bibliotecas PHP
