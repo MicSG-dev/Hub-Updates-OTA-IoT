@@ -1,4 +1,5 @@
 <?php
+
 define('database-acesso-privado-rv$he', TRUE);
 
 require('./private/database.php');

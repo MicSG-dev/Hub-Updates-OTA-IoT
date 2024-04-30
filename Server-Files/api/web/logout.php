@@ -2,7 +2,7 @@
 define('database-acesso-privado-rv$he', TRUE);
 $profundidadePastaAtual = 2;
 $pastaInicial = pathInitial($profundidadePastaAtual);
-
+spl_autoload_register('pathInitial');
 function pathInitial($depth)
 {
     $exploded = explode("\\", __DIR__);
@@ -12,7 +12,8 @@ function pathInitial($depth)
     return implode("\\", $exploded);
 }
 
-
+echo(pathInitial($profundidadePastaAtual));
+die();
 include ($pastaInicial . '/private/credentials.php');
 include ($pastaInicial . '/private/database.php');
 include ($pastaInicial . '/private/vendor/autoload.php');
