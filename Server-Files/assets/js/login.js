@@ -43,7 +43,17 @@ window.addEventListener('load', () => {
                 }
 
             } else if (req.status == 200) {
-                window.location.href = '/';
+                
+                let params = new URLSearchParams(document.location.search);
+                let urlRedirect = params.get("redirect");
+
+                if(urlRedirect != null && urlRedirect[0] == "/"){
+                    console.log(window.location.host + urlRedirect);
+                    window.location.href = window.location.protocol + "//" +window.location.host + urlRedirect;
+                }else{
+                    window.location.href = '/';
+                }
+                
             }
 
         });

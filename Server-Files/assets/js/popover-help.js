@@ -1,7 +1,7 @@
 window.addEventListener('load', () => {
     
     Array.prototype.forEach.call(document.getElementsByClassName('ajuda-secao'),(element) => {
-        console.log(element)
+        
         let popover = bootstrap.Popover.getOrCreateInstance(element);
         
         element.addEventListener("focus", () => {
