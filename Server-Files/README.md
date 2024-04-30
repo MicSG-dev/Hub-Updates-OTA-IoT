@@ -4,4 +4,6 @@
     - Alterar variável de controle de acesso da pasta private (define('database-acesso-privado-rv$he', TRUE);) para ser possível alterar seu valor em credentials.php
 
 - Front-end:
-    - Corrigir inclusão incorreta da navbar em páginas não necessárias
+    - Corrigir inclusão incorreta da navbar em páginas não necessárias;
+    - navbar.js: atualizar script pelo atual
+    - general.js: atualizar script pelo atual
