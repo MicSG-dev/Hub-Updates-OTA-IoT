@@ -1,5 +1,6 @@
 <?php
-require('private/vendor/autoload.php');
+
+include(realpath($_SERVER["DOCUMENT_ROOT"]).'/private/vendor/autoload.php');
 
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
@@ -779,5 +780,9 @@ if (!defined('database-acesso-privado-rv$he')) {
         }
 
         return false;
+    }
+
+    function teste(){
+        echo ('teste do database');
     }
 }
