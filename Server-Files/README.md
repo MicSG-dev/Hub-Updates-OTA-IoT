@@ -1,9 +1,7 @@
 # Rascunho Hub Updates OTA IoT - Server-Files
 
 - Back-end:
-    - Alterar variavel fixa para dinamica do controle de acesso da pasta private (define('database-acesso-privado-rv$he', TRUE);)
-    - Alterar .htaccess para não remover php de parametros GET
+    - Alterar variável de controle de acesso da pasta private (define('database-acesso-privado-rv$he', TRUE);) para ser possível alterar seu valor em credentials.php
 
 - Front-end:
-    - Corrigir inclusao de navbar em login
-    - Corrigir 
+    - Corrigir inclusão incorreta da navbar em páginas não necessárias
