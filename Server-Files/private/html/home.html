@@ -30,19 +30,25 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js" integrity="sha512-ZwR1/gSZM3ai6vCdI+LVF1zSq/5HznD3ZSTk7kajkaj4D292NLuduDCO1c/NT8Id+jE58KYLKT7hXnbtryGmMg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </head>
 
-<body>
-    <nav class="navbar navbar-expand-md topbar static-top navbar-light" style="box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);">
+<body id="page-top" title="Home">
+    <nav class="navbar navbar-expand-xl sticky-top topbar static-top navbar-light" style="box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);background: rgba(255,255,255,0.91);filter: blur(0px);">
         <div class="container-fluid"><a class="d-flex align-items-center navbar-brand" href="#">
                 <div style="background: url(&quot;../../assets/img/logo_180.png&quot;) center / cover no-repeat;height: 42px;width: 42px;margin-right: 8px;"></div><span style="font-size: 20px;color: var(--bs-navbar-active-color);">Hub Updates OTA IoT</span>
             </a><button class="btn navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
             <div id="navbarToggler" class="collapse navbar-collapse">
                 <ul class="navbar-nav flex-nowrap ms-auto">
-                    <li class="nav-item d-flex align-items-center"><a class="nav-link active" href="#">Home</a></li>
+                    <li class="nav-item d-flex align-items-center"><a class="nav-link" href="#">Home</a></li>
+                    <li class="nav-item d-flex align-items-center"><a class="nav-link" href="grupo-dispositivos.html">Grupo de Dispositivos</a></li>
+                    <li class="nav-item d-flex align-items-center"><a class="nav-link" href="#">Dispositivos</a></li>
+                    <li class="nav-item d-flex align-items-center"><a class="nav-link" href="#">Status</a></li>
+                    <li class="nav-item d-flex align-items-center"><a class="nav-link" href="#">Conexões</a></li>
                     <li class="nav-item dropdown no-arrow">
-                        <div class="nav-item dropdown no-arrow"><a class="dropdown-toggle d-flex align-items-center nav-link" aria-expanded="false" data-bs-toggle="dropdown" href="#"><span class="d-none d-lg-inline me-2 text-gray-600 small">@micsg</span>
-                                <div class="d-inline"><i class="fa fa-user-circle" style="font-size: 37px;"></i></div>
+                        <div class="nav-item dropdown no-arrow"><a class="dropdown-toggle d-flex align-items-center nav-link" aria-expanded="false" data-bs-toggle="dropdown" href="#">
+                                <div class="d-flex align-items-center"><span class="text-gray-600 small" style="padding-right: 7px;">@micsg</span>
+                                    <div class="d-inline"><i class="fa fa-user-circle" style="font-size: 37px;"></i></div>
+                                </div>
                             </a>
-                            <div class="dropdown-menu shadow dropdown-menu-end animated--grow-in"><a class="dropdown-item" href="#"><i class="fas fa-user fa-sm fa-fw me-2 text-gray-400"></i>&nbsp;Perfil</a><a class="dropdown-item" href="#"><i class="fas fa-cogs fa-sm fa-fw me-2 text-gray-400"></i>&nbsp;Configurações</a><a class="dropdown-item" href="#">Registro de Log</a>
+                            <div class="dropdown-menu shadow dropdown-menu-end animated--grow-in"><a class="dropdown-item" href="#"><i class="fas fa-cogs fa-sm fa-fw me-2 text-gray-400"></i>&nbsp;Configurações</a><a class="dropdown-item" href="#"><i class="fas fa-shield-alt fa-sm fa-fw me-2 text-gray-400"></i>&nbsp;Registro de Log</a>
                                 <div class="dropdown-divider"></div><a class="dropdown-item" href="/logout"><i class="fas fa-sign-out-alt fa-sm fa-fw me-2 text-gray-400"></i>&nbsp;Logout</a>
                             </div>
                         </div>
@@ -53,17 +59,17 @@
     </nav>
     <div id="wrapper">
         <div class="d-flex flex-column" id="content-wrapper" style="background: rgb(248,249,252);">
-            <div id="content" style="padding-top: 30px;">
+            <div id="content" style="padding-top: 15px;">
                 <div class="container-fluid">
-                    <div class="d-sm-flex justify-content-between align-items-center mb-4">
-                        <h3 class="text-dark mb-0">Home</h3>
+                    <div class="d-sm-flex justify-content-between align-items-center mb-2">
+                        <h3 class="text-dark">Home</h3>
                     </div>
                     <div class="row">
-                        <div class="col-md-6 col-xl-3 mb-4">
+                        <div class="col-md-6 col-xl-3 mb-2">
                             <div class="card shadow border-start-primary py-2" style="height: 102px;">
                                 <div class="card-body">
                                     <div class="row align-items-center no-gutters">
-                                        <div class="col me-2">
+                                        <div class="col me-1">
                                             <div class="text-uppercase text-primary fw-bold text-xs mb-1" style="font-family: Nunito, sans-serif;font-size: 11.2px;"><span>dispositivos cadastrados</span></div>
                                             <div class="text-dark fw-bold h5 mb-0"><span>40</span></div>
                                         </div>
@@ -75,32 +81,38 @@
                                                     <path d="M17,1H7C5.9,1,5,1.9,5,3v18c0,1.1,0.9,2,2,2h10c1.1,0,2-0.9,2-2V3C19,1.9,18.1,1,17,1z M17,18H7V6h10V18z M16,10.05 l-1.41-1.41l-3.54,3.54l-1.41-1.41l-1.41,1.41L11.05,15L16,10.05z"></path>
                                                 </g>
                                             </svg></div>
-                                    </div>
+                                    </div><span title="Clique e abra a Ajuda" style="position:absolute;top:1px;right:5px;"><a id="mostrar-ajuda-conexoes-devices-1" href="#"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-question-circle" style="color: rgba(73,80,87,0.75);">
+                                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"></path>
+                                                <path d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286zm1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94"></path>
+                                            </svg></a></span>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6 col-xl-3 mb-4">
+                        <div class="col-md-6 col-xl-3 mb-2">
                             <div class="card shadow border-start-success py-2" style="height: 102px;">
                                 <div class="card-body">
                                     <div class="row align-items-center no-gutters">
-                                        <div class="col me-2">
-                                            <div class="text-uppercase text-success fw-bold text-xs mb-1"><span style="font-size: 11.2px;">grupos de dispositivos</span></div>
+                                        <div class="col me-1">
+                                            <div class="text-uppercase text-success fw-bold text-xs mb-1"><span style="font-size: 11.2px;font-family: Nunito, sans-serif;">grupos de dispositivos</span></div>
                                             <div class="text-dark fw-bold h5 mb-0"><span>4</span></div>
                                         </div>
                                         <div class="col-auto"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -32 576 576" width="1em" height="1em" fill="currentColor" class="fa-2x text-gray-300">
                                                 <!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc. -->
                                                 <path d="M48 115.8C38.2 107 32 94.2 32 80c0-26.5 21.5-48 48-48c14.2 0 27 6.2 35.8 16H460.2c8.8-9.8 21.6-16 35.8-16c26.5 0 48 21.5 48 48c0 14.2-6.2 27-16 35.8V396.2c9.8 8.8 16 21.6 16 35.8c0 26.5-21.5 48-48 48c-14.2 0-27-6.2-35.8-16H115.8c-8.8 9.8-21.6 16-35.8 16c-26.5 0-48-21.5-48-48c0-14.2 6.2-27 16-35.8V115.8zM125.3 96c-4.8 13.6-15.6 24.4-29.3 29.3V386.7c13.6 4.8 24.4 15.6 29.3 29.3H450.7c4.8-13.6 15.6-24.4 29.3-29.3V125.3c-13.6-4.8-24.4-15.6-29.3-29.3H125.3zm2.7 64c0-17.7 14.3-32 32-32H288c17.7 0 32 14.3 32 32v96c0 17.7-14.3 32-32 32H160c-17.7 0-32-14.3-32-32V160zM256 320h32c35.3 0 64-28.7 64-64V224h64c17.7 0 32 14.3 32 32v96c0 17.7-14.3 32-32 32H288c-17.7 0-32-14.3-32-32V320z"></path>
                                             </svg></div>
-                                    </div>
+                                    </div><span title="Clique e abra a Ajuda" style="position:absolute;top:1px;right:5px;"><a id="mostrar-ajuda-conexoes-devices-2" href="#"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-question-circle" style="color: rgba(73,80,87,0.75);">
+                                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"></path>
+                                                <path d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286zm1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94"></path>
+                                            </svg></a></span>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6 col-xl-3 mb-4">
+                        <div class="col-md-6 col-xl-3 mb-2">
                             <div class="card shadow border-start-info py-2" style="height: 102px;">
                                 <div class="card-body">
                                     <div class="row align-items-center no-gutters">
-                                        <div class="col me-2">
-                                            <div class="text-uppercase text-info fw-bold text-xs mb-1"><span style="font-size: 11.2px;">Dispositivos atualizados</span></div>
+                                        <div class="col me-1">
+                                            <div class="text-uppercase text-info fw-bold text-xs mb-1"><span style="font-size: 11.2px;font-family: Nunito, sans-serif;">Dispositivos atualizados</span></div>
                                             <div class="row g-0 align-items-center">
                                                 <div class="col-auto">
                                                     <div class="text-dark fw-bold h5 mb-0 me-3"><span>50%</span></div>
@@ -116,33 +128,40 @@
                                                 <path d="M0 0h24v24H0z" fill="none"></path>
                                                 <path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14zm-1-6h-3V8h-2v5H8l4 4 4-4z"></path>
                                             </svg></div>
-                                    </div>
+                                    </div><span title="Clique e abra a Ajuda" style="position:absolute;top:1px;right:5px;"><a id="mostrar-ajuda-conexoes-devices-3" href="#"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-question-circle" style="color: rgba(73,80,87,0.75);">
+                                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"></path>
+                                                <path d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286zm1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94"></path>
+                                            </svg></a></span>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6 col-xl-3 mb-4">
+                        <div class="col-md-6 col-xl-3 mb-2">
                             <div class="card shadow border-start-warning py-2" style="height: 102px;">
                                 <div class="card-body">
                                     <div class="row align-items-center no-gutters">
-                                        <div class="col me-2">
-                                            <div class="text-uppercase text-warning fw-bold text-xs mb-1"><span style="font-size: 11.2px;">Atualizações pendentes</span></div>
+                                        <div class="col me-1">
+                                            <div class="text-uppercase text-warning fw-bold text-xs mb-1"><span style="font-size: 11.2px;font-family: Nunito, sans-serif;">Atualizações pendentes</span></div>
                                             <div class="text-dark fw-bold h5 mb-0"><span>18</span></div>
                                         </div>
                                         <div class="col-auto"><i class="fa fa-exclamation-triangle fa-2x text-gray-300"></i></div>
-                                    </div>
+                                    </div><span title="Clique e abra a Ajuda" style="position:absolute;top:1px;right:5px;"><a id="mostrar-ajuda-conexoes-devices-4" href="#"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-question-circle" style="color: rgba(73,80,87,0.75);">
+                                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"></path>
+                                                <path d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286zm1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94"></path>
+                                            </svg></a></span>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="row row-cols-2">
-                        <div class="col-12 col-lg-7 col-xl-8">
-                            <div class="card shadow mb-4" id="card-status-atualizacoes-grupos">
-                                <div style="top: 0px;right: 0px;position: absolute;"><a id="ajuda-grupo-atualizados" class="ajuda-secao" data-bs-toggle="popover" data-bs-title="Status das conexões dos dispositivos" data-bs-content="<p>Veja nesta seção a quantidade de dispositivos que não apresentaram conexão no servidor. </p> <ul>     <li><b>Conexão perdida: </b>Não houve conexão na última tentativa de conexão (à cada 15 minutos) ao servidor;</li>     <li><b>Conectado: </b>Houve uma conexão bem sucedida na última tentativa de conexão.</li> </ul> <p>Para mais detalhes sobre estes dispositivos, <a href=&quot;https://google.com/&quot; target=&quot;_blank&quot;>clique aqui</a>.</p>" rel="popover" data-bs-trigger="manual" data-bs-html="true" style="cursor: default;" href="#" data-bs-placement="right"></a></div>
-                                <div class="card-header d-flex justify-content-between align-items-center">
-                                    <h6 class="text-primary fw-bold m-0">Status das Atualizações por Grupo de Dispositivo</h6>
+                    <div class="row">
+                        <div class="col-12 col-lg-7 col-xl-8" style="margin-top: 5px;margin-bottom: 5px;">
+                            <div class="card shadow" id="card-status-atualizacoes-grupos" style="height:100%;">
+                                <div style="top: 0px;right: 0px;position: absolute;"><a id="ajuda-grupo-atualizados" class="ajuda-secao" data-bs-toggle="popover" data-bs-title="Status das Atualizações por Grupo de Dispositivo" data-bs-content="<p>Veja nesta seção a proporção da quantidade de dispositivos por grupo que apresentaram atualização de firmware. É medida em percentagem (0 à 100%).</p>" rel="popover" data-bs-trigger="manual" data-bs-html="true" style="cursor: default;" href="#" data-bs-placement="right"></a></div>
+                                <div class="card-header d-flex justify-content-between align-items-center"><a class="no-link" href="#">
+                                        <h6 class="text-primary fw-bold m-0">Status das Atualizações por Grupo de Dispositivo</h6>
+                                    </a>
                                     <div class="dropdown no-arrow"><button class="btn btn-link btn-sm dropdown-toggle" aria-expanded="false" data-bs-toggle="dropdown" type="button"><i class="fas fa-ellipsis-v text-gray-400" style="color: rgb(113,136,228);border-left-color: var(--bs-dropdown-bg);"></i></button>
                                         <div class="dropdown-menu shadow dropdown-menu-end animated--fade-in">
-                                            <p class="text-start dropdown-header">opções</p><a class="dropdown-item" href="#">&nbsp;Ver em tela cheia</a>
+                                            <p class="text-start dropdown-header">opções</p><a class="dropdown-item" href="#" data-bs-target="#chart-fullscreen" data-bs-toggle="modal">&nbsp;Ver em tela cheia</a>
                                             <div class="dropdown-divider"></div><a class="dropdown-item" id="mostrar-ajuda-grupo-atualizados">
                                                 <div class="d-xl-flex align-items-xl-center"><i class="fa fa-question-circle" style="margin-right: .5rem!important;font-size: 16px;"></i><span>Ajuda</span></div>
                                             </a>
@@ -150,7 +169,7 @@
                                     </div>
                                 </div>
                                 <div class="card-body">
-                                    <div style="height: 100%;"><div class="chart-area" style="height:32rem;position: relative;width: 100%;">
+                                    <div style="height: 100%;"><div class="chart-area" style="height:100%;position: relative;width: 100%;">
     <canvas id="chart1"></canvas>
 </div>
 
@@ -214,16 +233,17 @@
                         </div>
                         <div class="col-12 col-lg-5 col-xl-4">
                             <div class="row row-cols-1">
-                                <div class="col">
-                                    <div class="card shadow mb-4">
+                                <div class="col" style="margin-top: 5px;margin-bottom: 5px;">
+                                    <div class="card shadow mb-4" style="height:100%;">
                                         <div style="top: 32px;right: 0px;position: absolute;"><a id="ajuda-conexoes-devices" class="ajuda-secao" href="#" data-bs-toggle="popover" data-bs-title="Status das conexões dos dispositivos" data-bs-content="<p>Veja nesta seção a quantidade de dispositivos que não apresentaram conexão no servidor. </p> <ul>     <li><b>Conexão perdida: </b>Não houve conexão na última tentativa de conexão (à cada 15 minutos) ao servidor;</li>     <li><b>Conectado: </b>Houve uma conexão bem sucedida na última tentativa de conexão.</li> </ul>" rel="popover" data-bs-trigger="manual" data-bs-html="true"></a></div>
                                         <div class="card-header d-flex justify-content-between align-items-center"><a class="no-link" href="/dispositivos.html">
                                                 <h6 class="text-primary fw-bold m-0">Status Conexões dos Dispositivos</h6>
-                                            </a><span title="Clique e abra a Ajuda"><a id="mostrar-ajuda-conexoes-devices" href="#"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-question-circle" style="color: rgb(113,136,228)">
+                                            </a><span title="Clique e abra a Ajuda"><a id="mostrar-ajuda-conexoes-devices" href="#"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-question-circle" style="color: rgba(73,80,87,0.75);">
                                                         <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"></path>
                                                         <path d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286zm1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94"></path>
                                                     </svg></a></span></div>
-                                        <div class="card-body"><div class="chart-area" style="height: 8rem;">
+                                        <div class="card-body d-flex justify-content-center align-items-center">
+                                            <div><div class="chart-area" style="height: 8rem;">
     <canvas id="chartStatusConexoesDevices" height="160" style="display: block; width: 321px; height: 160px;" width="321"></canvas>
 </div>
 
@@ -276,23 +296,25 @@
     });
 
 </script>
-                                            <div class="text-center small mt-4"><span class="me-2"><i class="fas fa-circle" style="color: #2fb380;"></i>&nbsp;Conectado</span><span class="me-2"><i class="fas fa-circle" style="color: #df574e;"></i>&nbsp;Conexão perdida</span></div>
-                                            <div class="text-center small mt-2"><span class="me-2" style="color: var(--bs-tertiary-color);font-size: 12px;">Última atualização em 28/04/2024 ás 20:30 UTC-03:00</span></div>
+                                                <div class="text-center small mt-4"><span class="me-2"><i class="fas fa-circle" style="color: #2fb380;"></i>&nbsp;Conectado</span><span class="me-2"><i class="fas fa-circle" style="color: #df574e;"></i>&nbsp;Conexão perdida</span></div>
+                                                <div class="text-center small mt-2"><span style="color: var(--bs-tertiary-color);font-size: 12px;">Última atualização em 28/04/2024 ás 20:30 UTC-03:00</span></div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="row row-cols-1">
-                                <div class="col">
-                                    <div class="card shadow mb-4">
-                                        <div style="top: 32px;right: 0px;position: absolute;"><a id="ajuda-conexoes-devices-1" class="ajuda-secao" href="#" data-bs-toggle="popover" data-bs-title="Status das conexões dos dispositivos" data-bs-content="<p>Veja nesta seção a quantidade de dispositivos que não apresentaram conexão no servidor. </p> <ul>     <li><b>Conexão perdida: </b>Não houve conexão na última tentativa de conexão (à cada 15 minutos) ao servidor;</li>     <li><b>Conectado: </b>Houve uma conexão bem sucedida na última tentativa de conexão.</li> </ul>" rel="popover" data-bs-trigger="manual" data-bs-html="true"></a></div>
+                                <div class="col" style="margin-top: 5px;margin-bottom: 5px;">
+                                    <div class="card shadow mb-4" style="height:100%;">
+                                        <div style="top: 32px;right: 0px;position: absolute;"><a id="ajuda-atualizacoes-dispositivos" class="ajuda-secao" href="#" data-bs-toggle="popover" data-bs-title="Status Geral Atualizações dos Dispositivos" data-bs-content="<p>Veja nesta seção o status de atualização de cada dispositivo. O status é divido em três categorias:</p> <ul>     <li><b>Atualizado: </b>Atualizou o Firmware corretamente;</li>     <li><b>Esperando conexão: </b> O dispositivo ainda não tentou fazer atualização de firmware;</li>     <li><b>Erro de Atualização: </b> O dispositivo tentou fazer atualização, mas houve alguma falha. Esta falha pode         ser:         <ul>             <li><b>Firmware inválido: </b>O firmware cadastrado no sistema é inválido;</li>             <li><b>Falha na autenticação token: </b>O token do dispositivo não possui assinatura de autenticidade aprovada.</li>         </ul>     </li> </ul>" rel="popover" data-bs-trigger="manual" data-bs-html="true"></a></div>
                                         <div class="card-header d-flex justify-content-between align-items-center"><a class="no-link" href="/dispositivos.html">
                                                 <h6 class="text-primary fw-bold m-0">Status Geral Atualizações dos Dispositivos</h6>
-                                            </a><span title="Clique e abra a Ajuda"><a id="mostrar-ajuda-conexoes-devices-1" href="#"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-question-circle" style="color: rgb(113,136,228)">
+                                            </a><span title="Clique e abra a Ajuda"><a id="mostrar-ajuda-atualizacoes-dispositivos" href="#"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-question-circle" style="color: rgba(73,80,87,0.75);">
                                                         <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"></path>
                                                         <path d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286zm1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94"></path>
                                                     </svg></a></span></div>
-                                        <div class="card-body"><div class="chart-area" style="height: 8rem;">
+                                        <div class="card-body d-flex justify-content-center align-items-center">
+                                            <div><div class="chart-area" style="height: 8rem;">
     <canvas id="chart3" style="display: block; width: 321px; height: 160px;" width="321" height="160"></canvas>
 </div>
 
@@ -347,128 +369,9 @@
     });
 
 </script>
-                                            <div class="text-center small mt-4"><span class="me-2"><i class="fas fa-circle" style="color: #2fb380;"></i>&nbsp;Atualizado</span><span class="me-2"><i class="fas fa-circle" style="color: #dfd14e;"></i>&nbsp;Esperando conexão</span><span class="me-2"><i class="fas fa-circle" style="color: #df574e;"></i>&nbsp;Erro de Atualização</span></div>
-                                            <div class="text-center small mt-2"><span class="me-2" style="color: var(--bs-tertiary-color);font-size: 12px;">Última atualização em 28/04/2024 ás 20:30 UTC-03:00</span></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-lg-6 mb-4">
-                            <div class="card shadow mb-4">
-                                <div class="card-header py-3">
-                                    <h6 class="text-primary fw-bold m-0">Projects</h6>
-                                </div>
-                                <div class="card-body">
-                                    <h4 class="small fw-bold">Server migration<span class="float-end">20%</span></h4>
-                                    <div class="progress mb-4">
-                                        <div class="progress-bar bg-danger" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: 20%;"><span class="visually-hidden">20%</span></div>
-                                    </div>
-                                    <h4 class="small fw-bold">Sales tracking<span class="float-end">40%</span></h4>
-                                    <div class="progress mb-4">
-                                        <div class="progress-bar bg-warning" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 40%;"><span class="visually-hidden">40%</span></div>
-                                    </div>
-                                    <h4 class="small fw-bold">Customer Database<span class="float-end">60%</span></h4>
-                                    <div class="progress mb-4">
-                                        <div class="progress-bar bg-primary" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%;"><span class="visually-hidden">60%</span></div>
-                                    </div>
-                                    <h4 class="small fw-bold">Payout Details<span class="float-end">80%</span></h4>
-                                    <div class="progress mb-4">
-                                        <div class="progress-bar bg-info" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" style="width: 80%;"><span class="visually-hidden">80%</span></div>
-                                    </div>
-                                    <h4 class="small fw-bold">Account setup<span class="float-end">Complete!</span></h4>
-                                    <div class="progress mb-4">
-                                        <div class="progress-bar bg-success" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%;"><span class="visually-hidden">100%</span></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card shadow mb-4">
-                                <div class="card-header py-3">
-                                    <h6 class="text-primary fw-bold m-0">Todo List</h6>
-                                </div>
-                                <ul class="list-group list-group-flush">
-                                    <li class="list-group-item">
-                                        <div class="row align-items-center no-gutters">
-                                            <div class="col me-2">
-                                                <h6 class="mb-0"><strong>Lunch meeting</strong></h6><span class="text-xs">10:30 AM</span>
+                                                <div class="text-center small mt-4"><span class="me-2"><i class="fas fa-circle" style="color: #2fb380;"></i>&nbsp;Atualizado</span><span class="me-2"><i class="fas fa-circle" style="color: #dfd14e;"></i>&nbsp;Esperando conexão</span><span class="me-2"><i class="fas fa-circle" style="color: #df574e;"></i>&nbsp;Erro de Atualização</span></div>
+                                                <div class="text-center small mt-2"><span class="me-2" style="color: var(--bs-tertiary-color);font-size: 12px;">Última atualização em 28/04/2024 ás 20:30 UTC-03:00</span></div>
                                             </div>
-                                            <div class="col-auto">
-                                                <div class="form-check"><input class="form-check-input" type="checkbox" id="formCheck-1"><label class="form-check-label" for="formCheck-1"></label></div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li class="list-group-item">
-                                        <div class="row align-items-center no-gutters">
-                                            <div class="col me-2">
-                                                <h6 class="mb-0"><strong>Lunch meeting</strong></h6><span class="text-xs">11:30 AM</span>
-                                            </div>
-                                            <div class="col-auto">
-                                                <div class="form-check"><input class="form-check-input" type="checkbox" id="formCheck-2"><label class="form-check-label" for="formCheck-2"></label></div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li class="list-group-item">
-                                        <div class="row align-items-center no-gutters">
-                                            <div class="col me-2">
-                                                <h6 class="mb-0"><strong>Lunch meeting</strong></h6><span class="text-xs">12:30 AM</span>
-                                            </div>
-                                            <div class="col-auto">
-                                                <div class="form-check"><input class="form-check-input" type="checkbox" id="formCheck-3"><label class="form-check-label" for="formCheck-3"></label></div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="row">
-                                <div class="col-lg-6 mb-4">
-                                    <div class="card text-white bg-primary shadow">
-                                        <div class="card-body">
-                                            <p class="m-0">Primary</p>
-                                            <p class="text-white-50 small m-0">#4e73df</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6 mb-4">
-                                    <div class="card text-white bg-success shadow">
-                                        <div class="card-body">
-                                            <p class="m-0">Success</p>
-                                            <p class="text-white-50 small m-0">#1cc88a</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6 mb-4">
-                                    <div class="card text-white bg-info shadow">
-                                        <div class="card-body">
-                                            <p class="m-0">Info</p>
-                                            <p class="text-white-50 small m-0">#36b9cc</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6 mb-4">
-                                    <div class="card text-white bg-warning shadow">
-                                        <div class="card-body">
-                                            <p class="m-0">Warning</p>
-                                            <p class="text-white-50 small m-0">#f6c23e</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6 mb-4">
-                                    <div class="card text-white bg-danger shadow">
-                                        <div class="card-body">
-                                            <p class="m-0">Danger</p>
-                                            <p class="text-white-50 small m-0">#e74a3b</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6 mb-4">
-                                    <div class="card text-white bg-secondary shadow">
-                                        <div class="card-body">
-                                            <p class="m-0">Secondary</p>
-                                            <p class="text-white-50 small m-0">#858796</p>
                                         </div>
                                     </div>
                                 </div>
@@ -476,18 +379,90 @@
                         </div>
                     </div>
                 </div>
+                <footer class="text-center" style="background: rgb(248,249,252);margin-top: 10px;">
+                    <div class="container text-muted">
+                        <p class="mb-0" style="font-family: Nunito, sans-serif;font-size: 14px;">Copyright © 2024 -&nbsp;<a class="no-link" href="/" style="color: rgba(73,80,87,0.75);">Hub de Atualizações OTA IoT</a></p>
+                    </div>
+                </footer>
             </div>
-            <footer class="bg-white sticky-footer">
-                <div class="container my-auto">
-                    <div class="text-center my-auto copyright"><span>Copyright © Brand 2024</span></div>
+        </div><a class="border rounded d-inline scroll-to-top" id="backToTop" href="#page-top"><i class="fas fa-angle-up"></i></a>
+    </div>
+    <div class="modal fade" role="dialog" tabindex="-1" id="chart-fullscreen">
+        <div class="modal-dialog modal-fullscreen" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Modal Title</h4><button class="btn-close" type="button" aria-label="Close" data-bs-dismiss="modal"></button>
                 </div>
-            </footer>
-        </div><a class="border rounded d-inline scroll-to-top" href="#page-top"><i class="fas fa-angle-up"></i></a>
+                <div class="modal-body">
+                    <div style="height: 100%;"><div class="chart-area" style="height:100%;position: relative;width: 100%;">
+    <canvas id="chart23"></canvas>
+</div>
+
+
+<script>
+    window.addEventListener('load', () => {
+        let ctx = document.getElementById("chart23");
+        const data = {
+            labels: [
+                'Irrigador Tipo 1',
+                'Estação Meteorológica',
+                'Horimetro Trator Tipo 2',
+                'Monitorador de Presença',
+                'Logger de Placa de Carro'
+            ],
+            datasets: [{
+                label: '',
+                data: [10, 80, 100, 46, 24],
+                backgroundColor: [
+                    'rgba(255, 99, 132,0.3)',
+                    'rgba(75, 192, 192,0.3)',
+                    'rgba(255, 205, 86,0.3)',
+                    'rgba(201, 203, 207,0.3)',
+                    'rgba(54, 162, 235,0.3)'
+                ]
+            }]
+        };
+
+        const config = {
+            type: 'polarArea',
+            data: data,
+            options: {
+                maintainAspectRatio: false,
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: false,
+                        text: ''
+                    }
+                },
+                scale: {
+                    ticks: {
+                        min: 0,
+                        max: 100
+                    }
+                }
+            }
+        };
+
+
+
+        new Chart(ctx, config);
+    });
+
+</script></div>
+                </div>
+                <div class="modal-footer"><button class="btn btn-light" type="button" data-bs-dismiss="modal">Fechar</button></div>
+            </div>
+        </div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../../assets/js/home.js"></script>
     <script src="../../assets/js/input-password.js"></script>
+    <script src="../../assets/js/navbar.js"></script>
     <script src="../../assets/js/popover-help.js"></script>
     <script src="../../assets/js/popover.js"></script>
 </body>
