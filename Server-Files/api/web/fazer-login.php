@@ -22,7 +22,7 @@ isset($_POST["password"]) ? $senha_login = $_POST["password"] : $senha_login = n
 
 $token = isset($_COOKIE["key"]) ? $_COOKIE["key"] : null;
 
-if (!estaLogado($token, $chaveJwt, $versaoSistema)) {
+if (!estaLogado($token, $chaveJwt, $versaoSistema) || estaNaTokenBlackList($host, $username, $password, $database, $token) ) {
     if ($senha_login == null) {
 
         $response = new stdClass();

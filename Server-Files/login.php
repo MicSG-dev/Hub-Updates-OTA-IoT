@@ -31,7 +31,7 @@ $token = isset($_COOKIE["key"]) ? $_COOKIE["key"] : null;
 
 if ($mode == "fazer-login") {
 
-    if (!estaLogado($token, $chaveJwt, $versaoSistema)) {
+    if (!estaLogado($token, $chaveJwt, $versaoSistema) || estaNaTokenBlackList($host, $username, $password, $database, $token) ) {
         if ($senha_login == null) {
             http_response_code(400);
             echo ("PASS");
