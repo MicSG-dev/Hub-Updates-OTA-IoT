@@ -6,6 +6,7 @@ $pastaInicial = implode("/", array_slice(explode("\\", __DIR__), 0, -$profundida
 include_once ($pastaInicial . '/private/credentials.php');
 include_once ($pastaInicial . '/private/database.php');
 include_once ($pastaInicial . '/private/vendor/autoload.php');
+include_once ($pastaInicial . '/private/utils/general.php');
 
 executarFuncoesDeTodasPaginas($host, $username, $password, $database, $emailDemoAccount, $senhaDemoAccount, $chaveCrypto);
 
@@ -19,7 +20,4 @@ $response = new stdClass();
 $response->status = "OK";
 $json = json_encode($response);
 
-http_response_code(200);
-header("Content-Type: application/json; charset=utf-8");
-echo ($json);
-die();
+sendjson(200, $json);
