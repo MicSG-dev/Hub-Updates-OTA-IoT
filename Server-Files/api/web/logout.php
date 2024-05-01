@@ -1,22 +1,11 @@
 <?php
 define('database-acesso-privado-rv$he', TRUE);
 $profundidadePastaAtual = 2;
-$pastaInicial = pathInitial($profundidadePastaAtual);
-spl_autoload_register('pathInitial');
-function pathInitial($depth)
-{
-    $exploded = explode("\\", __DIR__);
-    for ($i = 0; $i < $depth; $i++) {
-        array_pop($exploded);
-    }
-    return implode("\\", $exploded);
-}
+$pastaInicial = implode("/", array_slice(explode("\\", __DIR__), 0, -$profundidadePastaAtual));
 
-echo(pathInitial($profundidadePastaAtual));
-die();
-include ($pastaInicial . '/private/credentials.php');
-include ($pastaInicial . '/private/database.php');
-include ($pastaInicial . '/private/vendor/autoload.php');
+include_once ($pastaInicial . '/private/credentials.php');
+include_once ($pastaInicial . '/private/database.php');
+include_once ($pastaInicial . '/private/vendor/autoload.php');
 
 executarFuncoesDeTodasPaginas($host, $username, $password, $database, $emailDemoAccount, $senhaDemoAccount, $chaveCrypto);
 
@@ -26,11 +15,8 @@ if ($token != null) {
     addTokenToBlackList($host, $username, $password, $database, $token, $chaveJwt);
 }
 
-
-
 $response = new stdClass();
 $response->status = "OK";
-
 $json = json_encode($response);
 
 http_response_code(200);

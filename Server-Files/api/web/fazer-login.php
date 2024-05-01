@@ -1,10 +1,13 @@
 <?php
 
 define('database-acesso-privado-rv$he', TRUE);
+$profundidadePastaAtual = 2;
+$pastaInicial = implode("/", array_slice(explode("\\", __DIR__), 0, -$profundidadePastaAtual));
 
-require('./private/database.php');
-require('./private/credentials.php');
-require('./private/vendor/autoload.php');
+include_once ($pastaInicial . '/private/database.php');
+include_once ($pastaInicial . '/private/credentials.php');
+include_once ($pastaInicial . '/private/vendor/autoload.php');
+include_once ($pastaInicial . '/private/utils/general.php');
 
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
@@ -21,17 +24,33 @@ $token = isset($_COOKIE["key"]) ? $_COOKIE["key"] : null;
 
 if (!estaLogado($token, $chaveJwt, $versaoSistema)) {
     if ($senha_login == null) {
-        http_response_code(400);
-        echo ("PASS");
+
+        $response = new stdClass();
+        $response->error = "PASS";
+        $json = json_encode($response);
+        sendjson(400, $json);
+
     } else if (mb_strlen($senha_login) < 12) {
-        http_response_code(400);
-        echo ("PASS_MIN");
+
+        $response = new stdClass();
+        $response->error = "PASS_MIN";
+        $json = json_encode($response);
+        sendjson(400, $json);
+
     } else if (mb_strlen($senha_login) > 4096) {
-        http_response_code(400);
-        echo ("PASS_MAX");
+
+        $response = new stdClass();
+        $response->error = "PASS_MAX";
+        $json = json_encode($response);
+        sendjson(400, $json);
+
     } else if ($email_login == null || !filter_var($email_login, FILTER_VALIDATE_EMAIL)) {
-        http_response_code(400);
-        echo ("EMAIL");
+
+        $response = new stdClass();
+        $response->error = "EMAIL";
+        $json = json_encode($response);
+        sendjson(400, $json);
+
     } else {
 
         $resultadoLogin = tentaFazerLogin($host, $username, $password, $database, $email_login, $senha_login, $chaveCrypto);
@@ -63,18 +82,33 @@ if (!estaLogado($token, $chaveJwt, $versaoSistema)) {
             );
 
             if ($resultadoLogin["username"] != "demo") {
-                http_response_code(200);
-                echo ("OK");
+
+                $response = new stdClass();
+                $response->status = "OK";
+                $json = json_encode($response);
+                sendjson(200, $json);
+
             } else {
-                http_response_code(400);
-                echo ("DEMO_REDEF");
+
+                $response = new stdClass();
+                $response->error = "DEMO_REDEF";
+                $json = json_encode($response);
+                sendjson(400, $json);
+
             }
         } else {
-            http_response_code(400);
-            echo ("FAILED_LOGIN");
+
+            $response = new stdClass();
+            $response->error = "FAILED_LOGIN";
+            $json = json_encode($response);
+            sendjson(400, $json);
+
         }
     }
 } else {
-    http_response_code(400);
-    echo ("JA_LOGADO");
+    $response = new stdClass();
+    $response->status = "JA_LOGADO";
+    $json = json_encode($response);
+
+    sendjson(200, $json);
 }
