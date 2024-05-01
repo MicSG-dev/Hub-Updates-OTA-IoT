@@ -109,7 +109,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     }
 } else {
     $response = new stdClass();
-    $response->status = "ERRO_METODO_HTTP";
+    $response->error = "ERRO_METODO_HTTP";
     $json = json_encode($response);
     sendjson(400, $json);
 }
