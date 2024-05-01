@@ -1,7 +1,7 @@
 window.addEventListener('load', () => {
 
     let subPageTitle = document.body.getAttribute('data-title');
-
+    
     if (subPageTitle != null) {
         let elNavItens = document.getElementById('navbarToggler').getElementsByTagName('ul')[0].children;
 
@@ -17,6 +17,4 @@ window.addEventListener('load', () => {
             }
         }
     }
-
-
 });
