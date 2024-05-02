@@ -4,6 +4,14 @@ define('database-acesso-privado-rv$he', TRUE);
 require('./private/database.php');
 require('./private/credentials.php');
 
+$profundidadePastaAtual = 0;
+$pastaInicial = ($profundidadePastaAtual == 0) ?
+    __DIR__ :
+    implode("/", array_slice(explode("\\", __DIR__), 0, -$profundidadePastaAtual));
+
+include_once($pastaInicial . '/private/vendor/autoload.php');
+include_once($pastaInicial . '/private/utils/general.php');
+
 $nomeArquivoHtml = basename(__FILE__);
 $prePath = str_replace($nomeArquivoHtml, "", __FILE__);
 $interPath = "private\\html\\";
@@ -33,6 +41,7 @@ $token = isset($_COOKIE["key"]) ? $_COOKIE["key"] : null;
 if ($mode == "solicitar-acesso") {
 
     $infoJwt = getInfoTokenJwt($token, $chaveJwt);
+    $infoJwt = estaNaTokenBlackList($host, $username, $password, $database, $token) ? null : $infoJwt;
 
     if (estaLogado($token, $chaveJwt, $versaoSistema) && $infoJwt["sub"] != "demo") {
         http_response_code(400);
@@ -98,32 +107,4 @@ if ($mode == "solicitar-acesso") {
     } else {
         echo ($pageHtml);
     }
-}
-
-function replaceSubstrByIdHtml($str, $replace, $idHtml, $endTagHtml)
-{
-    $inicioPosicaoStr = strpos($str, "id=\"$idHtml\"");
-    if ($inicioPosicaoStr == 0) {
-        return $str;
-    }
-
-    $inicioPosicaoStr = strpos($str, ">", $inicioPosicaoStr) + 1;
-
-    $fimPosicaoStr = strpos($str, $endTagHtml, $inicioPosicaoStr);
-
-    $length = $fimPosicaoStr - $inicioPosicaoStr;
-
-    if ($fimPosicaoStr == 0) {
-        return $str;
-    }
-
-    return substr_replace($str, $replace, $inicioPosicaoStr, $length);
-}
-
-function usernameEhValido($username)
-{
-    if(preg_match('/^(?!.*[._]{2})[a-z0-9]+(?:[._][a-z0-9]+)*$/',$username)){
-        return true;
-    }
-    return false;
 }

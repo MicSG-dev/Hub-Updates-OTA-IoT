@@ -1,6 +1,6 @@
 <?php
 
-include(realpath($_SERVER["DOCUMENT_ROOT"]).'/private/vendor/autoload.php');
+include(realpath($_SERVER["DOCUMENT_ROOT"]) . '/private/vendor/autoload.php');
 
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
@@ -635,6 +635,7 @@ if (!defined('database-acesso-privado-rv$he')) {
     function estaLogado($token, $chaveJwt, $versaoSistema)
     {
         $result = false;
+        
         if ($token != null) {
 
             try {
@@ -652,6 +653,18 @@ if (!defined('database-acesso-privado-rv$he')) {
         }
 
         return $result;
+    }
+
+    function estaLogadoVersao2($infoJwt, $versaoSistema)
+    {
+        if ($infoJwt != null && is_array($infoJwt)) {
+
+            if ($infoJwt["version"] == $versaoSistema) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     function getInfoTokenJwt($token, $chaveJwt)
@@ -723,29 +736,31 @@ if (!defined('database-acesso-privado-rv$he')) {
 
     function estaNaTokenBlackList($host, $username, $password, $database, $token)
     {
-        $mysqli = null;
+        if ($token != null) {
+            $mysqli = null;
 
-        try {
-            $mysqli = new mysqli($host, $username, $password, $database);
-        } catch (mysqli_sql_exception) {
-            echo ("Não foi possível continuar. Informe o seguinte erro ao Administrador do Sistema: Erro de Credenciais no Banco de Dados (UPDATE_DEMO) ");
-            exit();
-        }
+            try {
+                $mysqli = new mysqli($host, $username, $password, $database);
+            } catch (mysqli_sql_exception) {
+                echo ("Não foi possível continuar. Informe o seguinte erro ao Administrador do Sistema: Erro de Credenciais no Banco de Dados (UPDATE_DEMO) ");
+                exit();
+            }
 
-        if ($mysqli->connect_errno) {
-            echo ("O sistema apresentou um erro. Informe ao Administrador do Sistema. ERRO: Erro de conexão ao Banco de Dados (UPDATE_DEMO) ");
-        }
+            if ($mysqli->connect_errno) {
+                echo ("O sistema apresentou um erro. Informe ao Administrador do Sistema. ERRO: Erro de conexão ao Banco de Dados (UPDATE_DEMO) ");
+            }
 
 
-        $stmt = $mysqli->prepare("SELECT * FROM lista_tokens_bloqueados WHERE token = (?)");
-        $stmt->bind_param("s", $token);
-        $stmt->execute();
+            $stmt = $mysqli->prepare("SELECT * FROM lista_tokens_bloqueados WHERE token = (?)");
+            $stmt->bind_param("s", $token);
+            $stmt->execute();
 
-        $result = $stmt->get_result();
-        $row = $result->fetch_assoc();
-        if ($stmt->affected_rows != 0) {
-            setcookie("key", "");
-            return true;
+            $result = $stmt->get_result();
+            $row = $result->fetch_assoc();
+            if ($stmt->affected_rows != 0) {
+                setcookie("key", "");
+                return true;
+            }
         }
 
         return false;
@@ -782,7 +797,8 @@ if (!defined('database-acesso-privado-rv$he')) {
         return false;
     }
 
-    function teste(){
+    function teste()
+    {
         echo ('teste do database');
     }
 }

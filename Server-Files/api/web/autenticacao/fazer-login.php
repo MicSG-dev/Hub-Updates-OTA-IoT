@@ -1,7 +1,7 @@
 <?php
 
 define('database-acesso-privado-rv$he', TRUE);
-$profundidadePastaAtual = 2;
+$profundidadePastaAtual = 3;
 $pastaInicial = implode("/", array_slice(explode("\\", __DIR__), 0, -$profundidadePastaAtual));
 
 include_once($pastaInicial . '/private/database.php');
