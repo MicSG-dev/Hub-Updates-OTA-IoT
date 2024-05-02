@@ -12,4 +12,4 @@
 
 - Problemas no sistema à corrgir:
     - Ao fazer uma nova solitação de cadastro no sistema e tiver dentro das regras receberei um 'OK' (mesmo se o email tiver sido repetido, nas duas tabelas). Sem alterar nenhum dado e tentar pela segunda vez receberei um 'OK' se não tiver sido bem-sucedida a solicitação de cadastro anterior (por causa do e-mail) e receberei um 'USER_EXISTS' se a solicitacao anterior tiver sido bem-sucedida. Desta forma, esta é uma brecha de segurança para hackers verificarem se um e-mail tem ou não cadastro no sistema.
-        - Solução: Impedir do usuário informar um username na solicitação de cadastro no sistema, devendo o mesmo criar um ao entrar na conta (se o mesmo for devidamente aprovado para ser cadastrado no sistema). Esta restrição deve ser aplicada também ao usuário inicial tipo 'demo'.
+        - Solução: Impedir do usuário informar um username na solicitação de cadastro no sistema, devendo o mesmo criar um ao entrar na conta (se o mesmo for devidamente aprovado para ser cadastrado no sistema). Esta restrição também deve ser aplicada ao usuário inicial tipo 'demo'.
