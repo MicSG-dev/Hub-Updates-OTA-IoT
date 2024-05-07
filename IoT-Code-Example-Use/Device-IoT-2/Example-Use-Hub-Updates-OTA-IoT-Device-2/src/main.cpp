@@ -17,10 +17,10 @@ char serverHub[] = "sistemas.micsg.com.br";                           // host do
 char query[] = "GET /sistemas-web/hub-updates-ota-iot/api/iot/teste"; // https://sistemas.micsg.com.br/sistemas-web/hub-updates-ota-iot/api/iot/teste
 
 // Define o IP estático, máscara, DNS e endereço de gateway a ser usado se o DHCP não conseguir atribui-los
-IPAddress ipEthernet(192, 168, 0, 85);
-IPAddress dnsEthernet(255, 255, 255, 0);
-IPAddress gatewayEthernet(1, 1, 1, 1);
-IPAddress mascaraEthernet(192, 168, 0, 1);
+IPAddress ipEthernet(192, 168, 0, 199);
+IPAddress mascaraEthernet(255, 255, 255, 0);
+IPAddress dnsEthernet(1, 1, 1, 1);
+IPAddress gatewayEthernet(192, 168, 0, 1);
 
 // Pino analógico para obter dados semi-aleatórios para SSL a partir da leitura da flutuação de tensão aleatória (ruído)
 const int rand_pin = A0; // (GPIO26)
@@ -53,49 +53,15 @@ bool beginEthernetComModo(modosDeInicializacaoEthernet modo)
     Ethernet.begin(macAddressEthernet, ipEthernet, dnsEthernet, gatewayEthernet, mascaraEthernet);
     return true;
   case MODO_IP_DHCP:
-    return Ethernet.begin(macAddressEthernet, "Device 2");
+    SPI.endTransaction();
+    return Ethernet.begin(macAddressEthernet, 4000, 2000);
   default:
     return false;
   }
 }
 
-void definirModoIpEthernet()
-{
-  if (beginEthernetComModo(MODO_IP_DHCP))
-  { // Dynamic IP setup
-
-    Serial.println("IP definido por DHCP");
-
-    display.clearDisplay();
-    display.setCursor(15, 16);
-    display.setTextSize(2);
-    display.setTextColor(SSD1306_WHITE);
-    display.print("DHCP ok");
-    display.display();
-    delay(1500);
-  }
-  else
-  {
-
-    Serial.println("Falha na atribuicao de IP pelo DHCP. Definindo IP estatico");
-
-    display.clearDisplay();
-    display.setCursor(15, 16);
-    display.setTextSize(2);
-    display.setTextColor(SSD1306_WHITE);
-    display.println("IP");
-    display.print("estatico");
-    display.display();
-    delay(1500);
-
-    beginEthernetComModo(MODO_IP_ESTATICO);
-    Serial.println("STATIC OK!");
-  }
-}
-
 void verificacaoHardwareEthernet()
 {
-  bool corrigidoAlgumErro = false;
   if (Ethernet.hardwareStatus() == EthernetNoHardware)
   {
     Serial.println("Ethernet module was not found.  Sorry, can't run without hardware. :(");
@@ -112,16 +78,10 @@ void verificacaoHardwareEthernet()
     display.println("Conserte isso e");
     display.print("reinicie a placa");
     display.display();
-
-    do
-    {
-      delay(1000);
-      beginEthernetComModo(MODO_IP_ESTATICO);
-    } while (Ethernet.hardwareStatus() == EthernetNoHardware);
-    delay(3000);
-    corrigidoAlgumErro = true;
+    delay(10000);
+    rp2040.reboot();
   }
-  Serial.println(Ethernet.linkStatus());
+  
   if (Ethernet.linkStatus() == LinkOFF)
   {
     Serial.println("Ethernet cable is not connected.");
@@ -138,13 +98,6 @@ void verificacaoHardwareEthernet()
       delay(1000);
       Serial.println(Ethernet.linkStatus());
     }
-
-    corrigidoAlgumErro = true;
-  }
-
-  if (corrigidoAlgumErro)
-  {
-    definirModoIpEthernet();
   }
 }
 
@@ -183,11 +136,48 @@ void setup()
 
   // Atribui o pino CS (seleção) do módulo W5500 como GPIO17
   Ethernet.init(17);
+  bool hardwareEthernetOk = false;
+  bool configuracaoEthernetOk = false;
 
-  // Inicialização rápida para verificação de cabo e hardware íntegros
-  beginEthernetComModo(MODO_IP_ESTATICO);
-  delay(1000);
-  verificacaoHardwareEthernet();
+  do
+  {
+    if (beginEthernetComModo(MODO_IP_DHCP))
+    { // Dynamic IP setup
+
+      Serial.println("IP definido por DHCP");
+
+      display.clearDisplay();
+      display.setCursor(15, 16);
+      display.setTextSize(2);
+      display.setTextColor(SSD1306_WHITE);
+      display.print("DHCP ok");
+      display.display();
+      delay(1500);
+      configuracaoEthernetOk = true;
+    }
+    else if (hardwareEthernetOk == false)
+    {
+      verificacaoHardwareEthernet();
+      hardwareEthernetOk = true;
+    }
+    else
+    {
+      Serial.println("Falha na atribuicao de IP pelo DHCP. Definindo IP estatico");
+
+      display.clearDisplay();
+      display.setCursor(15, 16);
+      display.setTextSize(2);
+      display.setTextColor(SSD1306_WHITE);
+      display.println("IP");
+      display.print("estatico");
+      display.display();
+      delay(1500);
+
+      beginEthernetComModo(MODO_IP_ESTATICO);
+      Serial.println("STATIC OK!");
+      configuracaoEthernetOk = true;
+    }
+  } while (!configuracaoEthernetOk);
 
   Serial.print("Local IP : ");
   Serial.println(Ethernet.localIP());
