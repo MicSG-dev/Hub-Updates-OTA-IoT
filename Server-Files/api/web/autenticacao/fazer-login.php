@@ -4,10 +4,10 @@ define('database-acesso-privado-rv$he', TRUE);
 $profundidadePastaAtual = 3;
 $pastaInicial = implode("/", array_slice(explode("\\", __DIR__), 0, -$profundidadePastaAtual));
 
-include_once($pastaInicial . '/private/database.php');
-include_once($pastaInicial . '/private/credentials.php');
-include_once($pastaInicial . '/private/vendor/autoload.php');
-include_once($pastaInicial . '/private/utils/general.php');
+include_once ($pastaInicial . '/private/database.php');
+include_once ($pastaInicial . '/private/credentials.php');
+include_once ($pastaInicial . '/private/vendor/autoload.php');
+include_once ($pastaInicial . '/private/utils/general.php');
 
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
@@ -15,15 +15,21 @@ use Firebase\JWT\Key;
 executarFuncoesDeTodasPaginas($host, $username, $password, $database, $emailDemoAccount, $senhaDemoAccount, $chaveCrypto);
 
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
+
     // Parâmetro POST email
-    isset($_POST["email"]) ? $email_login = $_POST["email"] : $email_login = null;
+    $email_login = isset($_POST["email"]) ?
+        $_POST["email"] :
+        null;
 
     // Parâmetro POST user
-    isset($_POST["password"]) ? $senha_login = $_POST["password"] : $senha_login = null;
+    $senha_login = isset($_POST["password"]) ?
+        $_POST["password"] :
+        null;
 
-    $token = isset($_COOKIE["key"]) ? $_COOKIE["key"] : null;
-
-
+    // obtém HTTP Cookie de chave 'key' contendo o token JWT
+    $token = isset($_COOKIE["key"]) ?
+        $_COOKIE["key"] :
+        null;
 
     if (!estaLogado($token, $chaveJwt, $versaoSistema) || estaNaTokenBlackList($host, $username, $password, $database, $token)) {
         if ($senha_login == null) {
