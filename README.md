@@ -1,4 +1,6 @@
 # Hub Updates OTA IoT
+[![wakatime](https://wakatime.com/badge/user/cd636938-f610-42ec-a8d5-990354cad321/project/018ec445-4e84-4d84-bd22-6ccec88679c4.svg)](https://wakatime.com/@sistemas_micsg)
+
 Repositório do Hub de Atualizações OTA para dispositivos IoT remotos.
 
 ## Linguagens utilizadas
